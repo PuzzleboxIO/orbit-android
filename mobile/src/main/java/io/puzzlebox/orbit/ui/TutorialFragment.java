@@ -13,21 +13,22 @@ import io.puzzlebox.orbit.R;
  * Created by sc on 5/8/15.
  */
 
-public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
+public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 
 	/**
 	 * Configuration
 	 */
-	static String URL = "file:///android_asset/tutorial/index.html";
+//	static String URL = "file:///android_asset/tutorial/index.html";
+	static String URL = "file:///android_asset/tutorial/contents.html";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
 //		View v = inflater.inflate(io.puzzlebox.jigsaw.R.layout.fragment_welcome, container, false);
-		View v = inflater.inflate(R.layout.fragment_welcome, container, false);
+		View v = inflater.inflate(R.layout.fragment_tutorial, container, false);
 
-		WebView webview = (WebView) v.findViewById(R.id.webViewWelcome);
+		WebView webview = (WebView) v.findViewById(R.id.webViewTutorial);
 
 		webview.getSettings().setJavaScriptEnabled(true);
 

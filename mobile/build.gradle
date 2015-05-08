@@ -6,9 +6,11 @@ android {
 
     defaultConfig {
         applicationId "io.puzzlebox.orbit"
-        minSdkVersion 15
+//        minSdkVersion 9 // API 2.3 TODO getActivity()
+        minSdkVersion 15 // API 4.0.3
         targetSdkVersion 22
-        versionCode 1
+//        targetSdkVersion 19 // TODO Check WebView JavaScript for Tutorial
+        versionCode 12
         versionName "2.0.0"
     }
     buildTypes {

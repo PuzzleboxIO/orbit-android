@@ -86,12 +86,16 @@ body,html,iframe { width: 100%; height: 100%; margin: 0; border: 0; }
   margin-left: 120px;
 }
 
-.credits {
+.credits-fixed {
   position: absolute; 
   top: 100%; 
   margin-top: -72px;
   center: 0;
   margin-left: 60px;
+}
+
+.credits {
+    float: center;
 }
 
 .table {

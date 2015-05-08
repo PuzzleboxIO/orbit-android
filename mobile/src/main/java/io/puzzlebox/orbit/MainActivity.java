@@ -17,6 +17,9 @@ import io.puzzlebox.jigsaw.ui.EEGFragment;
 import io.puzzlebox.jigsaw.ui.SessionFragment;
 //import io.puzzlebox.jigsaw.ui.WelcomeFragment;
 //import io.puzzlebox.orbit.ui.FragmentTabWelcome;
+import io.puzzlebox.orbit.ui.FragmentTabSupport;
+import io.puzzlebox.orbit.ui.SupportFragment;
+import io.puzzlebox.orbit.ui.TutorialFragment;
 import io.puzzlebox.orbit.ui.WelcomeFragment;
 
 import io.puzzlebox.orbit.R;
@@ -79,9 +82,11 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
                 List<DrawerItem> dataList = new ArrayList<>();
 
                 dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_welcome), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
+                dataList.add(new DrawerItem(getString(R.string.title_fragment_tutorial), R.mipmap.ic_brain));
                 dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_session), io.puzzlebox.jigsaw.R.mipmap.ic_session));
                 dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_eeg), io.puzzlebox.jigsaw.R.mipmap.ic_eeg));
                 dataList.add(new DrawerItem(getString(R.string.title_fragment_orbit), R.mipmap.ic_orbit));
+                dataList.add(new DrawerItem(getString(R.string.title_fragment_support), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
 
 
                 return dataList;
@@ -108,6 +113,16 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
                                         fragment = new WelcomeFragment();
                                 break;
                         case 1:
+                                backStackName = "tutorial";
+                                try{
+                                        fragment = getFragmentManager().findFragmentByTag(backStackName);
+                                } catch (Exception e) {
+                                        e.printStackTrace();
+                                }
+                                if (fragment == null)
+                                        fragment = new TutorialFragment();
+                                break;
+                        case 2:
                                 backStackName = "session";
                                 try{
                                         fragment = getFragmentManager().findFragmentByTag(backStackName);
@@ -117,7 +132,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
                                 if (fragment == null)
                                         fragment = new SessionFragment();
                                 break;
-                        case 2:
+                        case 3:
                                 backStackName = "eeg";
                                 try{
                                         fragment = getFragmentManager().findFragmentByTag(backStackName);
@@ -128,7 +143,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
                                         fragment = new EEGFragment();
 
                                 break;
-                        case 3:
+                        case 4:
                                 backStackName = "orbit";
                                 try{
                                         fragment = getFragmentManager().findFragmentByTag(backStackName);
@@ -137,6 +152,17 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
                                 }
                                 if (fragment == null)
                                         fragment = new OrbitFragment();
+
+                                break;
+                        case 5:
+                                backStackName = "support";
+                                try{
+                                        fragment = getFragmentManager().findFragmentByTag(backStackName);
+                                } catch (Exception e) {
+                                        e.printStackTrace();
+                                }
+                                if (fragment == null)
+                                        fragment = new SupportFragment();
 
                                 break;
                         default:
