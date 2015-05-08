@@ -21,10 +21,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,8 +42,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
@@ -53,6 +58,9 @@ import io.puzzlebox.jigsaw.protocol.MuseService;
 import io.puzzlebox.jigsaw.protocol.RBLGattAttributes;
 import io.puzzlebox.jigsaw.protocol.RBLService;
 import io.puzzlebox.jigsaw.protocol.ThinkGearService;
+import io.puzzlebox.orbit.protocol.AudioHandler;
+import io.puzzlebox.orbit.ui.FragmentTabAdvanced;
+import io.puzzlebox.orbit.ui.FragmentTabFlightThinkGear;
 
 import static android.view.MenuItem.SHOW_AS_ACTION_ALWAYS;
 
@@ -71,39 +79,42 @@ public class OrbitFragment extends Fragment
 	 */
 	int eegPower = 0;
 
-	int bloomRange = 0;
-	int bloomRangeMax = 128;
-	int bloomServoPercentage = 0;
-	int bloomColorRed = 0;
-	int bloomColorGreen = 0;
-	int bloomColorBlue = 0;
+	public boolean generateAudio = true;
+	public boolean invertControlSignal = false;
+	boolean tiltSensorControl = false;
+	public int deviceWarningMessagesDisplayed = 0;
+
+	int minimumScoreTarget = 40;
+	int scoreCurrent = 0;
+	int scoreLast = 0;
+	int scoreHigh = 0;
+
+	boolean demoFlightMode = false;
 
 
 	/**
 	 * UI
 	 */
-//	Configuration config;
+	Configuration config;
 	ProgressBar progressBarAttention;
 	SeekBar seekBarAttention;
 	ProgressBar progressBarMeditation;
 	SeekBar seekBarMeditation;
 	ProgressBar progressBarSignal;
 	ProgressBar progressBarPower;
-//	Button connectButton;
 
-	ProgressBar progressBarRange;
-//	ProgressBar progressBarBloom;
+	TextView textViewLabelScores;
+	TextView textViewLabelScore;
+	TextView textViewLabelLastScore;
+	TextView textViewLabelHighScore;
+	View viewSpaceScore;
+	View viewSpaceScoreLast;
+	View viewSpaceScoreHigh;
+	TextView textViewScore;
+	TextView textViewLastScore;
+	TextView textViewHighScore;
 
-//	ImageView imageViewStatus;
-
-	private Button connectBloom = null;
-
-	private Button buttonDemo = null;
-//	private Button buttonOpen = null;
-//	private Button buttonClose = null;
-
-//	private TextView rssiValue = null;
-	private SeekBar servoSeekBar;
+	ImageView imageViewStatus;
 
 //	private static TextView textViewSessionTime;
 
@@ -112,30 +123,32 @@ public class OrbitFragment extends Fragment
 	int minimumPower = 0; // minimum power for the bloom
 	int maximumPower = 100; // maximum power for the bloom
 
-	//	private static XYPlot sessionPlot1 = null;
-	//	private static SimpleXYSeries sessionPlotSeries1 = null;
-	//	private static XYPlot sessionPlot2 = null;
-	//	private static SimpleXYSeries sessionPlotSeries2 = null;
 
 	/**
-	 * Bluetooth LE
+	 * Audio
+	 *
+	 * By default the flight control command is hard-coded into WAV files
+	 * When "Generate Control Signal" is enabled the tones used to communicate
+	 * with the infrared dongle are generated on-the-fly.
 	 */
-	//	private BluetoothGattCharacteristic characteristicTx = null;
-	//	private RBLService mBluetoothLeService;
-	//	private BluetoothAdapter mBluetoothAdapter;
-	//	private BluetoothDevice mDevice = null;
-	//	private String mDeviceAddress;
-	//
-	//	private boolean flag = true;
-	//	private boolean connState = false;
-	//	private boolean scanFlag = false;
-	//
-	//	private byte[] data = new byte[3];
-	//	private static final int REQUEST_ENABLE_BT = 1;
-	//	private static final long SCAN_PERIOD = 2000;
-	//
-	//	final private static char[] hexArray = { '0', '1', '2', '3', '4', '5', '6',
-	//			  '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+	int audioFile = R.raw.throttle_hover_android_common;
+	//	int audioFile = R.raw.throttle_hover_android_htc_one_x;
+
+	private SoundPool soundPool;
+	private int soundID;
+	boolean loaded = false;
+
+
+	/**
+	 * AudioHandler
+	 */
+	AudioHandler audioHandler = new AudioHandler();
+
+
+	/**
+	 * Flight status
+	 */
+	boolean flightActive = false;
 
 
 	// ################################################################
@@ -210,18 +223,18 @@ public class OrbitFragment extends Fragment
 		progressBarPower.setProgressDrawable(progressPower);
 		progressBarPower.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
 
-		progressBarRange = (ProgressBar) v.findViewById(R.id.progressBarRange);
-//		ShapeDrawable progressBarRangeDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
-		ShapeDrawable progressBarRangeDrawable = new ShapeDrawable();
-//		String progressBarRangeColor = "#FF00FF";
-		String progressBarRangeColor = "#990099";
-		progressBarRangeDrawable.getPaint().setColor(Color.parseColor(progressBarRangeColor));
-		ClipDrawable progressRange = new ClipDrawable(progressBarRangeDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
-		progressBarRange.setProgressDrawable(progressRange);
-		progressBarRange.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
-
-//		progressBarRange.setMax(128 + 127);
-		progressBarRange.setMax(bloomRangeMax);
+//		progressBarRange = (ProgressBar) v.findViewById(R.id.progressBarRange);
+////		ShapeDrawable progressBarRangeDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
+//		ShapeDrawable progressBarRangeDrawable = new ShapeDrawable();
+////		String progressBarRangeColor = "#FF00FF";
+//		String progressBarRangeColor = "#990099";
+//		progressBarRangeDrawable.getPaint().setColor(Color.parseColor(progressBarRangeColor));
+//		ClipDrawable progressRange = new ClipDrawable(progressBarRangeDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
+//		progressBarRange.setProgressDrawable(progressRange);
+//		progressBarRange.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
+//
+////		progressBarRange.setMax(128 + 127);
+//		progressBarRange.setMax(bloomRangeMax);
 
 
 //		progressBarBloom = (ProgressBar) v.findViewById(R.id.progressBarBloom);
@@ -291,279 +304,29 @@ public class OrbitFragment extends Fragment
 		seekBarMeditation.setOnSeekBarChangeListener(this);
 
 
-//		imageViewStatus = (ImageView) v.findViewById(R.id.imageViewStatus);
+		imageViewStatus = (ImageView) v.findViewById(R.id.imageViewStatus);
 
 
-		servoSeekBar = (SeekBar) v.findViewById(R.id.ServoSeekBar);
-		servoSeekBar.setEnabled(false);
-//		servoSeekBar.setMax(180);
-		servoSeekBar.setMax(100);
-		servoSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) {
-
-			}
-
-			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) {
-
-			}
-
-			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress,
-			                              boolean fromUser) {
-				byte[] buf = new byte[] { (byte) 0x03, (byte) 0x00, (byte) 0x00 };
-
-				buf[1] = (byte) servoSeekBar.getProgress();
-
-				OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-				OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-			}
-		});
 
 
-//		rssiValue = (TextView) v.findViewById(R.id.rssiValue);
+		textViewLabelScores = (TextView) v.findViewById(R.id.textViewLabelScores);
+		textViewLabelScore = (TextView) v.findViewById(R.id.textViewLabelScore);
+		textViewLabelLastScore = (TextView) v.findViewById(R.id.textViewLabelLastScore);
+		textViewLabelHighScore = (TextView) v.findViewById(R.id.textViewLabelHighScore);
 
-		connectBloom = (Button) v.findViewById(R.id.connectBloom);
+		viewSpaceScore = (View) v.findViewById(R.id.viewSpaceScore);
+		viewSpaceScoreLast = (View) v.findViewById(R.id.viewSpaceScoreLast);
+		viewSpaceScoreHigh = (View) v.findViewById(R.id.viewSpaceScoreHigh);
 
-
-		connectBloom.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (!OrbitSingleton.getInstance().scanFlag) {
-					scanLeDevice();
-
-					Timer mTimer = new Timer();
-					mTimer.schedule(new TimerTask() {
-
-						@Override
-						public void run() {
-							if (OrbitSingleton.getInstance().mDevice != null) {
-								OrbitSingleton.getInstance().mDeviceAddress = OrbitSingleton.getInstance().mDevice.getAddress();
-								OrbitSingleton.getInstance().mBluetoothLeService.connect(OrbitSingleton.getInstance().mDeviceAddress);
-								OrbitSingleton.getInstance().scanFlag = true;
-							} else {
-								getActivity().runOnUiThread(new Runnable() {
-									public void run() {
-										Toast toast = Toast
-												  .makeText(
-															 getActivity(),
-															 "Error connecting to Puzzlebox Bloom",
-															 Toast.LENGTH_SHORT);
-										toast.setGravity(0, 0, Gravity.CENTER);
-										toast.show();
-									}
-								});
-							}
-						}
-					}, OrbitSingleton.getInstance().SCAN_PERIOD);
-				}
-
-				System.out.println(OrbitSingleton.getInstance().connState);
-//				Log.e(TAG, connState);
-//				if (connState == false) {
-				if (!OrbitSingleton.getInstance().connState && OrbitSingleton.getInstance().mDeviceAddress != null) {
-					OrbitSingleton.getInstance().mBluetoothLeService.connect(OrbitSingleton.getInstance().mDeviceAddress);
-				} else {
-					if (OrbitSingleton.getInstance().mBluetoothLeService != null) {
-						OrbitSingleton.getInstance().mBluetoothLeService.disconnect();
-						OrbitSingleton.getInstance().mBluetoothLeService.close();
-						setButtonDisable();
-					}
-				}
-			}
-		});
+		textViewScore = (TextView) v.findViewById(R.id.textViewScore);
+		textViewLastScore = (TextView) v.findViewById(R.id.textViewLastScore);
+		textViewHighScore = (TextView) v.findViewById(R.id.textViewHighScore);
 
 
-		Button buttonOpen = (Button) v.findViewById(R.id.buttonOpen);
-		buttonOpen.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				byte[] buf = new byte[] { (byte) 0x01, (byte) 0x00, (byte) 0x00 };
-				OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-				OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-			}
-		});
-		buttonOpen.setVisibility(View.GONE);
+		// Hide the "Scores" label by default
+		textViewLabelScores.setVisibility(View.GONE);
+		viewSpaceScore.setVisibility(View.GONE);
 
-		Button buttonClose = (Button) v.findViewById(R.id.buttonClose);
-		buttonClose.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				byte[] buf = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00 };
-				OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-				OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-			}
-		});
-		buttonClose.setVisibility(View.GONE);
-
-		buttonDemo = (Button) v.findViewById(R.id.buttonDemo);
-		buttonDemo.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				byte[] buf;
-//				if (! OrbitSingleton.getInstance().demoActive) {
-				OrbitSingleton.getInstance().demoActive = true;
-
-				// bloomOpen()
-//				buf = new byte[]{(byte) 0x01, (byte) 0x00, (byte) 0x00};
-//				OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-//				OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-
-				// loopRGB()
-				buf = new byte[]{(byte) 0x06, (byte) 0x00, (byte) 0x00};
-				OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-				OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-
-				// Set Red to 0
-				buf = new byte[]{(byte) 0x0A, (byte) 0x00, (byte) 0x00}; // R = 0
-				OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-				OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-
-				// bloomClose()
-//				buf = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00};
-//				OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-//				OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-
-
-//				} else {
-//					OrbitSingleton.getInstance().demoActive = false;
-////					buf = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00};
-////					OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-////					OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-//					buf = new byte[]{(byte) 0x0A, (byte) 0x00, (byte) 0x00}; // R = 0
-//					OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-//					OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-////					buf = new byte[]{(byte) 0x0A, (byte) 0x01, (byte) 0x00}; // G = 0
-////					OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-////					OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-////					buf = new byte[]{(byte) 0x0A, (byte) 0x02, (byte) 0x00}; // B = 0
-////					OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-////					OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-//				}
-			}
-		});
-
-
-		if (!getActivity().getPackageManager().hasSystemFeature(
-				  PackageManager.FEATURE_BLUETOOTH_LE)) {
-			Toast.makeText(getActivity(), "Bluetooth LE not supported", Toast.LENGTH_SHORT)
-					  .show();
-			getActivity().finish();
-		}
-
-		final BluetoothManager mBluetoothManager = (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
-		OrbitSingleton.getInstance().mBluetoothAdapter = mBluetoothManager.getAdapter();
-		if (OrbitSingleton.getInstance().mBluetoothAdapter == null) {
-			Toast.makeText(getActivity(), "Bluetooth LE not supported", Toast.LENGTH_SHORT)
-					  .show();
-			getActivity().finish();
-			return v;
-		}
-
-		Intent gattServiceIntent = new Intent(getActivity(),
-				  RBLService.class);
-//		bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-		getActivity().bindService(gattServiceIntent, mServiceConnection, getActivity().BIND_AUTO_CREATE);
-
-
-//		// setup the Session History plot
-//		sessionPlot1 = (XYPlot) v.findViewById(R.id.sessionPlot1);
-//		sessionPlotSeries1 = new SimpleXYSeries("Session Plot");
-//
-//		// Setup the boundary mode, boundary values only applicable in FIXED mode.
-//
-//		if (sessionPlot1 != null) {
-//
-//			sessionPlot1.setDomainBoundaries(0, 30, BoundaryMode.FIXED);
-////			sessionPlot1.setRangeBoundaries(0, 100, BoundaryMode.GROW);
-//			sessionPlot1.setRangeBoundaries(0, 100, BoundaryMode.FIXED);
-//
-////			sessionPlot1.addSeries(sessionPlotSeries1, new LineAndPointFormatter(Color.rgb(200, 100, 100), Color.BLACK, null, null));
-//			sessionPlot1.addSeries(sessionPlotSeries1, new LineAndPointFormatter(Color.rgb(200, 100, 100), Color.RED, null, null));
-//
-//			// Thin out domain and range tick values so they don't overlap
-//			sessionPlot1.setDomainStepValue(1);
-//			sessionPlot1.setTicksPerRangeLabel(10);
-//
-//			sessionPlot1.setRangeLabel("Attention");
-//
-//			// Sets the dimensions of the widget to exactly contain the text contents
-//			sessionPlot1.getDomainLabelWidget().pack();
-//			sessionPlot1.getRangeLabelWidget().pack();
-//
-//			// Only display whole numbers in labels
-//			sessionPlot1.getGraphWidget().setDomainValueFormat(new DecimalFormat("0"));
-//			sessionPlot1.getGraphWidget().setRangeValueFormat(new DecimalFormat("0"));
-//
-//			// Hide domain and range labels
-//			sessionPlot1.getGraphWidget().setDomainLabelWidth(0);
-//			sessionPlot1.getGraphWidget().setRangeLabelWidth(0);
-//
-//			// Hide legend
-//			sessionPlot1.getLegendWidget().setVisible(false);
-//
-//			// setGridPadding(float left, float top, float right, float bottom)
-//			sessionPlot1.getGraphWidget().setGridPadding(0, 0, 0, 0);
-//
-//
-//			//		sessionPlot1.getGraphWidget().setDrawMarkersEnabled(false);
-//
-//			//		final PlotStatistics histStats = new PlotStatistics(1000, false);
-//			//		sessionPlot1.addListener(histStats);
-//
-//		}
-//
-//
-//
-//		// setup the Session History plot
-//		sessionPlot2 = (XYPlot) v.findViewById(R.id.sessionPlot2);
-//		sessionPlotSeries2 = new SimpleXYSeries("Session Plot");
-//
-//		// Setup the boundary mode, boundary values only applicable in FIXED mode.
-//
-//		if (sessionPlot2 != null) {
-//
-//			sessionPlot2.setDomainBoundaries(0, 30, BoundaryMode.FIXED);
-////			sessionPlot2.setRangeBoundaries(0, 100, BoundaryMode.GROW);
-//			sessionPlot2.setRangeBoundaries(0, 100, BoundaryMode.FIXED);
-//
-////			sessionPlot2.addSeries(sessionPlotSeries2, new LineAndPointFormatter(Color.rgb(200, 100, 100), Color.BLACK, null, null));
-//			sessionPlot2.addSeries(sessionPlotSeries2, new LineAndPointFormatter(Color.rgb(200, 100, 100), Color.RED, null, null));
-//
-//			// Thin out domain and range tick values so they don't overlap
-//			sessionPlot2.setDomainStepValue(1);
-//			sessionPlot2.setTicksPerRangeLabel(10);
-//
-//			sessionPlot2.setRangeLabel("Meditation");
-//
-//			// Sets the dimensions of the widget to exactly contain the text contents
-//			sessionPlot2.getDomainLabelWidget().pack();
-//			sessionPlot2.getRangeLabelWidget().pack();
-//
-//			// Only display whole numbers in labels
-//			sessionPlot2.getGraphWidget().setDomainValueFormat(new DecimalFormat("0"));
-//			sessionPlot2.getGraphWidget().setRangeValueFormat(new DecimalFormat("0"));
-//
-//			// Hide domain and range labels
-//			sessionPlot2.getGraphWidget().setDomainLabelWidth(0);
-//			sessionPlot2.getGraphWidget().setRangeLabelWidth(0);
-//
-//			// Hide legend
-//			sessionPlot2.getLegendWidget().setVisible(false);
-//
-//			// setGridPadding(float left, float top, float right, float bottom)
-//			sessionPlot2.getGraphWidget().setGridPadding(0, 0, 0, 0);
-//
-//
-//			//		sessionPlot2.getGraphWidget().setDrawMarkersEnabled(false);
-//
-//			//		final PlotStatistics histStats = new PlotStatistics(1000, false);
-//			//		sessionPlot2.addListener(histStats);
-//
-//		}
 
 
 		/**
@@ -572,11 +335,8 @@ public class OrbitFragment extends Fragment
 
 		updateScreenLayout();
 
-//		updatePowerThresholds();
-//		updatePower();
-
-		if (OrbitSingleton.getInstance().connState)
-			setButtonEnable();
+		updatePowerThresholds();
+		updatePower();
 
 
 		return v;
@@ -636,17 +396,17 @@ public class OrbitFragment extends Fragment
 		updatePower();
 
 
-		if (!OrbitSingleton.getInstance().mBluetoothAdapter.isEnabled()) {
-			Intent enableBtIntent = new Intent(
-					BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			startActivityForResult(enableBtIntent, OrbitSingleton.getInstance().REQUEST_ENABLE_BT);
-		}
+//		if (!OrbitSingleton.getInstance().mBluetoothAdapter.isEnabled()) {
+//			Intent enableBtIntent = new Intent(
+//					BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//			startActivityForResult(enableBtIntent, OrbitSingleton.getInstance().REQUEST_ENABLE_BT);
+//		}
 
-		getActivity().registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-
-		Intent gattServiceIntent = new Intent(getActivity(),
-				RBLService.class);
-		getActivity().bindService(gattServiceIntent, mServiceConnection, getActivity().BIND_AUTO_CREATE);
+//		getActivity().registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+//
+//		Intent gattServiceIntent = new Intent(getActivity(),
+//				RBLService.class);
+//		getActivity().bindService(gattServiceIntent, mServiceConnection, getActivity().BIND_AUTO_CREATE);
 
 //		if (OrbitSingleton.getInstance().connState)
 //			setButtonText(R.id.connectBloom, "Disconnect Bloom");
@@ -673,9 +433,9 @@ public class OrbitFragment extends Fragment
 				  getActivity().getApplicationContext()).unregisterReceiver(
 				mPacketReceiver);
 
-		getActivity().unregisterReceiver(mGattUpdateReceiver);
-
-		getActivity().unbindService(mServiceConnection);
+//		getActivity().unregisterReceiver(mGattUpdateReceiver);
+//
+//		getActivity().unbindService(mServiceConnection);
 
 
 	} // onPause
@@ -683,18 +443,18 @@ public class OrbitFragment extends Fragment
 
 	// ################################################################
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-
-		try {
-			if (mServiceConnection != null)
-				getActivity().unbindService(mServiceConnection);
-		} catch (IllegalArgumentException e) {
-			Log.w(TAG, "Exception in onDestroy(): " + e);
-		}
-
-	}
+//	@Override
+//	public void onDestroy() {
+//		super.onDestroy();
+//
+//		try {
+//			if (mServiceConnection != null)
+//				getActivity().unbindService(mServiceConnection);
+//		} catch (IllegalArgumentException e) {
+//			Log.w(TAG, "Exception in onDestroy(): " + e);
+//		}
+//
+//	}
 
 
 	// ################################################################
@@ -783,28 +543,7 @@ public class OrbitFragment extends Fragment
 
 //			updateSessionTime();
 
-//			sessionPlotSeries1 = updateSessionPlotHistory(
-//					  "Attention",
-//					  SessionSingleton.getInstance().getSessionRangeValues(
-//								 "Attention", 30),
-//					  Color.RED,
-//					  sessionPlot1,
-//					  sessionPlotSeries1);
-////			updateSessionPlotHistory(
-////					  SessionSingleton.getInstance().getSessionRangeValues(
-////								 "Attention", 30));
-//
-////			updateSessionPlotHistory2(
-////					  SessionSingleton.getInstance().getSessionRangeValues(
-////								 "Meditation", 30));
-//
-//			sessionPlotSeries2 = updateSessionPlotHistory(
-//					  "Meditation",
-//					  SessionSingleton.getInstance().getSessionRangeValues(
-//								 "Meditation", 30),
-//					  Color.BLUE,
-//					  sessionPlot2,
-//					  sessionPlotSeries2);
+
 
 
 		}
@@ -814,343 +553,103 @@ public class OrbitFragment extends Fragment
 
 	// ################################################################
 
-//	private void updateSessionTime() {
+//	private void setButtonEnable() {
+//		OrbitSingleton.getInstance().flag = true;
+//		OrbitSingleton.getInstance().connState = true;
 //
-//		textViewSessionTime.setText( SessionSingleton.getInstance().getSessionTimestamp() );
+//		servoSeekBar.setEnabled(OrbitSingleton.getInstance().flag);
+//		connectBloom.setText("Disconnect Bloom");
 //
+//		buttonDemo.setEnabled(true);
 //	}
 
 
 	// ################################################################
 
-//	public SimpleXYSeries updateSessionPlotHistory(String name,
-//	                                               Number[] values,
-//	                                               Integer color,
-//	                                               XYPlot mPlot,
-//	                                               SimpleXYSeries mSeries) {
+//	private void setButtonDisable() {
+//		OrbitSingleton.getInstance().flag = false;
+//		OrbitSingleton.getInstance().connState = false;
 //
-////		if (sessionPlot1 != null) {
-////			sessionPlot1.removeSeries(sessionPlotSeries1);
+//		servoSeekBar.setEnabled(OrbitSingleton.getInstance().flag);
+//		connectBloom.setText("Connect Bloom");
 //
-//		if (mPlot != null) {
-//			mPlot.removeSeries(mSeries);
+//		buttonDemo.setEnabled(false);
 //
-//			mSeries = new SimpleXYSeries(Arrays.asList(values), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, name);
-//
-//			LineAndPointFormatter format = new LineAndPointFormatter(color, color, null, null);
-//
-//			//		format.getFillPaint().setAlpha(220);
-//
-//			mPlot.addSeries(mSeries, format);
-//
-//
-//			// Redraw the plots:
-//			mPlot.redraw();
-//
-//			return mSeries;
-//		} else
-//			return null;
-//
-//	} // updateSessionPlotHistory
-
-
-	// ################################################################
-
-	private void displayData(String data) {
-		if (data != null) {
-//			rssiValue.setText(data);
-
-			try{
-//				progressBarRange.setProgress( Integer.parseInt(data) );
-
-				// -128 to 127 [https://stackoverflow.com/questions/21609544/bluetooth-rssi-values-are-always-in-dbm-in-all-android-devices]
-				bloomRange = Integer.parseInt(data);
-
-				bloomRange = bloomRange + 128;
-
-				if (bloomRange > bloomRangeMax)
-					bloomRange = bloomRangeMax;
-
-				progressBarRange.setProgress( bloomRange );
-
-			} catch (Exception e) {
-				Log.e(TAG, "Exception: displayData(" + data + ")" + e.toString());
-			}
-
-		}
-	}
-
-
-	// ################################################################
-
-//	private void readAnalogInValue(byte[] data) {
-//		for (int i = 0; i < data.length; i += 3) {
-//			if (data[i] == 0x0A) {
-//				if (data[i + 1] == 0x01)
-//					digitalInBtn.setChecked(false);
-//				else
-//					digitalInBtn.setChecked(true);
-//			} else if (data[i] == 0x0B) {
-//				int Value;
-//
-//				Value = ((data[i + 1] << 8) & 0x0000ff00)
-//						  | (data[i + 2] & 0x000000ff);
-//
-//				AnalogInValue.setText(Value + "");
-//			}
-//		}
+//		progressBarRange.setProgress(0);
 //	}
-
-
-	// ################################################################
-
-	private void setButtonEnable() {
-		OrbitSingleton.getInstance().flag = true;
-		OrbitSingleton.getInstance().connState = true;
-
-		servoSeekBar.setEnabled(OrbitSingleton.getInstance().flag);
-		connectBloom.setText("Disconnect Bloom");
-
-		buttonDemo.setEnabled(true);
-	}
-
-
-	// ################################################################
-
-	private void setButtonDisable() {
-		OrbitSingleton.getInstance().flag = false;
-		OrbitSingleton.getInstance().connState = false;
-
-		servoSeekBar.setEnabled(OrbitSingleton.getInstance().flag);
-		connectBloom.setText("Connect Bloom");
-
-		buttonDemo.setEnabled(false);
-
-		progressBarRange.setProgress(0);
-	}
-
-
-	// ################################################################
-
-	private void startReadRssi() {
-		new Thread() {
-			public void run() {
-
-				while (OrbitSingleton.getInstance().flag) {
-					OrbitSingleton.getInstance().mBluetoothLeService.readRssi();
-					try {
-						sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}.start();
-	}
-
-
-	// ################################################################
-
-	private void getGattService(BluetoothGattService gattService) {
-		if (gattService == null)
-			return;
-
-		setButtonEnable();
-		startReadRssi();
-
-		OrbitSingleton.getInstance().characteristicTx = gattService
-				  .getCharacteristic(RBLService.UUID_BLE_SHIELD_TX);
-
-		BluetoothGattCharacteristic characteristicRx = gattService
-				  .getCharacteristic(RBLService.UUID_BLE_SHIELD_RX);
-		OrbitSingleton.getInstance().mBluetoothLeService.setCharacteristicNotification(characteristicRx,
-				  true);
-		OrbitSingleton.getInstance().mBluetoothLeService.readCharacteristic(characteristicRx);
-	}
-
-
-	// ################################################################
-
-	private static IntentFilter makeGattUpdateIntentFilter() {
-		final IntentFilter intentFilter = new IntentFilter();
-
-		intentFilter.addAction(RBLService.ACTION_GATT_CONNECTED);
-		intentFilter.addAction(RBLService.ACTION_GATT_DISCONNECTED);
-		intentFilter.addAction(RBLService.ACTION_GATT_SERVICES_DISCOVERED);
-		intentFilter.addAction(RBLService.ACTION_DATA_AVAILABLE);
-		intentFilter.addAction(RBLService.ACTION_GATT_RSSI);
-
-		return intentFilter;
-	}
-
-
-	// ################################################################
-
-	private void scanLeDevice() {
-		new Thread() {
-
-			@Override
-			public void run() {
-				OrbitSingleton.getInstance().mBluetoothAdapter.startLeScan(mLeScanCallback);
-
-				try {
-					Thread.sleep(OrbitSingleton.getInstance().SCAN_PERIOD);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
-				OrbitSingleton.getInstance().mBluetoothAdapter.stopLeScan(mLeScanCallback);
-			}
-		}.start();
-	}
-
-
-	// ################################################################
-
-	private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
-
-		@Override
-		public void onLeScan(final BluetoothDevice device, final int rssi,
-		                     final byte[] scanRecord) {
-
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					byte[] serviceUuidBytes = new byte[16];
-					String serviceUuid = "";
-					for (int i = 32, j = 0; i >= 17; i--, j++) {
-						serviceUuidBytes[j] = scanRecord[i];
-					}
-					serviceUuid = bytesToHex(serviceUuidBytes);
-					if (stringToUuidString(serviceUuid).equals(
-							  RBLGattAttributes.BLE_SHIELD_SERVICE
-										 .toUpperCase(Locale.ENGLISH))) {
-						OrbitSingleton.getInstance().mDevice = device;
-					}
-				}
-			});
-		}
-	};
-
-
-	// ################################################################
-
-	private String bytesToHex(byte[] bytes) {
-		char[] hexChars = new char[bytes.length * 2];
-		int v;
-		for (int j = 0; j < bytes.length; j++) {
-			v = bytes[j] & 0xFF;
-			hexChars[j * 2] = OrbitSingleton.getInstance().hexArray[v >>> 4];
-			hexChars[j * 2 + 1] = OrbitSingleton.getInstance().hexArray[v & 0x0F];
-		}
-		return new String(hexChars);
-	}
-
-
-	// ################################################################
-
-	private String stringToUuidString(String uuid) {
-		StringBuffer newString = new StringBuffer();
-		newString.append(uuid.toUpperCase(Locale.ENGLISH).substring(0, 8));
-		newString.append("-");
-		newString.append(uuid.toUpperCase(Locale.ENGLISH).substring(8, 12));
-		newString.append("-");
-		newString.append(uuid.toUpperCase(Locale.ENGLISH).substring(12, 16));
-		newString.append("-");
-		newString.append(uuid.toUpperCase(Locale.ENGLISH).substring(16, 20));
-		newString.append("-");
-		newString.append(uuid.toUpperCase(Locale.ENGLISH).substring(20, 32));
-
-		return newString.toString();
-	}
-
-
-	// ################################################################
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// User chose not to enable Bluetooth.
-		if (requestCode == OrbitSingleton.getInstance().REQUEST_ENABLE_BT
-				  && resultCode == Activity.RESULT_CANCELED) {
-			getActivity().finish();
-			return;
-		}
-
-		super.onActivityResult(requestCode, resultCode, data);
-	}
 
 
 	// ################################################################
 
 	public void updateScreenLayout() {
 
-//		switch(config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK){
-//			case Configuration.SCREENLAYOUT_SIZE_SMALL:
-//				Log.v(TAG, "screenLayout: small");
-//				updateScreenLayoutSmall();
-//				break;
-//			case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-//				Log.v(TAG, "screenLayout: normal");
-//				updateScreenLayoutSmall();
-//				break;
-//			case Configuration.SCREENLAYOUT_SIZE_LARGE:
-//				Log.v(TAG, "screenLayout: large");
-//				break;
-//			case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-//				Log.v(TAG, "screenLayout: xlarge");
-//				break;
-//			case Configuration.SCREENLAYOUT_SIZE_UNDEFINED:
-//				Log.v(TAG, "screenLayout: undefined");
-//				updateScreenLayoutSmall();
-//				break;
-//		}
+		switch(config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK){
+			case Configuration.SCREENLAYOUT_SIZE_SMALL:
+				Log.v(TAG, "screenLayout: small");
+				updateScreenLayoutSmall();
+				break;
+			case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+				Log.v(TAG, "screenLayout: normal");
+				updateScreenLayoutSmall();
+				break;
+			case Configuration.SCREENLAYOUT_SIZE_LARGE:
+				Log.v(TAG, "screenLayout: large");
+				break;
+			case Configuration.SCREENLAYOUT_SIZE_XLARGE:
+				Log.v(TAG, "screenLayout: xlarge");
+				break;
+			case Configuration.SCREENLAYOUT_SIZE_UNDEFINED:
+				Log.v(TAG, "screenLayout: undefined");
+				updateScreenLayoutSmall();
+				break;
+		}
 
 	} // updateScreenLayout
 
 
 	// ################################################################
 
-//	public void updateScreenLayoutSmall() {
+	public void updateScreenLayoutSmall() {
+
+//		String button_test_fly_small = getResources().getString(R.string.button_test_fly_small);
+//		setButtonText(R.id.buttonTestFly, button_test_fly_small);
+
+		textViewLabelScores.setVisibility(View.VISIBLE);
+		viewSpaceScore.setVisibility(View.VISIBLE);
+
+
+		android.view.ViewGroup.LayoutParams layoutParams;
+
+		layoutParams = (android.view.ViewGroup.LayoutParams) viewSpaceScoreLast.getLayoutParams();
+		layoutParams.width = 10;
+		viewSpaceScoreLast.setLayoutParams(layoutParams);
+
+		layoutParams = (android.view.ViewGroup.LayoutParams) viewSpaceScoreHigh.getLayoutParams();
+		layoutParams.width = 10;
+		viewSpaceScoreHigh.setLayoutParams(layoutParams);
+
+
+		String labelScore = getResources().getString(R.string.textview_label_score_small);
+		textViewLabelScore.setText(labelScore);
+
+		String labelLastScore = getResources().getString(R.string.textview_label_last_score_small);
+		textViewLabelLastScore.setText(labelLastScore);
+
+		String labelHighScore = getResources().getString(R.string.textview_label_high_score_small);
+		textViewLabelHighScore.setText(labelHighScore);
+
+
+//		// HTC Droid DNA - AndroidPlot has issues with OpenGL Render
+//		if ((Build.MANUFACTURER.contains("HTC")) &&
+//				  (Build.MODEL.contains("HTC6435LVW"))) {
 //
-////		String button_test_fly_small = getResources().getString(R.string.button_test_fly_small);
-////		setButtonText(R.id.buttonTestFly, button_test_fly_small);
-////
-////		textViewLabelScores.setVisibility(View.VISIBLE);
-////		viewSpaceScore.setVisibility(View.VISIBLE);
+//			Log.v(TAG, "Device detected: HTC Droid DNA");
+//			hideEEGRawHistory();
 //
-//
-//		ViewGroup.LayoutParams layoutParams;
-//
-////		layoutParams = (android.view.ViewGroup.LayoutParams) viewSpaceScoreLast.getLayoutParams();
-////		layoutParams.width = 10;
-////		viewSpaceScoreLast.setLayoutParams(layoutParams);
-////
-////		layoutParams = (android.view.ViewGroup.LayoutParams) viewSpaceScoreHigh.getLayoutParams();
-////		layoutParams.width = 10;
-////		viewSpaceScoreHigh.setLayoutParams(layoutParams);
-////
-////
-////		String labelScore = getResources().getString(R.string.textview_label_score_small);
-////		textViewLabelScore.setText(labelScore);
-////
-////		String labelLastScore = getResources().getString(R.string.textview_label_last_score_small);
-////		textViewLabelLastScore.setText(labelLastScore);
-////
-////		String labelHighScore = getResources().getString(R.string.textview_label_high_score_small);
-////		textViewLabelHighScore.setText(labelHighScore);
-//
-//
-////		// HTC Droid DNA - AndroidPlot has issues with OpenGL Render
-////		if ((Build.MANUFACTURER.contains("HTC")) &&
-////				  (Build.MODEL.contains("HTC6435LVW"))) {
-////
-////			Log.v(TAG, "Device detected: HTC Droid DNA");
-////			hideEEGRawHistory();
-////
-////		}
-//
-//
-//	} // updateScreenLayoutSmall
+//		}
+
+
+	} // updateScreenLayoutSmall
 
 
 	// ################################################################
@@ -1316,8 +815,28 @@ public class OrbitFragment extends Fragment
 		}
 
 
-		updateServoPosition();
-		updateBloomRGB();
+		if (eegPower > 0) {
+
+			/** Start playback of audio control stream */
+			if (flightActive == false) {
+				playControl();
+			}
+
+			updateScore();
+
+			flightActive = true;
+
+		} else {
+
+			/** Land the helicopter */
+			stopControl();
+
+			resetCurrentScore();
+
+		}
+
+			Log.d(TAG, "flightActive: " + flightActive);
+
 
 
 	} // updatePower
@@ -1357,137 +876,6 @@ public class OrbitFragment extends Fragment
 	} // calculateSpeed
 
 
-	// ################################################################
-
-	public void updateServoPosition() {
-
-
-		if (eegPower > 0)
-			bloomServoPercentage = bloomServoPercentage + 3;
-		else
-			bloomServoPercentage = bloomServoPercentage - 1;
-
-		if (bloomServoPercentage > 100)
-			bloomServoPercentage = 100;
-
-		if (bloomServoPercentage < 0)
-			bloomServoPercentage = 0;
-
-
-//		progressBarBloom.setProgress(bloomServoPercentage);
-
-		servoSeekBar.setProgress(bloomServoPercentage);
-
-
-//		if (characteristicTx != null) {
-//
-//			byte[] buf = new byte[]{(byte) 0x03, (byte) 0x00, (byte) 0x00};
-//
-////		buf[1] = (byte) servoSeekBar.getProgress();
-//			buf[1] = (byte) bloomServoPercentage;
-//
-//			characteristicTx.setValue(buf);
-//			mBluetoothLeService.writeCharacteristic(characteristicTx);
-//
-//		}
-
-
-	}
-
-
-	// ################################################################
-
-	public void updateBloomRGB() {
-
-
-		boolean sendRed = false;
-		boolean sendBlue = false;
-
-		int attentionSeekValue = seekBarAttention.getProgress();
-		int meditationSeekValue = seekBarMeditation.getProgress();
-
-		if (eegPower > 0) {
-
-			if (attentionSeekValue > 0) {
-				bloomColorRed = bloomColorRed + 8;
-				sendRed = true;
-			}
-			if (meditationSeekValue > 0) {
-				bloomColorBlue = bloomColorBlue + 8;
-				sendBlue = true;
-			}
-
-		} else {
-
-
-			if (attentionSeekValue > 0) {
-				bloomColorRed = bloomColorRed - 6;
-				sendRed = true;
-			}
-			if (meditationSeekValue > 0) {
-				bloomColorBlue = bloomColorBlue - 6;
-				sendBlue = true;
-			}
-
-		}
-
-		if (bloomColorRed > 255)
-			bloomColorRed = 255;
-		if (bloomColorBlue > 255)
-			bloomColorBlue = 255;
-		if (bloomColorGreen > 255)
-			bloomColorGreen = 255;
-
-		if (bloomColorRed < 0)
-			bloomColorRed = 0;
-		if (bloomColorBlue < 0)
-			bloomColorBlue = 0;
-		if (bloomColorGreen < 0)
-			bloomColorGreen = 0;
-
-
-		if (sendRed)
-			if (OrbitSingleton.getInstance().characteristicTx != null) {
-
-				byte[] buf = new byte[]{(byte) 0x0A, (byte) 0x00, (byte) bloomColorRed};
-
-				OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-				OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-
-			}
-
-
-		if (sendBlue)
-			if (OrbitSingleton.getInstance().characteristicTx != null) {
-
-				byte[] buf = new byte[]{(byte) 0x0A, (byte) 0x02, (byte) bloomColorBlue};
-
-				OrbitSingleton.getInstance().characteristicTx.setValue(buf);
-				OrbitSingleton.getInstance().mBluetoothLeService.writeCharacteristic(OrbitSingleton.getInstance().characteristicTx);
-
-			}
-
-	}
-
-
-	// ################################################################
-
-//	public void hideEEGRawHistory() {
-//
-//		Log.v(TAG, "hideEEGRawHistory()");
-//
-//		if (eegRawHistoryPlot != null)
-//			eegRawHistoryPlot.setVisibility(View.GONE);
-//
-//
-//		//			removeView*(View)
-//		//			eegRawHistoryPlot.remove
-//		//			(XYPlot) v.findViewById(R.id.eegRawHistoryPlot)
-//
-//
-//	} // hideEEGRawHistory
-//
-//
 //	// ################################################################
 //
 //	public void updateEEGRawHistory(Number[] rawEEG) {
@@ -1518,68 +906,339 @@ public class OrbitFragment extends Fragment
 
 	// ################################################################
 
-//	public void updateScore() {
-//
-//		/**
-//		 * Score points based on target slider levels
-//		 * If you pass your goal with either Attention or Meditation
-//		 * the higher target of the two will counts as points per second.
-//		 *
-//		 * Minimum threshold for points is set as "minimumScoreTarget"
-//		 *
-//		 * For example, assume minimumScoreTarget is 40%.
-//		 * If your target Attention is 60% and you go past to reach 80%
-//		 * you will receive 20 points per second (60-40). If your
-//		 * target is 80% and you reach 80% you will receive 40
-//		 * points per second (80-40).
-//		 *
-//		 * You can set both Attention and Meditation targets at the
-//		 * same time. Reaching either will fly the helicopter but you
-//		 * will only receive points for the higher-scoring target of
-//		 * the two.
-//		 *
-//		 */
-//
-//		int eegAttentionScore = 0;
-//		int eegAttention = progressBarAttention.getProgress();
-//		int eegAttentionTarget = seekBarAttention.getProgress();
-//
-//		int eegMeditationScore = 0;
-//		int eegMeditation = progressBarMeditation.getProgress();
-//		int eegMeditationTarget = seekBarMeditation.getProgress();
-//
-//		if ((eegAttention >= eegAttentionTarget) &&
-//				  (eegAttentionTarget > minimumScoreTarget))
-//			eegAttentionScore = eegAttentionTarget - minimumScoreTarget;
-//
-//		if ((eegMeditation >= eegMeditationTarget) &&
-//				  (eegMeditationTarget > minimumScoreTarget))
-//			eegMeditationScore = eegMeditationTarget - minimumScoreTarget;
-//
-//		if (eegAttentionScore > eegMeditationScore)
-//			scoreCurrent = scoreCurrent + eegAttentionScore;
-//		else
-//			scoreCurrent = scoreCurrent + eegMeditationScore;
-//
-//		textViewScore.setText(Integer.toString(scoreCurrent));
-//
-//		if (scoreCurrent > scoreHigh) {
-//			scoreHigh = scoreCurrent;
-//			textViewHighScore.setText(Integer.toString(scoreHigh));
+	public void updateScore() {
+
+		/**
+		 * Score points based on target slider levels
+		 * If you pass your goal with either Attention or Meditation
+		 * the higher target of the two will counts as points per second.
+		 *
+		 * Minimum threshold for points is set as "minimumScoreTarget"
+		 *
+		 * For example, assume minimumScoreTarget is 40%.
+		 * If your target Attention is 60% and you go past to reach 80%
+		 * you will receive 20 points per second (60-40). If your
+		 * target is 80% and you reach 80% you will receive 40
+		 * points per second (80-40).
+		 *
+		 * You can set both Attention and Meditation targets at the
+		 * same time. Reaching either will fly the helicopter but you
+		 * will only receive points for the higher-scoring target of
+		 * the two.
+		 *
+		 */
+
+		int eegAttentionScore = 0;
+		int eegAttention = progressBarAttention.getProgress();
+		int eegAttentionTarget = seekBarAttention.getProgress();
+
+		int eegMeditationScore = 0;
+		int eegMeditation = progressBarMeditation.getProgress();
+		int eegMeditationTarget = seekBarMeditation.getProgress();
+
+		if ((eegAttention >= eegAttentionTarget) &&
+				  (eegAttentionTarget > minimumScoreTarget))
+			eegAttentionScore = eegAttentionTarget - minimumScoreTarget;
+
+		if ((eegMeditation >= eegMeditationTarget) &&
+				  (eegMeditationTarget > minimumScoreTarget))
+			eegMeditationScore = eegMeditationTarget - minimumScoreTarget;
+
+		if (eegAttentionScore > eegMeditationScore)
+			scoreCurrent = scoreCurrent + eegAttentionScore;
+		else
+			scoreCurrent = scoreCurrent + eegMeditationScore;
+
+		textViewScore.setText(Integer.toString(scoreCurrent));
+
+		if (scoreCurrent > scoreHigh) {
+			scoreHigh = scoreCurrent;
+			textViewHighScore.setText(Integer.toString(scoreHigh));
+		}
+
+
+		// Catch anyone gaming the system with one slider
+		// below the minimum threshold and the other over.
+		// For example, setting Meditation to 1% will keep helicopter
+		// activated even if Attention is below target
+		if ((eegAttention < eegAttentionTarget) && (eegMeditation < minimumScoreTarget))
+			resetCurrentScore();
+		if ((eegMeditation < eegMeditationTarget) && (eegAttention < minimumScoreTarget))
+			resetCurrentScore();
+		if ((eegAttention < minimumScoreTarget) && (eegMeditation < minimumScoreTarget))
+			resetCurrentScore();
+
+
+	} // updateScore
+
+
+	// ################################################################
+
+	public void resetCurrentScore() {
+
+		if (scoreCurrent > 0)
+			textViewLastScore.setText(Integer.toString(scoreCurrent));
+		scoreCurrent = 0;
+		textViewScore.setText(Integer.toString(scoreCurrent));
+
+	} // resetCurrentScore
+
+
+	// ################################################################
+
+	public void updateStatusImage() {
+
+//		if(DEBUG) {
+//			Log.v(TAG, (new StringBuilder("Attention: ")).append(eegAttention).toString());
+//			Log.v(TAG, (new StringBuilder("Meditation: ")).append(eegMeditation).toString());
+//			Log.v(TAG, (new StringBuilder("Power: ")).append(eegPower).toString());
+//			Log.v(TAG, (new StringBuilder("Signal: ")).append(eegSignal).toString());
+//			Log.v(TAG, (new StringBuilder("Connecting: ")).append(eegConnecting).toString());
+//			Log.v(TAG, (new StringBuilder("Connected: ")).append(eegConnected).toString());
+//		}
+
+
+//		if(eegConnected) {
+//			imageViewStatus.setImageResource(R.raw.status_2_connected);
+//			return;
 //		}
 //
+//		if(eegConnecting) {
+//			imageViewStatus.setImageResource(R.raw.status_1_connecting);
+//			return;
+//		} else {
+//			imageViewStatus.setImageResource(R.raw.status_default);
+//			return;
+//		}		if(eegPower > 0) {
+//			imageViewStatus.setImageResource(R.raw.status_4_active);
+//			return;
+//		}
 //
-//		// Catch anyone gaming the system with one slider
-//		// below the minimum threshold and the other over.
-//		// For example, setting Meditation to 1% will keep helicopter
-//		// activated even if Attention is below target
-//		if ((eegAttention < eegAttentionTarget) && (eegMeditation < minimumScoreTarget))
-//			resetCurrentScore();
-//		if ((eegMeditation < eegMeditationTarget) && (eegAttention < minimumScoreTarget))
-//			resetCurrentScore();
-//		if ((eegAttention < minimumScoreTarget) && (eegMeditation < minimumScoreTarget))
-//			resetCurrentScore();
+//		if(eegSignal > 90) {
+//			imageViewStatus.setImageResource(R.raw.status_3_processing);
+//			return;
+//		}
+
+
+	} // updateStatusImage
+
+
+	// ################################################################
+
+	public void maximizeAudioVolume() {
+
+		AudioManager audio = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+		int currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+		if (currentVolume < audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) {
+
+			Log.v(TAG, "Previous volume:" + currentVolume);
+
+			Toast.makeText(getActivity().getApplicationContext(), "Automatically setting volume to maximum", Toast.LENGTH_SHORT).show();
+
+			AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+					  audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+					  AudioManager.FLAG_SHOW_UI);
+
+		}
+
+
+	} // maximizeAudioVolume
+
+
+	// ################################################################
+
+	public void playControl() {
+
+		// TODO Convert to service
+
+//		FragmentTabAdvanced fragmentAdvanced =
+//				  (FragmentTabAdvanced) getActivity().getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
 //
+//		if (generateAudio) {
+//
+//			/**
+//			 * Generate signal on the fly
+//			 */
+//
+//			// Handle controlled descent thread if activated
+//			if ((fragmentAdvanced.orbitControlledDescentTask != null) &&
+//					  (fragmentAdvanced.orbitControlledDescentTask.keepDescending)) {
+//				fragmentAdvanced.orbitControlledDescentTask.callStopAudio = false;
+//				fragmentAdvanced.orbitControlledDescentTask.keepDescending = false;
+//			}
+//
+//
+//			//			if (audioHandler != null) {
+//
+//			//				serviceBinder.ifFlip = fragmentAdvanced.checkBoxInvertControlSignal.isChecked(); // if checked then flip
+//			audioHandler.ifFlip = invertControlSignal; // if checked then flip
+//
+//			int channel = 0; // default "A"
+//
+//			if (fragmentAdvanced != null)
+//				channel = fragmentAdvanced.radioGroupChannel.getCheckedRadioButtonId();
+//
+//			//				if (demoFlightMode)
+//			//					updateAudioHandlerLoopNumberWhileMindControl(200);
+//			//				else
+//			//					updateAudioHandlerLoopNumberWhileMindControl(4500);
+//			//
+//			//			updateAudioHandlerLoopNumberWhileMindControl(5000);
+//
+//			updateAudioHandlerLoopNumberWhileMindControl(-1); // Loop infinite for easier user testing
+//
+//			updateAudioHandlerChannel(channel);
+//
+//			audioHandler.mutexNotify();
+//			//			}
+//
+//
+//		} else {
+//
+//			/**
+//			 * Play audio control file
+//			 */
+//
+//			/** Getting the user sound settings */
+//			AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+//			//			float actualVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+//			float maxVolume = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+//			//			float volume = actualVolume / maxVolume;
+//
+//			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) maxVolume, 0);
+//			/** Is the sound loaded already? */
+//			if (loaded) {
+//				//				soundPool.play(soundID, volume, volume, 1, 0, 1f);
+//				//				soundPool.setVolume(soundID, 1f, 1f);
+//				//				soundPool.play(soundID, maxVolume, maxVolume, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
+//
+//				soundPool.play(soundID, 1f, 1f, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
+//
+//				// TODO No visible effects of changing these variables on digital oscilloscope
+//				//				soundPool.play(soundID, 0.5f, 0.5f, 1, 0, 0.5f);
+//				if (DEBUG)
+//					Log.v(TAG, "Played sound");
+//			}
+//
+//		}
+
+	} // playControl
+
+
+	// ################################################################
+
+	public void stopControl() {
+
+		// TODO Convert to service
+
+//		FragmentTabAdvanced fragmentAdvanced =
+//				  (FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//
+//		// Initial Controlled Descent if activated by user
+//		if ((generateAudio) &&
+//				  (flightActive) &&
+//				  (fragmentAdvanced != null) &&
+//				  (fragmentAdvanced.checkBoxControlledDescent.isChecked()) &&
+//				  (audioHandler != null)) {
+//
+//			fragmentAdvanced.registerControlledDescent();
+//
+//		} else {
+//
+//			stopAudio();
+//
+//		}
+//
+//		flightActive = false;
+
+
+	} // stopControl
+
+
+	// ################################################################
+
+	public void stopAudio() {
+
+		/**
+		 * stop AudioTrack as well as destroy service.
+		 */
+
+		audioHandler.keepPlaying = false;
+
+		/**
+		 * Stop playing audio control file
+		 */
+
+		if (soundPool != null) {
+			try {
+				soundPool.stop(soundID);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+
+	} // stopControl
+
+
+	// ################################################################
+
+	public void demoMode(View view) {
+
+		// TODO Convert to service
+
+//		/**
+//		 * Demo mode is called when the "Test Helicopter" button is pressed.
+//		 * This method can be easily adjusted for testing new features
+//		 * during development.
+//		 */
+//
+//		Log.v(TAG, "Sending Test Signal to Helicopter");
+////		appendDebugConsole("Sending Test Signal to Helicopter\n");
+//
+//		demoFlightMode = true;
+//		flightActive = true;
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				  (FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		//		if (fragmentAdvanced.checkBoxGenerateAudio.isChecked())
+//		if (generateAudio && (fragmentAdvanced != null))
+//			eegPower = fragmentAdvanced.seekBarThrottle.getProgress();
+//		else
+//			eegPower = 100;
+//
+//		playControl();
+//
+//		demoFlightMode = false;
+
+
+	} // demoMode
+
+
+	// ################################################################
+
+	public void demoStop(View view) {
+
+		eegPower = 0;
+
+		stopControl();
+
+	} // demoStop
+
+
+	// ################################################################
+
+//	public void updateScore() {
+//
+//		FragmentTabFlightThinkGear fragmentFlight =
+//				  (FragmentTabFlightThinkGear) getSupportFragmentManager().findFragmentByTag( getTabFragmentFlightThinkGear() );
+//
+//		if (fragmentFlight != null)
+//			fragmentFlight.updateScore();
 //
 //	} // updateScore
 
@@ -1588,62 +1247,145 @@ public class OrbitFragment extends Fragment
 
 //	public void resetCurrentScore() {
 //
-//		if (scoreCurrent > 0)
-//			textViewLastScore.setText(Integer.toString(scoreCurrent));
-//		scoreCurrent = 0;
-//		textViewScore.setText(Integer.toString(scoreCurrent));
+//		FragmentTabFlightThinkGear fragmentFlight =
+//				  (FragmentTabFlightThinkGear) getSupportFragmentManager().findFragmentByTag( getTabFragmentFlightThinkGear() );
+//
+//		if (fragmentFlight != null)
+//			fragmentFlight.resetCurrentScore();
 //
 //	} // resetCurrentScore
 
+
 	// ################################################################
 
-	private final ServiceConnection mServiceConnection = new ServiceConnection() {
+	/**
+	 * the audioHandler to update command
+	 */
+	public void updateAudioHandlerCommand(Integer[] command) {
 
-		@Override
-		public void onServiceConnected(ComponentName componentName,
-		                               IBinder service) {
-			OrbitSingleton.getInstance().mBluetoothLeService = ((RBLService.LocalBinder) service)
-					  .getService();
-			if (!OrbitSingleton.getInstance().mBluetoothLeService.initialize()) {
-				Log.e(TAG, "Unable to initialize Bluetooth");
-				getActivity().finish();
-			}
-		}
+		this.audioHandler.command = command;
+		this.audioHandler.updateControlSignal();
 
-		@Override
-		public void onServiceDisconnected(ComponentName componentName) {
-			OrbitSingleton.getInstance().mBluetoothLeService = null;
-		}
-	};
+
+	} // updateServiceBinderCommand
 
 
 	// ################################################################
 
-	private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			final String action = intent.getAction();
+	/**
+	 * the audioHandler to update channel
+	 */
+	public void updateAudioHandlerChannel(int channel) {
 
-			if (RBLService.ACTION_GATT_DISCONNECTED.equals(action)) {
-//				Toast.makeText(getApplicationContext(), "Disconnected",
-				Toast.makeText(getActivity(), "Bloom Disconnected",
-						  Toast.LENGTH_SHORT).show();
-				setButtonDisable();
-			} else if (RBLService.ACTION_GATT_SERVICES_DISCOVERED
-					  .equals(action)) {
-				Toast.makeText(getActivity(), "Bloom Connected",
-						  Toast.LENGTH_SHORT).show();
+		this.audioHandler.channel = channel;
+		this.audioHandler.updateControlSignal();
 
-				getGattService(OrbitSingleton.getInstance().mBluetoothLeService.getSupportedGattService());
-			} else if (RBLService.ACTION_DATA_AVAILABLE.equals(action)) {
-				OrbitSingleton.getInstance().data = intent.getByteArrayExtra(RBLService.EXTRA_DATA);
 
-//				readAnalogInValue(data);
-			} else if (RBLService.ACTION_GATT_RSSI.equals(action)) {
-				displayData(intent.getStringExtra(RBLService.EXTRA_DATA));
-			}
-		}
-	};
+	} // updateServiceBinderChannel
+
+
+	// ################################################################
+
+	/**
+	 * @param number the audioHandler to update loop number while mind control
+	 */
+	public void updateAudioHandlerLoopNumberWhileMindControl(int number) {
+
+		this.audioHandler.loopNumberWhileMindControl = number;
+
+
+	} // updateServiceBinderLoopNumberWhileMindControl
+
+
+	// ################################################################
+
+	public void resetControlSignal(View view) {
+
+//		/**
+//		 * Called when the "Reset" button is pressed
+//		 */
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				  (FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (fragmentAdvanced != null)
+//			fragmentAdvanced.resetControlSignal();
+
+
+	} // resetControlSignal
+
+
+	// ################################################################
+
+	public void setControlSignalHover(View view) {
+
+//		/**
+//		 * Called when the "Hover" button is pressed
+//		 */
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				  (FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (fragmentAdvanced != null)
+//			fragmentAdvanced.setControlSignalHover();
+
+
+	} // setControlSignalHover
+
+
+	// ################################################################
+
+	public void setControlSignalForward(View view) {
+
+//		/**
+//		 * Called when the "Forward" button is pressed
+//		 */
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				  (FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (fragmentAdvanced != null)
+//			fragmentAdvanced.setControlSignalForward();
+
+
+	} // setControlSignalForward
+
+
+	// ################################################################
+
+	public void setControlSignalLeft(View view) {
+
+//		/**
+//		 * Called when the "Left" button is pressed
+//		 */
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				  (FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (fragmentAdvanced != null)
+//			fragmentAdvanced.setControlSignalLeft();
+
+
+	} // setControlSignalLeft
+
+
+	// ################################################################
+
+	public void setControlSignalRight(View view) {
+
+//		/**
+//		 * Called when the "Right" button is pressed
+//		 */
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				  (FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (fragmentAdvanced != null)
+//			fragmentAdvanced.setControlSignalRight();
+
+
+	} // setControlSignalRight
+
 
 
 }

@@ -1,11 +1,15 @@
 package io.puzzlebox.orbit.ui;
 
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 
 import io.puzzlebox.orbit.R;
 
@@ -15,11 +19,15 @@ import io.puzzlebox.orbit.R;
 
 public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 
+	private final static String TAG = TutorialFragment.class.getSimpleName();
+
 	/**
 	 * Configuration
 	 */
 //	static String URL = "file:///android_asset/tutorial/index.html";
 	static String URL = "file:///android_asset/tutorial/contents.html";
+
+	WebView webView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,15 +36,66 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 //		View v = inflater.inflate(io.puzzlebox.jigsaw.R.layout.fragment_welcome, container, false);
 		View v = inflater.inflate(R.layout.fragment_tutorial, container, false);
 
-		WebView webview = (WebView) v.findViewById(R.id.webViewTutorial);
+//		WebView webview = (WebView) v.findViewById(R.id.webViewTutorial);
 
-		webview.getSettings().setJavaScriptEnabled(true);
 
-		webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
 
-		webview.setWebViewClient(new compatibilityWebViewClient());
+		LinearLayout dynamicLayout = (LinearLayout) v.findViewById(R.id.dynamicLayout);
 
-		webview.loadUrl(URL);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				  LinearLayoutCompat.LayoutParams.MATCH_PARENT, LinearLayoutCompat.LayoutParams.MATCH_PARENT);
+
+		LinearLayout ll = new LinearLayout(getActivity().getBaseContext());
+		ll.setOrientation(LinearLayout.VERTICAL);
+
+
+
+		ll.setLayoutParams(params);
+
+
+		webView = new WebView(getActivity()){
+
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event) {
+				Log.d(TAG, "onTouch()");
+
+				if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
+					webView.goBack();
+					return true;
+				}
+
+//				if (keyCode == KeyEvent.KEYCODE_BACK) {
+//					Log.d(TAG, "webView.destroy()");
+////					webView.stopLoading();
+//					webView.destroy();
+////					return true;
+//				}
+
+				return super.onKeyDown(keyCode, event);
+			}
+
+		};
+
+
+		webView.setLayoutParams(params);
+
+
+		webView.getSettings().setJavaScriptEnabled(true);
+
+		webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
+
+		webView.setWebViewClient(new compatibilityWebViewClient());
+
+		webView.loadUrl(URL);
+
+
+
+
+		ll.addView(webView);
+
+		dynamicLayout.addView(ll);
+
+
 
 		return v;
 

@@ -1,7 +1,6 @@
 package io.puzzlebox.orbit;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -15,15 +14,11 @@ import java.util.List;
 import io.puzzlebox.jigsaw.ui.DrawerItem;
 import io.puzzlebox.jigsaw.ui.EEGFragment;
 import io.puzzlebox.jigsaw.ui.SessionFragment;
-//import io.puzzlebox.jigsaw.ui.WelcomeFragment;
-//import io.puzzlebox.orbit.ui.FragmentTabWelcome;
+import io.puzzlebox.jigsaw.ui.SupportFragment;
 import io.puzzlebox.orbit.ui.CreditsFragment;
-import io.puzzlebox.orbit.ui.FragmentTabSupport;
-import io.puzzlebox.orbit.ui.SupportFragment;
 import io.puzzlebox.orbit.ui.TutorialFragment;
 import io.puzzlebox.orbit.ui.WelcomeFragment;
 
-import io.puzzlebox.orbit.R;
 
 public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
         WelcomeFragment.OnFragmentInteractionListener,
@@ -87,8 +82,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
                 dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_session), io.puzzlebox.jigsaw.R.mipmap.ic_session));
                 dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_eeg), io.puzzlebox.jigsaw.R.mipmap.ic_eeg));
                 dataList.add(new DrawerItem(getString(R.string.title_fragment_orbit), R.mipmap.ic_orbit));
+                dataList.add(new DrawerItem(getString(R.string.title_fragment_support), io.puzzlebox.jigsaw.R.mipmap.ic_support));
                 dataList.add(new DrawerItem(getString(R.string.title_fragment_credits), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
-                dataList.add(new DrawerItem(getString(R.string.title_fragment_support), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
 
 
                 return dataList;
@@ -157,17 +152,6 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 
                                 break;
                         case 5:
-                                backStackName = "credits";
-                                try{
-                                        fragment = getFragmentManager().findFragmentByTag(backStackName);
-                                } catch (Exception e) {
-                                        e.printStackTrace();
-                                }
-                                if (fragment == null)
-                                        fragment = new CreditsFragment();
-
-                                break;
-                        case 6:
                                 backStackName = "support";
                                 try{
                                         fragment = getFragmentManager().findFragmentByTag(backStackName);
@@ -178,6 +162,18 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
                                         fragment = new SupportFragment();
 
                                 break;
+                        case 6:
+                                backStackName = "credits";
+                                try{
+                                        fragment = getFragmentManager().findFragmentByTag(backStackName);
+                                } catch (Exception e) {
+                                        e.printStackTrace();
+                                }
+                                if (fragment == null)
+                                        fragment = new CreditsFragment();
+
+                                break;
+
                         default:
                                 break;
                 }

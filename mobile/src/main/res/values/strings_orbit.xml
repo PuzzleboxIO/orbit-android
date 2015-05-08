@@ -80,10 +80,5 @@
     <string name="menu_refresh">Refresh</string>
     <string name="menu_search">Search</string>
     <string name="menu_share">Share</string>
-    <string name="label_support_title">Questions, Comments, or Ideas?</string>
-    <string name="label_support_name">Name:</string>
-    <string name="label_support_email">Email:</string>
-    <string name="label_support_message">Message:</string>
-    <string name="button_support_send">Send to Puzzlebox</string>
 
 </resources>

@@ -27,7 +27,7 @@ public class CreditsFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 //		View v = inflater.inflate(io.puzzlebox.jigsaw.R.layout.fragment_welcome, container, false);
 		View v = inflater.inflate(R.layout.fragment_welcome, container, false);
 
-		WebView webview = (WebView) v.findViewById(R.id.webViewWelcome);
+		WebView webview = (WebView) v.findViewById(R.id.webViewCredits);
 
 		webview.getSettings().setJavaScriptEnabled(true);
 
