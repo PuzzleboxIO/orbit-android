@@ -14,7 +14,7 @@
 
     <application android:allowBackup="true"
                  android:label="@string/app_name"
-                 android:icon="@mipmap/ic_orbit_glow"
+                 android:icon="@mipmap/ic_orbit_photo"
                  tools:replace="android:icon"
                  android:theme="@style/AppTheme">
 
