@@ -17,6 +17,7 @@ import io.puzzlebox.jigsaw.ui.EEGFragment;
 import io.puzzlebox.jigsaw.ui.SessionFragment;
 //import io.puzzlebox.jigsaw.ui.WelcomeFragment;
 //import io.puzzlebox.orbit.ui.FragmentTabWelcome;
+import io.puzzlebox.orbit.ui.CreditsFragment;
 import io.puzzlebox.orbit.ui.FragmentTabSupport;
 import io.puzzlebox.orbit.ui.SupportFragment;
 import io.puzzlebox.orbit.ui.TutorialFragment;
@@ -86,6 +87,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
                 dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_session), io.puzzlebox.jigsaw.R.mipmap.ic_session));
                 dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_eeg), io.puzzlebox.jigsaw.R.mipmap.ic_eeg));
                 dataList.add(new DrawerItem(getString(R.string.title_fragment_orbit), R.mipmap.ic_orbit));
+                dataList.add(new DrawerItem(getString(R.string.title_fragment_credits), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
                 dataList.add(new DrawerItem(getString(R.string.title_fragment_support), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
 
 
@@ -155,6 +157,17 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 
                                 break;
                         case 5:
+                                backStackName = "credits";
+                                try{
+                                        fragment = getFragmentManager().findFragmentByTag(backStackName);
+                                } catch (Exception e) {
+                                        e.printStackTrace();
+                                }
+                                if (fragment == null)
+                                        fragment = new CreditsFragment();
+
+                                break;
+                        case 6:
                                 backStackName = "support";
                                 try{
                                         fragment = getFragmentManager().findFragmentByTag(backStackName);
