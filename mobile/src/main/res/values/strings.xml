@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">Orbit</string>
+
+    <string name="title_fragment_welcome">Welcome</string>
+
+    <string name="welcome_message">Welcome to Puzzlebox Orbit</string>
+
+</resources>
