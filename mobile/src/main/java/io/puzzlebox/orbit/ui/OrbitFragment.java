@@ -62,8 +62,8 @@ public class OrbitFragment extends Fragment
 	 */
 	int eegPower = 0;
 
-		public boolean generateAudio = true;
-//	public boolean generateAudio = false;
+	public boolean generateAudio = true;
+	//	public boolean generateAudio = false;
 	public boolean invertControlSignal = false;
 	boolean tiltSensorControl = false;
 	public int deviceWarningMessagesDisplayed = 0;
@@ -262,7 +262,7 @@ public class OrbitFragment extends Fragment
 		 */
 
 		// TODO Testing DroidDNA
-//		maximizeAudioVolume(); // Automatically set media volume to maximum
+		maximizeAudioVolume(); // Automatically set media volume to maximum
 
 		/** Set the hardware buttons to control the audio output */
 		getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -1037,7 +1037,7 @@ public class OrbitFragment extends Fragment
 			//			if (audioHandler != null) {
 
 			//				serviceBinder.ifFlip = fragmentAdvanced.checkBoxInvertControlSignal.isChecked(); // if checked then flip
-//			audioHandler.ifFlip = invertControlSignal; // if checked then flip
+			audioHandler.ifFlip = invertControlSignal; // if checked then flip
 
 			int channel = 0; // default "A"
 
@@ -1153,11 +1153,7 @@ public class OrbitFragment extends Fragment
 
 	// ################################################################
 
-	public void demoMode(View view) {
-
-		Log.d(TAG, "demoMode");
-
-		// TODO Convert to service
+	public void demoMode(View v) {
 
 		/**
 		 * Demo mode is called when the "Test Helicopter" button is pressed.
@@ -1165,10 +1161,19 @@ public class OrbitFragment extends Fragment
 		 * during development.
 		 */
 
-		Log.v(TAG, "Sending Test Signal to Helicopter");
+		Log.v(TAG, "Test Flight clicked");
+
+
+		Button buttonTestFlight = (Button) v.findViewById(R.id.buttonTestFlight);
+
+
+
+
+		if (! flightActive) {
+
 
 //		demoFlightMode = true;
-		flightActive = true;
+			flightActive = true;
 //
 //		FragmentTabAdvanced fragmentAdvanced =
 //				  (FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
@@ -1178,10 +1183,22 @@ public class OrbitFragment extends Fragment
 //			eegPower = fragmentAdvanced.seekBarThrottle.getProgress();
 //		else
 //			eegPower = 100;
+
+			buttonTestFlight.setText( getResources().getString(R.string.button_stop_test) );
 //
-		playControl();
+			playControl();
 
 //		demoFlightMode = false;
+
+		} else {
+
+			flightActive = false;
+
+			stopControl();
+
+			buttonTestFlight.setText(getResources().getString(R.string.button_test_fly));
+
+		}
 
 
 	} // demoMode
