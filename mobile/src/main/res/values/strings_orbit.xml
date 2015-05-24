@@ -3,6 +3,24 @@
 
     <string name="title_fragment_orbit">Orbit</string>
 
+    <!--<string name="button_connect">Connect</string>-->
+    <string name="button_connect">Activate Orbit</string>
+    <string name="button_disconnect">Deactivate Orbit</string>
+    <string name="button_test_fly">Test Flight</string>
+    <string name="button_stop_test">Land</string>
+
+    <string name="textview_label_scores">Scores</string>
+    <string name="textview_label_score">Current Score: </string>
+    <string name="textview_label_score_small">Current:</string>
+    <string name="textview_score">0</string>
+    <string name="textview_label_last_score">Last Score: </string>
+    <string name="textview_label_last_score_small">Last:</string>
+    <string name="textview_last_score">0</string>
+    <string name="textview_label_high_score">High Score: </string>
+    <string name="textview_label_high_score_small">High:</string>
+    <string name="textview_high_score">0</string>
+
+
     <!--<string name="app_name">Orbit</string>-->
     <string name="app_name_small">Orbit</string>
     <string name="tab_welcome">Start</string>
@@ -24,9 +42,8 @@
     <string name="label_signal">Signal</string>
     <string name="label_power">Power</string>
     <string name="label_debug_console">Puzzlebox Orbit</string>
-    <string name="button_connect">Connect</string>
     <string name="button_connect_server">Cloud</string>
-    <string name="button_disconnect">Disconnect</string>
+    <!--<string name="button_disconnect">Disconnect</string>-->
     <string name="button_demo">Test Helicopter</string>
     <string name="button_hover">Hover</string>
     <string name="button_start_training">Start Training</string>
@@ -37,9 +54,7 @@
     <string name="seekbar_tracking_on">Tracking on</string>
     <string name="seekbar_tracking_off">Tracking off</string>
     <string name="seekbar_from_touch">from touch</string>
-    <string name="button_test_fly">Test Flight</string>
     <string name="button_test_fly_small">Test</string>
-    <string name="button_stop_test">Land</string>
     <string name="text_view_channel">Channel</string>
     <string name="radio_a">A</string>
     <string name="radio_b">B</string>
@@ -60,16 +75,6 @@
     <string name="checkbox_tilt_sensor_control_throttle">Adjust Throttle Only</string>
     <string name="checkbox_tilt_sensor_control_throttle_small">Throttle Only</string>
     <string name="checkbox_controlled_descent">Controlled Descent (Experimental)</string>
-    <string name="textview_label_scores">Scores</string>
-    <string name="textview_label_score">Current Score: </string>
-    <string name="textview_label_score_small">Current:</string>
-    <string name="textview_score">0</string>
-    <string name="textview_label_last_score">Last Score: </string>
-    <string name="textview_label_last_score_small">Last:</string>
-    <string name="textview_last_score">0</string>
-    <string name="textview_label_high_score">High Score: </string>
-    <string name="textview_label_high_score_small">High:</string>
-    <string name="textview_high_score">0</string>
     <string name="textview_throttle">Throttle</string>
     <string name="textview_yaw">Yaw</string>
     <string name="textview_pitch">Pitch</string>

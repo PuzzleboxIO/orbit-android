@@ -43,6 +43,7 @@ import io.puzzlebox.orbit.R;
 import io.puzzlebox.jigsaw.data.SessionSingleton;
 import io.puzzlebox.jigsaw.protocol.MuseService;
 import io.puzzlebox.jigsaw.protocol.ThinkGearService;
+import io.puzzlebox.orbit.data.OrbitSingleton;
 import io.puzzlebox.orbit.protocol.AudioHandler;
 
 import static android.view.MenuItem.SHOW_AS_ACTION_ALWAYS;
@@ -62,18 +63,18 @@ public class OrbitFragment extends Fragment
 	 */
 	int eegPower = 0;
 
-	public boolean generateAudio = true;
-	//	public boolean generateAudio = false;
-	public boolean invertControlSignal = false;
-	boolean tiltSensorControl = false;
-	public int deviceWarningMessagesDisplayed = 0;
+//	public boolean generateAudio = true;
+//	//	public boolean generateAudio = false;
+//	public boolean invertControlSignal = false;
+//	boolean tiltSensorControl = false;
+//	public int deviceWarningMessagesDisplayed = 0;
 
-	int minimumScoreTarget = 40;
-	int scoreCurrent = 0;
-	int scoreLast = 0;
-	int scoreHigh = 0;
+//	int minimumScoreTarget = 40;
+//	int scoreCurrent = 0;
+//	int scoreLast = 0;
+//	int scoreHigh = 0;
 
-	boolean demoFlightMode = false;
+//	boolean demoFlightMode = false;
 
 
 	/**
@@ -108,31 +109,31 @@ public class OrbitFragment extends Fragment
 	int maximumPower = 100; // maximum power for the bloom
 
 
-	/**
-	 * Audio
-	 *
-	 * By default the flight control command is hard-coded into WAV files
-	 * When "Generate Control Signal" is enabled the tones used to communicate
-	 * with the infrared dongle are generated on-the-fly.
-	 */
-	int audioFile = R.raw.throttle_hover_android_common;
-	//	int audioFile = R.raw.throttle_hover_android_htc_one_x;
-
-	private SoundPool soundPool;
-	private int soundID;
-	boolean loaded = false;
+//	/**
+//	 * Audio
+//	 *
+//	 * By default the flight control command is hard-coded into WAV files
+//	 * When "Generate Control Signal" is enabled the tones used to communicate
+//	 * with the infrared dongle are generated on-the-fly.
+//	 */
+//	int audioFile = R.raw.throttle_hover_android_common;
+//	//	int audioFile = R.raw.throttle_hover_android_htc_one_x;
+//
+//	private SoundPool soundPool;
+//	private int soundID;
+//	boolean loaded = false;
 
 
 	/**
 	 * AudioHandler
 	 */
-	AudioHandler audioHandler = new AudioHandler();
+//	AudioHandler audioHandler = new AudioHandler();
 
 
 	/**
 	 * Flight status
 	 */
-	boolean flightActive = false;
+//	boolean flightActive = false;
 
 
 	// ################################################################
@@ -256,36 +257,42 @@ public class OrbitFragment extends Fragment
 
 
 
-
-		/**
-		 * Prepare audio stream
-		 */
-
-		// TODO Testing DroidDNA
-		maximizeAudioVolume(); // Automatically set media volume to maximum
-
-		/** Set the hardware buttons to control the audio output */
-		getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-		/** Preload the flight control WAV file into memory */
-		soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-		soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-			public void onLoadComplete(SoundPool soundPool,
-			                           int sampleId,
-			                           int status) {
-				loaded = true;
-			}
-		});
-		soundID = soundPool.load(getActivity().getApplicationContext(), audioFile, 1);
-
-
 		/**
 		 * AudioHandler
 		 */
-		audioHandler.start();
+
+		if (!OrbitSingleton.getInstance().audioHandler.isAlive()) {
 
 
+			/**
+			 * Prepare audio stream
+			 */
 
+			maximizeAudioVolume(); // Automatically set media volume to maximum
+
+			/** Set the hardware buttons to control the audio output */
+			getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+			/** Preload the flight control WAV file into memory */
+			OrbitSingleton.getInstance().soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+			OrbitSingleton.getInstance().soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+				public void onLoadComplete(SoundPool soundPool,
+				                           int sampleId,
+				                           int status) {
+					OrbitSingleton.getInstance().loaded = true;
+				}
+			});
+			OrbitSingleton.getInstance().soundID = OrbitSingleton.getInstance().soundPool.load(getActivity().getApplicationContext(), OrbitSingleton.getInstance().audioFile, 1);
+
+
+			OrbitSingleton.getInstance().audioHandler.start();
+
+
+		}
+
+
+		if (OrbitSingleton.getInstance().flightActive)
+			buttonTestFlight.setText(getResources().getString(R.string.button_stop_test));
 
 		/**
 		 * Update settings according to default UI
@@ -294,7 +301,7 @@ public class OrbitFragment extends Fragment
 		updateScreenLayout();
 
 		updatePowerThresholds();
-		updatePower();
+//		updatePower();
 
 
 		return v;
@@ -779,24 +786,25 @@ public class OrbitFragment extends Fragment
 		if (eegPower > 0) {
 
 			/** Start playback of audio control stream */
-			if (!flightActive) {
+			if (!OrbitSingleton.getInstance().flightActive) {
 				playControl();
 			}
 
 			updateScore();
 
-			flightActive = true;
+			OrbitSingleton.getInstance().flightActive = true;
 
 		} else {
 
 			/** Land the helicopter */
-			stopControl();
+			if (! OrbitSingleton.getInstance().demoActive )
+				stopControl();
 
 			resetCurrentScore();
 
 		}
 
-		Log.d(TAG, "flightActive: " + flightActive);
+		Log.d(TAG, "flightActive: " + OrbitSingleton.getInstance().flightActive);
 
 
 
@@ -898,23 +906,23 @@ public class OrbitFragment extends Fragment
 		int eegMeditationTarget = seekBarMeditation.getProgress();
 
 		if ((eegAttention >= eegAttentionTarget) &&
-				  (eegAttentionTarget > minimumScoreTarget))
-			eegAttentionScore = eegAttentionTarget - minimumScoreTarget;
+				  (eegAttentionTarget > OrbitSingleton.getInstance().minimumScoreTarget))
+			eegAttentionScore = eegAttentionTarget - OrbitSingleton.getInstance().minimumScoreTarget;
 
 		if ((eegMeditation >= eegMeditationTarget) &&
-				  (eegMeditationTarget > minimumScoreTarget))
-			eegMeditationScore = eegMeditationTarget - minimumScoreTarget;
+				  (eegMeditationTarget > OrbitSingleton.getInstance().minimumScoreTarget))
+			eegMeditationScore = eegMeditationTarget - OrbitSingleton.getInstance().minimumScoreTarget;
 
 		if (eegAttentionScore > eegMeditationScore)
-			scoreCurrent = scoreCurrent + eegAttentionScore;
+			OrbitSingleton.getInstance().scoreCurrent = OrbitSingleton.getInstance().scoreCurrent + eegAttentionScore;
 		else
-			scoreCurrent = scoreCurrent + eegMeditationScore;
+			OrbitSingleton.getInstance().scoreCurrent = OrbitSingleton.getInstance().scoreCurrent + eegMeditationScore;
 
-		textViewScore.setText(Integer.toString(scoreCurrent));
+		textViewScore.setText(Integer.toString(OrbitSingleton.getInstance().scoreCurrent));
 
-		if (scoreCurrent > scoreHigh) {
-			scoreHigh = scoreCurrent;
-			textViewHighScore.setText(Integer.toString(scoreHigh));
+		if (OrbitSingleton.getInstance().scoreCurrent > OrbitSingleton.getInstance().scoreHigh) {
+			OrbitSingleton.getInstance().scoreHigh = OrbitSingleton.getInstance().scoreCurrent;
+			textViewHighScore.setText(Integer.toString(OrbitSingleton.getInstance().scoreHigh));
 		}
 
 
@@ -922,11 +930,11 @@ public class OrbitFragment extends Fragment
 		// below the minimum threshold and the other over.
 		// For example, setting Meditation to 1% will keep helicopter
 		// activated even if Attention is below target
-		if ((eegAttention < eegAttentionTarget) && (eegMeditation < minimumScoreTarget))
+		if ((eegAttention < eegAttentionTarget) && (eegMeditation < OrbitSingleton.getInstance().minimumScoreTarget))
 			resetCurrentScore();
-		if ((eegMeditation < eegMeditationTarget) && (eegAttention < minimumScoreTarget))
+		if ((eegMeditation < eegMeditationTarget) && (eegAttention < OrbitSingleton.getInstance().minimumScoreTarget))
 			resetCurrentScore();
-		if ((eegAttention < minimumScoreTarget) && (eegMeditation < minimumScoreTarget))
+		if ((eegAttention < OrbitSingleton.getInstance().minimumScoreTarget) && (eegMeditation < OrbitSingleton.getInstance().minimumScoreTarget))
 			resetCurrentScore();
 
 
@@ -937,10 +945,10 @@ public class OrbitFragment extends Fragment
 
 	public void resetCurrentScore() {
 
-		if (scoreCurrent > 0)
-			textViewLastScore.setText(Integer.toString(scoreCurrent));
-		scoreCurrent = 0;
-		textViewScore.setText(Integer.toString(scoreCurrent));
+		if (OrbitSingleton.getInstance().scoreCurrent > 0)
+			textViewLastScore.setText(Integer.toString(OrbitSingleton.getInstance().scoreCurrent));
+		OrbitSingleton.getInstance().scoreCurrent = 0;
+		textViewScore.setText(Integer.toString(OrbitSingleton.getInstance().scoreCurrent));
 
 	} // resetCurrentScore
 
@@ -1020,7 +1028,7 @@ public class OrbitFragment extends Fragment
 //		FragmentTabAdvanced fragmentAdvanced =
 //				  (FragmentTabAdvanced) getActivity().getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
 //
-		if (generateAudio) {
+		if (OrbitSingleton.getInstance().generateAudio) {
 
 			/**
 			 * Generate signal on the fly
@@ -1037,7 +1045,7 @@ public class OrbitFragment extends Fragment
 			//			if (audioHandler != null) {
 
 			//				serviceBinder.ifFlip = fragmentAdvanced.checkBoxInvertControlSignal.isChecked(); // if checked then flip
-			audioHandler.ifFlip = invertControlSignal; // if checked then flip
+			OrbitSingleton.getInstance().audioHandler.ifFlip = OrbitSingleton.getInstance().invertControlSignal; // if checked then flip
 
 			int channel = 0; // default "A"
 
@@ -1055,7 +1063,7 @@ public class OrbitFragment extends Fragment
 
 			updateAudioHandlerChannel(channel);
 
-			audioHandler.mutexNotify();
+			OrbitSingleton.getInstance().audioHandler.mutexNotify();
 
 			//			}
 //
@@ -1074,12 +1082,12 @@ public class OrbitFragment extends Fragment
 
 			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) maxVolume, 0);
 			/** Is the sound loaded already? */
-			if (loaded) {
+			if (OrbitSingleton.getInstance().loaded) {
 				//				soundPool.play(soundID, volume, volume, 1, 0, 1f);
 				//				soundPool.setVolume(soundID, 1f, 1f);
 				//				soundPool.play(soundID, maxVolume, maxVolume, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
 
-				soundPool.play(soundID, 1f, 1f, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
+				OrbitSingleton.getInstance().soundPool.play(OrbitSingleton.getInstance().soundID, 1f, 1f, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
 
 				// TODO No visible effects of changing these variables on digital oscilloscope
 				//				soundPool.play(soundID, 0.5f, 0.5f, 1, 0, 0.5f);
@@ -1119,7 +1127,7 @@ public class OrbitFragment extends Fragment
 //
 //		}
 //
-		flightActive = false;
+		OrbitSingleton.getInstance().flightActive = false;
 
 
 	} // stopControl
@@ -1133,15 +1141,15 @@ public class OrbitFragment extends Fragment
 		 * stop AudioTrack as well as destroy service.
 		 */
 
-		audioHandler.keepPlaying = false;
+		OrbitSingleton.getInstance().audioHandler.keepPlaying = false;
 
 		/**
 		 * Stop playing audio control file
 		 */
 
-		if (soundPool != null) {
+		if (OrbitSingleton.getInstance().soundPool != null) {
 			try {
-				soundPool.stop(soundID);
+				OrbitSingleton.getInstance().soundPool.stop(OrbitSingleton.getInstance().soundID);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1168,12 +1176,12 @@ public class OrbitFragment extends Fragment
 
 
 
-
-		if (! flightActive) {
+		if (! OrbitSingleton.getInstance().flightActive) {
 
 
 //		demoFlightMode = true;
-			flightActive = true;
+			OrbitSingleton.getInstance().flightActive = true;
+			OrbitSingleton.getInstance().demoActive = true;
 //
 //		FragmentTabAdvanced fragmentAdvanced =
 //				  (FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
@@ -1192,7 +1200,8 @@ public class OrbitFragment extends Fragment
 
 		} else {
 
-			flightActive = false;
+			OrbitSingleton.getInstance().flightActive = false;
+			OrbitSingleton.getInstance().demoActive = false;
 
 			stopControl();
 
@@ -1248,8 +1257,10 @@ public class OrbitFragment extends Fragment
 	 */
 	public void updateAudioHandlerCommand(Integer[] command) {
 
-		this.audioHandler.command = command;
-		this.audioHandler.updateControlSignal();
+//		this.audioHandler.command = command;
+//		this.audioHandler.updateControlSignal();
+		OrbitSingleton.getInstance().audioHandler.command = command;
+		OrbitSingleton.getInstance().audioHandler.updateControlSignal();
 
 
 	} // updateServiceBinderCommand
@@ -1262,8 +1273,10 @@ public class OrbitFragment extends Fragment
 	 */
 	public void updateAudioHandlerChannel(int channel) {
 
-		this.audioHandler.channel = channel;
-		this.audioHandler.updateControlSignal();
+//		this.audioHandler.channel = channel;
+//		this.audioHandler.updateControlSignal();
+		OrbitSingleton.getInstance().audioHandler.channel = channel;
+		OrbitSingleton.getInstance().audioHandler.updateControlSignal();
 
 
 	} // updateServiceBinderChannel
@@ -1276,7 +1289,8 @@ public class OrbitFragment extends Fragment
 	 */
 	public void updateAudioHandlerLoopNumberWhileMindControl(int number) {
 
-		this.audioHandler.loopNumberWhileMindControl = number;
+//		this.audioHandler.loopNumberWhileMindControl = number;
+		OrbitSingleton.getInstance().audioHandler.loopNumberWhileMindControl = number;
 
 
 	} // updateServiceBinderLoopNumberWhileMindControl
