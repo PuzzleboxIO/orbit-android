@@ -4,23 +4,15 @@
  * License: GNU Affero General Public License Version 3
  */
 
-package io.puzzlebox.orbit;
+package io.puzzlebox.orbit.ui;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ClipDrawable;
@@ -31,7 +23,6 @@ import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -41,26 +32,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import io.puzzlebox.orbit.data.OrbitSingleton;
+import io.puzzlebox.orbit.R;
 import io.puzzlebox.jigsaw.data.SessionSingleton;
 import io.puzzlebox.jigsaw.protocol.MuseService;
-import io.puzzlebox.jigsaw.protocol.RBLGattAttributes;
-import io.puzzlebox.jigsaw.protocol.RBLService;
 import io.puzzlebox.jigsaw.protocol.ThinkGearService;
 import io.puzzlebox.orbit.protocol.AudioHandler;
-import io.puzzlebox.orbit.ui.FragmentTabAdvanced;
-import io.puzzlebox.orbit.ui.FragmentTabFlightThinkGear;
 
 import static android.view.MenuItem.SHOW_AS_ACTION_ALWAYS;
 
@@ -181,8 +163,8 @@ public class OrbitFragment extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
 
+		// Inflate the layout for this fragment
 		View v = inflater.inflate(R.layout.fragment_orbit, container, false);
 
 //		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
@@ -223,80 +205,6 @@ public class OrbitFragment extends Fragment
 		progressBarPower.setProgressDrawable(progressPower);
 		progressBarPower.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
 
-//		progressBarRange = (ProgressBar) v.findViewById(R.id.progressBarRange);
-////		ShapeDrawable progressBarRangeDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
-//		ShapeDrawable progressBarRangeDrawable = new ShapeDrawable();
-////		String progressBarRangeColor = "#FF00FF";
-//		String progressBarRangeColor = "#990099";
-//		progressBarRangeDrawable.getPaint().setColor(Color.parseColor(progressBarRangeColor));
-//		ClipDrawable progressRange = new ClipDrawable(progressBarRangeDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
-//		progressBarRange.setProgressDrawable(progressRange);
-//		progressBarRange.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
-//
-////		progressBarRange.setMax(128 + 127);
-//		progressBarRange.setMax(bloomRangeMax);
-
-
-//		progressBarBloom = (ProgressBar) v.findViewById(R.id.progressBarBloom);
-//		ShapeDrawable progressBarBloomDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
-//		String progressBarBloomColor = "#7F0000";
-//		progressBarBloomDrawable.getPaint().setColor(Color.parseColor(progressBarBloomColor));
-//		ClipDrawable progressBloom = new ClipDrawable(progressBarBloomDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
-//		progressBarBloom.setProgressDrawable(progressBloom);
-//		progressBarBloom.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
-
-
-//		// setup the Raw EEG History plot
-//		eegRawHistoryPlot = (XYPlot) v.findViewById(R.id.eegRawHistoryPlot);
-//		eegRawHistorySeries = new SimpleXYSeries("Raw EEG");
-//
-//		// Use index value as xVal, instead of explicit, user provided xVals.
-//		//		eegRawHistorySeries.useImplicitXVals();
-//
-//		// Setup the boundary mode, boundary values only applicable in FIXED mode.
-//
-//		if (eegRawHistoryPlot != null) {
-//
-//			eegRawHistoryPlot.setDomainBoundaries(0, EEG_RAW_HISTORY_SIZE, BoundaryMode.FIXED);
-//			//		eegRawHistoryPlot.setDomainBoundaries(0, EEG_RAW_HISTORY_SIZE, BoundaryMode.AUTO);
-//			//		eegRawHistoryPlot.setRangeBoundaries(-32767, 32767, BoundaryMode.FIXED);
-//			//		eegRawHistoryPlot.setRangeBoundaries(-32767, 32767, BoundaryMode.AUTO);
-//			eegRawHistoryPlot.setRangeBoundaries(-256, 256, BoundaryMode.GROW);
-//
-//			eegRawHistoryPlot.addSeries(eegRawHistorySeries, new LineAndPointFormatter(Color.rgb(200, 100, 100), Color.BLACK, null, null));
-//
-//			// Thin out domain and range tick values so they don't overlap
-//			eegRawHistoryPlot.setDomainStepValue(5);
-//			eegRawHistoryPlot.setTicksPerRangeLabel(3);
-//
-//			//		eegRawHistoryPlot.setRangeLabel("Amplitude");
-//
-//			// Sets the dimensions of the widget to exactly contain the text contents
-//			eegRawHistoryPlot.getDomainLabelWidget().pack();
-//			eegRawHistoryPlot.getRangeLabelWidget().pack();
-//
-//			// Only display whole numbers in labels
-//			eegRawHistoryPlot.getGraphWidget().setDomainValueFormat(new DecimalFormat("0"));
-//			eegRawHistoryPlot.getGraphWidget().setRangeValueFormat(new DecimalFormat("0"));
-//
-//			// Hide domain and range labels
-//			eegRawHistoryPlot.getGraphWidget().setDomainLabelWidth(0);
-//			eegRawHistoryPlot.getGraphWidget().setRangeLabelWidth(0);
-//
-//			// Hide legend
-//			eegRawHistoryPlot.getLegendWidget().setVisible(false);
-//
-//			// setGridPadding(float left, float top, float right, float bottom)
-//			eegRawHistoryPlot.getGraphWidget().setGridPadding(0, 0, 0, 0);
-//
-//
-//			//		eegRawHistoryPlot.getGraphWidget().setDrawMarkersEnabled(false);
-//
-//			//		final PlotStatistics histStats = new PlotStatistics(1000, false);
-//			//		eegRawHistoryPlot.addListener(histStats);
-//
-//		}
-
 
 		seekBarAttention = (SeekBar) v.findViewById(R.id.seekBarAttention);
 		seekBarAttention.setOnSeekBarChangeListener(this);
@@ -305,8 +213,6 @@ public class OrbitFragment extends Fragment
 
 
 		imageViewStatus = (ImageView) v.findViewById(R.id.imageViewStatus);
-
-
 
 
 		textViewLabelScores = (TextView) v.findViewById(R.id.textViewLabelScores);
@@ -583,26 +489,26 @@ public class OrbitFragment extends Fragment
 
 	public void updateScreenLayout() {
 
-		switch(config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK){
-			case Configuration.SCREENLAYOUT_SIZE_SMALL:
-				Log.v(TAG, "screenLayout: small");
-				updateScreenLayoutSmall();
-				break;
-			case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-				Log.v(TAG, "screenLayout: normal");
-				updateScreenLayoutSmall();
-				break;
-			case Configuration.SCREENLAYOUT_SIZE_LARGE:
-				Log.v(TAG, "screenLayout: large");
-				break;
-			case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-				Log.v(TAG, "screenLayout: xlarge");
-				break;
-			case Configuration.SCREENLAYOUT_SIZE_UNDEFINED:
-				Log.v(TAG, "screenLayout: undefined");
-				updateScreenLayoutSmall();
-				break;
-		}
+//		switch(config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK){
+//			case Configuration.SCREENLAYOUT_SIZE_SMALL:
+//				Log.v(TAG, "screenLayout: small");
+//				updateScreenLayoutSmall();
+//				break;
+//			case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+//				Log.v(TAG, "screenLayout: normal");
+//				updateScreenLayoutSmall();
+//				break;
+//			case Configuration.SCREENLAYOUT_SIZE_LARGE:
+//				Log.v(TAG, "screenLayout: large");
+//				break;
+//			case Configuration.SCREENLAYOUT_SIZE_XLARGE:
+//				Log.v(TAG, "screenLayout: xlarge");
+//				break;
+//			case Configuration.SCREENLAYOUT_SIZE_UNDEFINED:
+//				Log.v(TAG, "screenLayout: undefined");
+//				updateScreenLayoutSmall();
+//				break;
+//		}
 
 	} // updateScreenLayout
 
@@ -620,11 +526,11 @@ public class OrbitFragment extends Fragment
 
 		android.view.ViewGroup.LayoutParams layoutParams;
 
-		layoutParams = (android.view.ViewGroup.LayoutParams) viewSpaceScoreLast.getLayoutParams();
+		layoutParams = viewSpaceScoreLast.getLayoutParams();
 		layoutParams.width = 10;
 		viewSpaceScoreLast.setLayoutParams(layoutParams);
 
-		layoutParams = (android.view.ViewGroup.LayoutParams) viewSpaceScoreHigh.getLayoutParams();
+		layoutParams = viewSpaceScoreHigh.getLayoutParams();
 		layoutParams.width = 10;
 		viewSpaceScoreHigh.setLayoutParams(layoutParams);
 
@@ -818,7 +724,7 @@ public class OrbitFragment extends Fragment
 		if (eegPower > 0) {
 
 			/** Start playback of audio control stream */
-			if (flightActive == false) {
+			if (!flightActive) {
 				playControl();
 			}
 

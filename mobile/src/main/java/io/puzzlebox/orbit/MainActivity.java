@@ -16,6 +16,7 @@ import io.puzzlebox.jigsaw.ui.EEGFragment;
 import io.puzzlebox.jigsaw.ui.SessionFragment;
 import io.puzzlebox.jigsaw.ui.SupportFragment;
 import io.puzzlebox.orbit.ui.CreditsFragment;
+import io.puzzlebox.orbit.ui.OrbitFragment;
 import io.puzzlebox.orbit.ui.TutorialFragment;
 import io.puzzlebox.orbit.ui.WelcomeFragment;
 
@@ -24,7 +25,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
         WelcomeFragment.OnFragmentInteractionListener,
         SessionFragment.OnFragmentInteractionListener,
         EEGFragment.OnFragmentInteractionListener,
-        OrbitFragment.OnFragmentInteractionListener
+        OrbitFragment.OnFragmentInteractionListener,
+        SupportFragment.OnFragmentInteractionListener
 {
 
         private final static String TAG = MainActivity.class.getSimpleName();
@@ -45,6 +47,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 
                 dataList = getDrawerDataList();
 
+                mTitle = mDrawerTitle = getTitle();
                 mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
                 mDrawerList = (ListView) findViewById(R.id.navigation_drawer);
 
@@ -55,7 +58,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
                         mToolbar, io.puzzlebox.jigsaw.R.string.drawer_open,
                         io.puzzlebox.jigsaw.R.string.drawer_close) {
                         public void onDrawerClosed(View view) {
-                                getSupportActionBar().setTitle(mTitle);
+//                                getSupportActionBar().setTitle(mTitle);
                                 invalidateOptionsMenu(); // creates call to
                                 // onPrepareOptionsMenu()
                         }
