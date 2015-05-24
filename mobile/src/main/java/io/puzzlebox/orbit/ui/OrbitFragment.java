@@ -32,6 +32,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -61,7 +62,8 @@ public class OrbitFragment extends Fragment
 	 */
 	int eegPower = 0;
 
-	public boolean generateAudio = true;
+		public boolean generateAudio = true;
+//	public boolean generateAudio = false;
 	public boolean invertControlSignal = false;
 	boolean tiltSensorControl = false;
 	public int deviceWarningMessagesDisplayed = 0;
@@ -171,6 +173,25 @@ public class OrbitFragment extends Fragment
 //		setContentView(R.layout.main);
 //		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title);
 
+
+		Button buttonConnectOrbit = (Button) v.findViewById(R.id.buttonConnectOrbit);
+		buttonConnectOrbit.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setButtonEnable();
+			}
+		});
+
+
+		Button buttonTestFlight = (Button) v.findViewById(R.id.buttonTestFlight);
+		buttonTestFlight.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				demoMode(v);
+			}
+		});
+
+
 		progressBarAttention = (ProgressBar) v.findViewById(R.id.progressBarAttention);
 		final float[] roundedCorners = new float[] { 5, 5, 5, 5, 5, 5, 5, 5 };
 		ShapeDrawable progressBarAttentionDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
@@ -232,6 +253,37 @@ public class OrbitFragment extends Fragment
 		// Hide the "Scores" label by default
 		textViewLabelScores.setVisibility(View.GONE);
 		viewSpaceScore.setVisibility(View.GONE);
+
+
+
+
+		/**
+		 * Prepare audio stream
+		 */
+
+		// TODO Testing DroidDNA
+//		maximizeAudioVolume(); // Automatically set media volume to maximum
+
+		/** Set the hardware buttons to control the audio output */
+		getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+		/** Preload the flight control WAV file into memory */
+		soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+		soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+			public void onLoadComplete(SoundPool soundPool,
+			                           int sampleId,
+			                           int status) {
+				loaded = true;
+			}
+		});
+		soundID = soundPool.load(getActivity().getApplicationContext(), audioFile, 1);
+
+
+		/**
+		 * AudioHandler
+		 */
+		audioHandler.start();
+
 
 
 
@@ -320,7 +372,7 @@ public class OrbitFragment extends Fragment
 //		updateSessionTime();
 
 		LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(
-				mPacketReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.thinkgear.packet"));
+				  mPacketReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.thinkgear.packet"));
 
 
 	}
@@ -337,7 +389,7 @@ public class OrbitFragment extends Fragment
 
 		LocalBroadcastManager.getInstance(
 				  getActivity().getApplicationContext()).unregisterReceiver(
-				mPacketReceiver);
+				  mPacketReceiver);
 
 //		getActivity().unregisterReceiver(mGattUpdateReceiver);
 //
@@ -459,7 +511,10 @@ public class OrbitFragment extends Fragment
 
 	// ################################################################
 
-//	private void setButtonEnable() {
+	private void setButtonEnable() {
+
+		Log.d(TAG, "setButtonEnable");
+
 //		OrbitSingleton.getInstance().flag = true;
 //		OrbitSingleton.getInstance().connState = true;
 //
@@ -467,12 +522,12 @@ public class OrbitFragment extends Fragment
 //		connectBloom.setText("Disconnect Bloom");
 //
 //		buttonDemo.setEnabled(true);
-//	}
+	}
 
 
 	// ################################################################
 
-//	private void setButtonDisable() {
+	private void setButtonDisable() {
 //		OrbitSingleton.getInstance().flag = false;
 //		OrbitSingleton.getInstance().connState = false;
 //
@@ -482,7 +537,7 @@ public class OrbitFragment extends Fragment
 //		buttonDemo.setEnabled(false);
 //
 //		progressBarRange.setProgress(0);
-//	}
+	}
 
 
 	// ################################################################
@@ -741,7 +796,7 @@ public class OrbitFragment extends Fragment
 
 		}
 
-			Log.d(TAG, "flightActive: " + flightActive);
+		Log.d(TAG, "flightActive: " + flightActive);
 
 
 
@@ -957,78 +1012,82 @@ public class OrbitFragment extends Fragment
 
 	public void playControl() {
 
+		Log.d(TAG, "playControl()");
+
+
 		// TODO Convert to service
 
 //		FragmentTabAdvanced fragmentAdvanced =
 //				  (FragmentTabAdvanced) getActivity().getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
 //
-//		if (generateAudio) {
-//
-//			/**
-//			 * Generate signal on the fly
-//			 */
-//
+		if (generateAudio) {
+
+			/**
+			 * Generate signal on the fly
+			 */
+
 //			// Handle controlled descent thread if activated
 //			if ((fragmentAdvanced.orbitControlledDescentTask != null) &&
 //					  (fragmentAdvanced.orbitControlledDescentTask.keepDescending)) {
 //				fragmentAdvanced.orbitControlledDescentTask.callStopAudio = false;
 //				fragmentAdvanced.orbitControlledDescentTask.keepDescending = false;
 //			}
-//
-//
-//			//			if (audioHandler != null) {
-//
-//			//				serviceBinder.ifFlip = fragmentAdvanced.checkBoxInvertControlSignal.isChecked(); // if checked then flip
+
+
+			//			if (audioHandler != null) {
+
+			//				serviceBinder.ifFlip = fragmentAdvanced.checkBoxInvertControlSignal.isChecked(); // if checked then flip
 //			audioHandler.ifFlip = invertControlSignal; // if checked then flip
-//
-//			int channel = 0; // default "A"
-//
+
+			int channel = 0; // default "A"
+
 //			if (fragmentAdvanced != null)
 //				channel = fragmentAdvanced.radioGroupChannel.getCheckedRadioButtonId();
+
+			//				if (demoFlightMode)
+			//					updateAudioHandlerLoopNumberWhileMindControl(200);
+			//				else
+			//					updateAudioHandlerLoopNumberWhileMindControl(4500);
+			//
+			//			updateAudioHandlerLoopNumberWhileMindControl(5000);
+
+			updateAudioHandlerLoopNumberWhileMindControl(-1); // Loop infinite for easier user testing
+
+			updateAudioHandlerChannel(channel);
+
+			audioHandler.mutexNotify();
+
+			//			}
 //
-//			//				if (demoFlightMode)
-//			//					updateAudioHandlerLoopNumberWhileMindControl(200);
-//			//				else
-//			//					updateAudioHandlerLoopNumberWhileMindControl(4500);
-//			//
-//			//			updateAudioHandlerLoopNumberWhileMindControl(5000);
 //
-//			updateAudioHandlerLoopNumberWhileMindControl(-1); // Loop infinite for easier user testing
-//
-//			updateAudioHandlerChannel(channel);
-//
-//			audioHandler.mutexNotify();
-//			//			}
-//
-//
-//		} else {
-//
-//			/**
-//			 * Play audio control file
-//			 */
-//
-//			/** Getting the user sound settings */
-//			AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-//			//			float actualVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-//			float maxVolume = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-//			//			float volume = actualVolume / maxVolume;
-//
-//			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) maxVolume, 0);
-//			/** Is the sound loaded already? */
-//			if (loaded) {
-//				//				soundPool.play(soundID, volume, volume, 1, 0, 1f);
-//				//				soundPool.setVolume(soundID, 1f, 1f);
-//				//				soundPool.play(soundID, maxVolume, maxVolume, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
-//
-//				soundPool.play(soundID, 1f, 1f, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
-//
-//				// TODO No visible effects of changing these variables on digital oscilloscope
-//				//				soundPool.play(soundID, 0.5f, 0.5f, 1, 0, 0.5f);
+		} else {
+
+			/**
+			 * Play audio control file
+			 */
+
+			/** Getting the user sound settings */
+			AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+			//			float actualVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+			float maxVolume = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+			//			float volume = actualVolume / maxVolume;
+
+			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) maxVolume, 0);
+			/** Is the sound loaded already? */
+			if (loaded) {
+				//				soundPool.play(soundID, volume, volume, 1, 0, 1f);
+				//				soundPool.setVolume(soundID, 1f, 1f);
+				//				soundPool.play(soundID, maxVolume, maxVolume, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
+
+				soundPool.play(soundID, 1f, 1f, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
+
+				// TODO No visible effects of changing these variables on digital oscilloscope
+				//				soundPool.play(soundID, 0.5f, 0.5f, 1, 0, 0.5f);
 //				if (DEBUG)
-//					Log.v(TAG, "Played sound");
-//			}
-//
-//		}
+				Log.v(TAG, "Played sound");
+			}
+
+		}
 
 	} // playControl
 
@@ -1036,6 +1095,8 @@ public class OrbitFragment extends Fragment
 	// ################################################################
 
 	public void stopControl() {
+
+		Log.d(TAG, "stopControl()");
 
 		// TODO Convert to service
 
@@ -1054,11 +1115,11 @@ public class OrbitFragment extends Fragment
 //
 //		} else {
 //
-//			stopAudio();
+		stopAudio();
 //
 //		}
 //
-//		flightActive = false;
+		flightActive = false;
 
 
 	} // stopControl
@@ -1094,19 +1155,20 @@ public class OrbitFragment extends Fragment
 
 	public void demoMode(View view) {
 
+		Log.d(TAG, "demoMode");
+
 		// TODO Convert to service
 
-//		/**
-//		 * Demo mode is called when the "Test Helicopter" button is pressed.
-//		 * This method can be easily adjusted for testing new features
-//		 * during development.
-//		 */
-//
-//		Log.v(TAG, "Sending Test Signal to Helicopter");
-////		appendDebugConsole("Sending Test Signal to Helicopter\n");
-//
+		/**
+		 * Demo mode is called when the "Test Helicopter" button is pressed.
+		 * This method can be easily adjusted for testing new features
+		 * during development.
+		 */
+
+		Log.v(TAG, "Sending Test Signal to Helicopter");
+
 //		demoFlightMode = true;
-//		flightActive = true;
+		flightActive = true;
 //
 //		FragmentTabAdvanced fragmentAdvanced =
 //				  (FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
@@ -1117,8 +1179,8 @@ public class OrbitFragment extends Fragment
 //		else
 //			eegPower = 100;
 //
-//		playControl();
-//
+		playControl();
+
 //		demoFlightMode = false;
 
 
@@ -1129,7 +1191,7 @@ public class OrbitFragment extends Fragment
 
 	public void demoStop(View view) {
 
-		eegPower = 0;
+//		eegPower = 0;
 
 		stopControl();
 

@@ -3,7 +3,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="io.puzzlebox.jigsaw.ui.BloomFragment">
+             tools:context=".OrbitTabActivity">
 
     <LinearLayout
         android:id="@+id/layoutOrbit"
@@ -95,8 +95,43 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/padding_medium"
                 android:text="@string/textview_high_score" />
+
         </LinearLayout>
 
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_connect"
+                android:id="@+id/buttonConnectOrbit"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/shape_rounded_corners_grey"
+                />
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="0dp" >
+            </View>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_test_fly"
+                android:id="@+id/buttonTestFlight"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/shape_rounded_corners_grey"
+                />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textViewLabelAttention"

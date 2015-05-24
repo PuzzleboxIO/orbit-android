@@ -27,6 +27,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name="io.puzzlebox.orbit.protocol.AudioService" />
+
     </application>
 
 </manifest>
