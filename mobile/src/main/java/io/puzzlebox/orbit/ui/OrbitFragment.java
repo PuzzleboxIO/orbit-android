@@ -783,6 +783,9 @@ public class OrbitFragment extends Fragment
 		}
 
 
+		OrbitSingleton.getInstance().eegPower = eegPower;
+
+
 		if (eegPower > 0) {
 
 			/** Start playback of audio control stream */

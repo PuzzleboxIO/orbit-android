@@ -271,7 +271,8 @@ public class AdvancedFragment extends Fragment
 //		radioButtonChannelA.setId(0);
 //		radioButtonChannelB.setId(1);
 //		radioButtonChannelC.setId(2);
-		radioGroupChannel.check(0);
+//		radioGroupChannel.check(0);
+		radioButtonChannelA.setChecked(true);
 
 		viewSpaceGenerateAudio = (View) v.findViewById(R.id.viewSpaceGenerateAudio);
 
@@ -1124,12 +1125,15 @@ public class AdvancedFragment extends Fragment
 			int eegAttention = Integer.valueOf(intent.getStringExtra("Attention"));
 			int eegMeditation = Integer.valueOf(intent.getStringExtra("Meditation"));
 			int eegSignal = Integer.valueOf(intent.getStringExtra("Signal Level"));
+//			int eegPower = Integer.valueOf(intent.getStringExtra("Power"));
 
 //			Log.e(TAG, "eegAttention: " + eegAttention);
 
 			progressBarAttention.setProgress(eegAttention);
 			progressBarMeditation.setProgress(eegMeditation);
 			progressBarSignal.setProgress(eegSignal);
+//			progressBarPower.setProgress(eegPower);
+			progressBarPower.setProgress(OrbitSingleton.getInstance().eegPower);
 
 //			updatePower();
 
