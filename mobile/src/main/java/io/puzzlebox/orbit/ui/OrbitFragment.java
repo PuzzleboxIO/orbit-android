@@ -48,8 +48,6 @@ import io.puzzlebox.orbit.protocol.AudioHandler;
 
 import static android.view.MenuItem.SHOW_AS_ACTION_ALWAYS;
 
-//import io.puzzlebox.jigsaw.R;
-
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class OrbitFragment extends Fragment
 		  implements SeekBar.OnSeekBarChangeListener {

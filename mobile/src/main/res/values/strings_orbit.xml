@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="title_fragment_orbit">Orbit</string>
+    <string name="welcome_message">Welcome to Puzzlebox Orbit</string>
+
+    <string name="app_name">Orbit</string>
+
+    <string name="title_fragment_welcome">Welcome</string>
+    <string name="title_fragment_tutorial">Tutorial</string>
+    <!--<string name="title_fragment_orbit">Orbit</string>-->
+    <string name="title_fragment_orbit">Flight</string>
+    <string name="title_fragment_advanced">Settings</string>
+    <string name="title_fragment_support">Support</string>
+    <string name="title_fragment_credits">Credits</string>
 
     <!--<string name="button_connect">Connect</string>-->
     <string name="button_connect">Activate Orbit</string>

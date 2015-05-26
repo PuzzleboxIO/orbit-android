@@ -25,7 +25,8 @@ public class CreditsFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	                         Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
 //		View v = inflater.inflate(io.puzzlebox.jigsaw.R.layout.fragment_welcome, container, false);
-		View v = inflater.inflate(R.layout.fragment_welcome, container, false);
+//		View v = inflater.inflate(R.layout.fragment_welcome, container, false);
+		View v = inflater.inflate(R.layout.fragment_credits, container, false);
 
 		WebView webview = (WebView) v.findViewById(R.id.webViewCredits);
 

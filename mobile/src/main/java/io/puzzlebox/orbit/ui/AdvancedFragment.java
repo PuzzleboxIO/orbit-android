@@ -61,40 +61,38 @@ public class AdvancedFragment extends Fragment
 
 	private OnFragmentInteractionListener mListener;
 
-
-
-	/**
-	 * Configuration
-	 */
-	int defaultControlThrottle = 80;
-	//	int defaultControlYaw = 78;
-	int defaultControlYaw = 49;
-	int defaultControlPitch = 31;
-
-	int hoverControlThrottle = 80;
-	//	int hoverControlYaw = 78;
-	int hoverControlYaw = 49;
-	int hoverControlPitch = 31;
-
-	int forwardControlThrottle = 80;
-	//	int forwardControlYaw = 78;
-	int forwardControlYaw = 49;
-	int forwardControlPitch = 50;
-
-	int leftControlThrottle = 80;
-	//	int leftControlYaw = 42;
-	int leftControlYaw = 13;
-	int leftControlPitch = 31;
-
-	int rightControlThrottle = 80;
-	int rightControlYaw = 114;
-	//		int rightControlYaw = 13;
-	int rightControlPitch = 31;
-
-	private float tiltX = 0;
-	private float tiltY = 0;
-	private float referenceTiltX = 0;
-	private float referenceTiltY = 0;
+//	/**
+//	 * Configuration
+//	 */
+//	int defaultControlThrottle = 80;
+//	//	int defaultControlYaw = 78;
+//	int defaultControlYaw = 49;
+//	int defaultControlPitch = 31;
+//
+//	int hoverControlThrottle = 80;
+//	//	int hoverControlYaw = 78;
+//	int hoverControlYaw = 49;
+//	int hoverControlPitch = 31;
+//
+//	int forwardControlThrottle = 80;
+//	//	int forwardControlYaw = 78;
+//	int forwardControlYaw = 49;
+//	int forwardControlPitch = 50;
+//
+//	int leftControlThrottle = 80;
+//	//	int leftControlYaw = 42;
+//	int leftControlYaw = 13;
+//	int leftControlPitch = 31;
+//
+//	int rightControlThrottle = 80;
+//	int rightControlYaw = 114;
+//	//		int rightControlYaw = 13;
+//	int rightControlPitch = 31;
+//
+//	private float tiltX = 0;
+//	private float tiltY = 0;
+//	private float referenceTiltX = 0;
+//	private float referenceTiltY = 0;
 
 	/**
 	 * UI
@@ -130,7 +128,7 @@ public class AdvancedFragment extends Fragment
 	RadioButton radioButtonChannelC;
 	View viewSpaceRadioGroupChannel;
 
-//	TextView tv;
+	//	TextView tv;
 	int viewSpaceGenerateAudioWidth = 120;
 
 	public OrbitControlledDescentTask orbitControlledDescentTask;
@@ -159,7 +157,7 @@ public class AdvancedFragment extends Fragment
 //	String TAG = "FragmentAdvanced";
 
 
-
+// ################################################################
 
 	public static AdvancedFragment newInstance(String param1, String param2) {
 		AdvancedFragment fragment = new AdvancedFragment();
@@ -171,10 +169,14 @@ public class AdvancedFragment extends Fragment
 	}
 
 
+	// ################################################################
+
 	public AdvancedFragment() {
 		// Required empty public constructor
 	}
 
+
+	// ################################################################
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -186,6 +188,8 @@ public class AdvancedFragment extends Fragment
 	}
 
 
+	// ################################################################
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -194,9 +198,6 @@ public class AdvancedFragment extends Fragment
 //		return textView;
 
 		View v = inflater.inflate(R.layout.fragment_advanced, container, false);
-
-
-
 
 
 		config = getResources().getConfiguration();
@@ -371,15 +372,12 @@ public class AdvancedFragment extends Fragment
 		updateScreenLayout();
 		updateAdvancedOptions();
 
-
-
-
-
-
 		return v;
 
 	}
 
+
+	// ################################################################
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -393,12 +391,16 @@ public class AdvancedFragment extends Fragment
 	}
 
 
+	// ################################################################
+
 	@Override
 	public void onDetach() {
 		super.onDetach();
 		mListener = null;
 	}
 
+
+	// ################################################################
 
 	/**
 	 * This interface must be implemented by activities that contain this
@@ -414,9 +416,6 @@ public class AdvancedFragment extends Fragment
 		// TODO: Update argument type and name
 		public void onFragmentInteraction(Uri uri);
 	}
-
-
-
 
 
 	// ################################################################
@@ -506,9 +505,6 @@ public class AdvancedFragment extends Fragment
 		}
 		return addresses;
 	}
-
-
-
 
 
 	// ################################################################
@@ -743,8 +739,8 @@ public class AdvancedFragment extends Fragment
 		} else {
 			if (orientationSensor != null) {
 				sensorManager.unregisterListener(this);
-				referenceTiltX = 0;
-				referenceTiltY = 0;
+				OrbitSingleton.getInstance().referenceTiltX = 0;
+				OrbitSingleton.getInstance().referenceTiltY = 0;
 			}
 		}
 
@@ -756,8 +752,8 @@ public class AdvancedFragment extends Fragment
 
 	public void checkBoxTiltSensorControlThrottleClicked(View v) {
 
-		referenceTiltX = 0;
-		referenceTiltY = 0;
+		OrbitSingleton.getInstance().referenceTiltX = 0;
+		OrbitSingleton.getInstance().referenceTiltY = 0;
 
 		Log.v(TAG, "onCheckBoxTiltSensorControlThrottleClicked");
 
@@ -881,9 +877,9 @@ public class AdvancedFragment extends Fragment
 
 	public void resetControlSignal(View v) {
 
-		seekBarThrottle.setProgress(defaultControlThrottle);
-		seekBarYaw.setProgress(defaultControlYaw);
-		seekBarPitch.setProgress(defaultControlPitch);
+		seekBarThrottle.setProgress(OrbitSingleton.getInstance().defaultControlThrottle);
+		seekBarYaw.setProgress(OrbitSingleton.getInstance().defaultControlYaw);
+		seekBarPitch.setProgress(OrbitSingleton.getInstance().defaultControlPitch);
 
 		updateControlSignal();
 
@@ -895,9 +891,9 @@ public class AdvancedFragment extends Fragment
 
 	public void setControlSignalHover(View v) {
 
-		seekBarThrottle.setProgress(hoverControlThrottle);
-		seekBarYaw.setProgress(hoverControlYaw);
-		seekBarPitch.setProgress(hoverControlPitch);
+		seekBarThrottle.setProgress(OrbitSingleton.getInstance().hoverControlThrottle);
+		seekBarYaw.setProgress(OrbitSingleton.getInstance().hoverControlYaw);
+		seekBarPitch.setProgress(OrbitSingleton.getInstance().hoverControlPitch);
 
 		updateControlSignal();
 
@@ -909,9 +905,9 @@ public class AdvancedFragment extends Fragment
 
 	public void setControlSignalForward(View v) {
 
-		seekBarThrottle.setProgress(forwardControlThrottle);
-		seekBarYaw.setProgress(forwardControlYaw);
-		seekBarPitch.setProgress(forwardControlPitch);
+		seekBarThrottle.setProgress(OrbitSingleton.getInstance().forwardControlThrottle);
+		seekBarYaw.setProgress(OrbitSingleton.getInstance().forwardControlYaw);
+		seekBarPitch.setProgress(OrbitSingleton.getInstance().forwardControlPitch);
 
 		updateControlSignal();
 
@@ -923,9 +919,9 @@ public class AdvancedFragment extends Fragment
 
 	public void setControlSignalLeft(View v) {
 
-		seekBarThrottle.setProgress(leftControlThrottle);
-		seekBarYaw.setProgress(leftControlYaw);
-		seekBarPitch.setProgress(leftControlPitch);
+		seekBarThrottle.setProgress(OrbitSingleton.getInstance().leftControlThrottle);
+		seekBarYaw.setProgress(OrbitSingleton.getInstance().leftControlYaw);
+		seekBarPitch.setProgress(OrbitSingleton.getInstance().leftControlPitch);
 
 		updateControlSignal();
 
@@ -937,9 +933,9 @@ public class AdvancedFragment extends Fragment
 
 	public void setControlSignalRight(View v) {
 
-		seekBarThrottle.setProgress(rightControlThrottle);
-		seekBarYaw.setProgress(rightControlYaw);
-		seekBarPitch.setProgress(rightControlPitch);
+		seekBarThrottle.setProgress(OrbitSingleton.getInstance().rightControlThrottle);
+		seekBarYaw.setProgress(OrbitSingleton.getInstance().rightControlYaw);
+		seekBarPitch.setProgress(OrbitSingleton.getInstance().rightControlPitch);
 
 		updateControlSignal();
 
@@ -965,14 +961,14 @@ public class AdvancedFragment extends Fragment
 		//		tiltY = -sensorEvent.values[2]; // invert the Y axis so that negative values equal left
 
 		// Sensor.TYPE_GRAVITY or TYPE_ACCELEROMETER methods
-		tiltX = sensorEvent.values[1] * -4;
-		tiltY = sensorEvent.values[0] * -8;
+		OrbitSingleton.getInstance().tiltX = sensorEvent.values[1] * -4;
+		OrbitSingleton.getInstance().tiltY = sensorEvent.values[0] * -8;
 
 		//		appendDebugConsole("X: " + tiltX + ", Y: " + tiltY + "\n");
 
-		if (referenceTiltX == 0) {
-			referenceTiltX = tiltX;
-			referenceTiltY = tiltY;
+		if (OrbitSingleton.getInstance().referenceTiltX == 0) {
+			OrbitSingleton.getInstance().referenceTiltX = OrbitSingleton.getInstance().tiltX;
+			OrbitSingleton.getInstance().referenceTiltY = OrbitSingleton.getInstance().tiltY;
 		}
 
 		// Sensor.TYPE_OPERATION method
@@ -981,10 +977,10 @@ public class AdvancedFragment extends Fragment
 
 		// Sensor.TYPE_GRAVITY
 		if (checkBoxTiltSensorControlThrottle.isChecked()) {
-			seekBarThrottle.setProgress(defaultControlThrottle - (int) ((tiltX * 2) - (referenceTiltX * 2)));
+			seekBarThrottle.setProgress(OrbitSingleton.getInstance().defaultControlThrottle - (int) ((OrbitSingleton.getInstance().tiltX * 2) - (OrbitSingleton.getInstance().referenceTiltX * 2)));
 		} else {
-			seekBarYaw.setProgress(defaultControlYaw + (int) (tiltY - referenceTiltY));
-			seekBarPitch.setProgress(defaultControlPitch + (int) (tiltX - referenceTiltX));
+			seekBarYaw.setProgress(OrbitSingleton.getInstance().defaultControlYaw + (int) (OrbitSingleton.getInstance().tiltY - OrbitSingleton.getInstance().referenceTiltY));
+			seekBarPitch.setProgress(OrbitSingleton.getInstance().defaultControlPitch + (int) (OrbitSingleton.getInstance().tiltX - OrbitSingleton.getInstance().referenceTiltX));
 		}
 
 	} // onSensorChanged
@@ -1080,7 +1076,7 @@ public class AdvancedFragment extends Fragment
 			if (OrbitSingleton.getInstance().deviceWarningMessagesDisplayed < 2) {
 //				Toast.makeText(((OrbitTabActivity) getActivity()),
 				Toast.makeText(getActivity().getApplicationContext(),
-						  "Warning: HTC Droid DNA detected, which has known compatability issues with infrared transmitter. Contact Support for more information.", Toast.LENGTH_LONG).show();
+						  "Warning: HTC Droid DNA detected, which has known compatibility issues with infrared transmitter. Contact Support for more information.", Toast.LENGTH_LONG).show();
 //				((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed =
 				OrbitSingleton.getInstance().deviceWarningMessagesDisplayed =
 //						  ((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed + 1;
@@ -1099,7 +1095,7 @@ public class AdvancedFragment extends Fragment
 //			if (((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed < 2) {
 			if (OrbitSingleton.getInstance().deviceWarningMessagesDisplayed < 2) {
 				Toast.makeText(getActivity().getApplicationContext(),
-						  "Warning: HTC One detected, which has known compatability issues with infrared transmitter. Contact Support for more information.", Toast.LENGTH_LONG).show();
+						  "Warning: HTC One detected, which has known compatibility issues with infrared transmitter. Contact Support for more information.", Toast.LENGTH_LONG).show();
 //				((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed =
 				OrbitSingleton.getInstance().deviceWarningMessagesDisplayed =
 //						  ((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed + 1;

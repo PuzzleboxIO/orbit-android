@@ -1,5 +1,6 @@
 package io.puzzlebox.orbit;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,7 +21,6 @@ import io.puzzlebox.orbit.ui.CreditsFragment;
 import io.puzzlebox.orbit.ui.OrbitFragment;
 import io.puzzlebox.orbit.ui.TutorialFragment;
 import io.puzzlebox.orbit.ui.WelcomeFragment;
-
 
 public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		  WelcomeFragment.OnFragmentInteractionListener,
@@ -46,6 +46,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 	protected void onCreateCustom() {
 
 		// For use with custom applications
+
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		dataList = getDrawerDataList();
 
@@ -87,7 +89,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_session), io.puzzlebox.jigsaw.R.mipmap.ic_session));
 		dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_eeg), io.puzzlebox.jigsaw.R.mipmap.ic_eeg));
 		dataList.add(new DrawerItem(getString(R.string.title_fragment_orbit), R.mipmap.ic_orbit));
-		dataList.add(new DrawerItem(getString(R.string.title_fragment_advanced), R.mipmap.ic_orbit));
+		dataList.add(new DrawerItem(getString(R.string.title_fragment_advanced), R.mipmap.ic_settings));
 		dataList.add(new DrawerItem(getString(R.string.title_fragment_support), io.puzzlebox.jigsaw.R.mipmap.ic_support));
 		dataList.add(new DrawerItem(getString(R.string.title_fragment_credits), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
 

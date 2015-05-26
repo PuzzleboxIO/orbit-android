@@ -14,6 +14,16 @@ import io.puzzlebox.orbit.protocol.AudioHandler;
  */
 public class OrbitSingleton {
 
+	/**
+	 * EEG Configuration
+	 */
+
+	public int eegPower = 0;
+
+	/**
+	 * Flight Configuration
+	 */
+
 	public int minimumScoreTarget = 40;
 	public int scoreCurrent = 0;
 	public int scoreLast = 0;
@@ -24,11 +34,42 @@ public class OrbitSingleton {
 
 	public boolean demoActive = false;
 
-	public boolean generateAudio = true;
-	//	public boolean generateAudio = false;
-	public boolean invertControlSignal = false;
-
 	public boolean flightActive = false;
+
+
+	/**
+	 * Advanced Configuration
+	 */
+	public int defaultControlThrottle = 80;
+	//	int defaultControlYaw = 78;
+	public int defaultControlYaw = 49;
+	public int defaultControlPitch = 31;
+
+	public int hoverControlThrottle = 80;
+	//	int hoverControlYaw = 78;
+	public int hoverControlYaw = 49;
+	public int hoverControlPitch = 31;
+
+	public int forwardControlThrottle = 80;
+	//	int forwardControlYaw = 78;
+	public int forwardControlYaw = 49;
+	public int forwardControlPitch = 50;
+
+	public int leftControlThrottle = 80;
+	//	int leftControlYaw = 42;
+	public int leftControlYaw = 13;
+	public int leftControlPitch = 31;
+
+	public int rightControlThrottle = 80;
+	public int rightControlYaw = 114;
+	//		int rightControlYaw = 13;
+	public int rightControlPitch = 31;
+
+	public float tiltX = 0;
+	public float tiltY = 0;
+	public float referenceTiltX = 0;
+	public float referenceTiltY = 0;
+
 
 	/**
 	 * Audio
@@ -40,7 +81,11 @@ public class OrbitSingleton {
 	public int audioFile = R.raw.throttle_hover_android_common;
 	//	int audioFile = R.raw.throttle_hover_android_htc_one_x;
 
-//	private SoundPool soundPool;
+	public boolean generateAudio = true;
+	//	public boolean generateAudio = false;
+	public boolean invertControlSignal = false;
+
+	//	private SoundPool soundPool;
 //	private int soundID;
 //	boolean loaded = false;
 	public SoundPool soundPool;
