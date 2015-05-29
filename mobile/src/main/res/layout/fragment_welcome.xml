@@ -16,7 +16,7 @@
         android:fitsSystemWindows="true"
         android:id="@+id/video_view" />
 
-<!--<WebView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--<WebView xmlns:android="http://schemas.android.com/apk/res/android"-->
     <!--android:id="@+id/webViewWelcome"-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="match_parent"-->
@@ -47,23 +47,23 @@
                 android:layout_marginBottom="-42dp"/>
 
             <!--<ImageView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:id="@+id/imageView"-->
-                <!--android:src="@drawable/puzzlebox_logo"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:layout_marginLeft="16dp"-->
-                <!--android:layout_marginRight="16dp"-->
-                <!--android:layout_marginTop="-32dp"-->
-                <!--android:layout_marginBottom="-16dp"/>-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/imageView"-->
+            <!--android:src="@drawable/puzzlebox_logo"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:layout_marginLeft="16dp"-->
+            <!--android:layout_marginRight="16dp"-->
+            <!--android:layout_marginTop="-32dp"-->
+            <!--android:layout_marginBottom="-16dp"/>-->
 
             <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="@string/welcome_message"-->
-                <!--android:id="@+id/textView"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:textSize="24sp" />-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/welcome_message"-->
+            <!--android:id="@+id/textView"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:textSize="24sp" />-->
 
         </LinearLayout>
 
@@ -77,30 +77,42 @@
         android:gravity="center_vertical|bottom"
         >
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shape_rounded_corners_white"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        >
-
-        <!--android:background="@color/WhiteTint">-->
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/welcome_message"
-            android:id="@+id/textView"
-            android:layout_gravity="center_horizontal"
-            android:textSize="24sp"
+            android:background="@drawable/shape_rounded_corners_white"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:id="@+id/layoutWelcome"
+            >
 
-            />
+            <!--android:background="@color/WhiteTint">-->
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_message"
+                android:id="@+id/textView"
+                android:layout_gravity="center_horizontal"
+                android:textSize="24sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_message_help"
+                android:id="@+id/textViewHelp"
+                android:layout_gravity="center_horizontal"
+                android:textSize="12sp"
+                android:maxLines="4"
+                android:textAlignment="center"
+                android:minLines="2"
+                android:gravity="center"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -1,5 +1,6 @@
 package io.puzzlebox.orbit.ui;
 
+import android.app.Activity;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 import android.widget.VideoView;
 
 import io.puzzlebox.orbit.R;
@@ -19,13 +21,22 @@ import io.puzzlebox.orbit.R;
 
 public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 
+	private final static String TAG = WelcomeFragment.class.getSimpleName();
+
 	/**
 	 * Configuration
 	 */
+
 	static String URL = "file:///android_asset/tutorial/index.html";
 
 	private VideoView mVideoView;
 	private int position = 0;
+
+	private OnTutorialListener mListenerTutorial;
+
+	public interface OnTutorialListener {
+		void loadTutorial();
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,7 +55,6 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 //		webview.setWebViewClient(new compatibilityWebViewClient());
 //
 //		webview.loadUrl(URL);
-
 
 
 		// Background video
@@ -75,7 +85,7 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 
 
 		mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-			public void onCompletion (MediaPlayer mp) {
+			public void onCompletion(MediaPlayer mp) {
 				position = 0;
 				mVideoView.seekTo(position);
 				mVideoView.start();
@@ -83,11 +93,41 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 		});
 
 
+		LinearLayout ll = (LinearLayout) v.findViewById(R.id.layoutWelcome);
+		ll.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.d(TAG, "onClick");
+				if (mListenerTutorial != null)
+					mListenerTutorial.loadTutorial();
+				else
+					Log.d(TAG, "mListenerTutorial was null");
+			}
+		});
 
 
 		return v;
 
 	}
+
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			mListenerTutorial = (OnTutorialListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString() + " must implement mListenerTutorial");
+		}
+	}
+
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		mListenerTutorial = null;
+	}
+
 
 	private class compatibilityWebViewClient extends WebViewClient {
 

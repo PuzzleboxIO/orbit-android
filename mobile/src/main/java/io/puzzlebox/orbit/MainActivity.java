@@ -1,5 +1,6 @@
 package io.puzzlebox.orbit;
 
+import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +25,7 @@ import io.puzzlebox.orbit.ui.WelcomeFragment;
 
 public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		  WelcomeFragment.OnFragmentInteractionListener,
+		  WelcomeFragment.OnTutorialListener,
 		  SessionFragment.OnFragmentInteractionListener,
 		  EEGFragment.OnFragmentInteractionListener,
 		  OrbitFragment.OnFragmentInteractionListener,
@@ -212,6 +214,31 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		} else {
 			Log.w(TAG, "mDrawerList == null");
 		}
+
+	}
+
+
+	// ################################################################
+
+	public void loadTutorial() {
+
+		Fragment fragment = null;
+		Bundle args = new Bundle();
+		String backStackName = "tutorial";
+
+		try{
+			fragment = getFragmentManager().findFragmentByTag(backStackName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (fragment == null)
+			fragment = new TutorialFragment();
+
+		fragment.setArguments(args);
+		android.app.FragmentManager frgManager = getFragmentManager();
+		frgManager.beginTransaction().replace(io.puzzlebox.jigsaw.R.id.container, fragment)
+				  .addToBackStack(backStackName)
+				  .commit();
 
 	}
 
