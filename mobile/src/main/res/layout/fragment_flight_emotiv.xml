@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/imageViewStatus"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:contentDescription="@string/image_description_status"
+        android:src="@+raw/status_default" />
+    
+    <TextView
+        android:id="@+id/textViewLabelCognitiv"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/padding_medium"
+        android:text="@string/label_cognitiv" />
+
+    <ProgressBar
+        android:id="@+id/progressBarCognitiv"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="25dip"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingRight="@dimen/padding_large" />
+
+    <SeekBar
+        android:id="@+id/seekBarCognitiv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="72" />
+
+    <TextView
+        android:id="@+id/textViewLabelSignal"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/padding_medium"
+        android:text="@string/label_signal" />
+
+    <ProgressBar
+        android:id="@+id/progressBarSignal"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="25dip"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingRight="@dimen/padding_large" />
+
+    <TextView
+        android:id="@+id/textViewLabelPower"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/padding_medium"
+        android:text="@string/label_power" />
+
+    <ProgressBar
+        android:id="@+id/progressBarPower"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="25dip"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingRight="@dimen/padding_large" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" >
+    </View>
+
+    <LinearLayout
+        android:id="@+id/layoutControl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <View
+            android:layout_width="5dp"
+            android:layout_height="0dp" >
+        </View>
+
+<!--         <Button
+            android:id="@+id/buttonConnect"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="connectHeadset"
+            android:text="@string/button_connect" /> -->
+
+        <Button
+            android:id="@+id/buttonTestFly"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="demoMode"
+            android:text="@string/button_test_fly" />
+
+        <Button
+            android:id="@+id/buttonStopTest"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="demoStop"
+            android:text="@string/button_stop_test" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+
+        <Spinner
+            android:id="@+id/spinnerAction"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent" />
+
+        <Button
+            android:id="@+id/buttonStartTraining"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:enabled="true"
+            android:text="@string/button_start_training"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:text="@string/textview_detection_status_label"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/DetectionStatus"
+            android:layout_width="0dp"
+            android:layout_weight="1.7"
+            android:layout_height="fill_parent"
+            android:text="@string/textview_detection_status"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:text="@string/textview_current_action_label"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/CurrentAction"
+            android:layout_width="0dp"
+            android:layout_weight="1.7"
+            android:layout_height="fill_parent"
+            android:text="@string/textview_current_action"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9" >
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </TextView>
+    </ScrollView>
+
+</LinearLayout>

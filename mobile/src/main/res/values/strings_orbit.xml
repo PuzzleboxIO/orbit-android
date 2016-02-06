@@ -12,7 +12,7 @@
     <string name="title_fragment_credits">Credits</string>
 
     <string name="welcome_message">Welcome to Puzzlebox Orbit</string>
-    <string name="welcome_message_help">To begin please use menu at top-left\nor click here for tutorial</string>
+    <string name="welcome_message_help">To begin please use menu at top-left\nor click here for a tutorial</string>
 
     <!--<string name="button_connect">Connect</string>-->
     <string name="button_connect">Activate Orbit</string>

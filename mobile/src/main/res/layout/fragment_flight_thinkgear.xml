@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/imageViewStatus"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:contentDescription="@string/image_description_status"
+        android:src="@drawable/status_default" />
+
+    <TextView
+        android:id="@+id/textViewLabelAttention"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/padding_medium"
+        android:text="@string/label_attention" />
+
+    <ProgressBar
+        android:id="@+id/progressBarAttention"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="25dip"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingRight="@dimen/padding_large" />
+
+    <SeekBar
+        android:id="@+id/seekBarAttention"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="72" />
+
+    <TextView
+        android:id="@+id/textViewLabelMeditation"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/padding_medium"
+        android:text="@string/label_meditation" />
+
+    <ProgressBar
+        android:id="@+id/progressBarMeditation"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="25dip"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingRight="@dimen/padding_large" />
+
+    <SeekBar
+        android:id="@+id/seekBarMeditation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="0" />
+
+    <TextView
+        android:id="@+id/textViewLabelSignal"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/padding_medium"
+        android:text="@string/label_signal" />
+
+    <ProgressBar
+        android:id="@+id/progressBarSignal"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="25dip"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingRight="@dimen/padding_large" />
+
+    <TextView
+        android:id="@+id/textViewLabelPower"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/padding_medium"
+        android:text="@string/label_power" />
+
+    <ProgressBar
+        android:id="@+id/progressBarPower"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="25dip"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingRight="@dimen/padding_large" />
+
+    <LinearLayout
+        android:id="@+id/layoutControl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <View
+            android:layout_width="5dp"
+            android:layout_height="0dp" >
+        </View>
+
+        <Button
+            android:id="@+id/buttonConnect"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_connect" />
+
+        <!--
+             <Button
+            android:id="@+id/buttonConnectServer"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="connectServer"
+            android:text="@string/button_connect_server" />
+        -->
+
+        <Button
+            android:id="@+id/buttonTestFly"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="demoMode"
+            android:text="@string/button_test_fly" />
+
+        <Button
+            android:id="@+id/buttonStopTest"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="demoStop"
+            android:text="@string/button_stop_test" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/textViewLabelScores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_medium"
+            android:text="@string/textview_label_scores" />
+
+        <View
+            android:id="@+id/viewSpaceScore"
+            android:layout_width="25dp"
+            android:layout_height="0dp" >
+        </View>
+
+        <TextView
+            android:id="@+id/textViewLabelScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_medium"
+            android:text="@string/textview_label_score" />
+
+        <TextView
+            android:id="@+id/textViewScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_medium"
+            android:text="@string/textview_score" />
+
+        <View
+            android:id="@+id/viewSpaceScoreLast"
+            android:layout_width="25dp"
+            android:layout_height="0dp" >
+        </View>
+
+        <TextView
+            android:id="@+id/textViewLabelLastScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_medium"
+            android:text="@string/textview_label_last_score" />
+
+        <TextView
+            android:id="@+id/textViewLastScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_medium"
+            android:text="@string/textview_last_score" />
+
+        <View
+            android:id="@+id/viewSpaceScoreHigh"
+            android:layout_width="25dp"
+            android:layout_height="0dp" >
+        </View>
+
+        <TextView
+            android:id="@+id/textViewLabelHighScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_medium"
+            android:text="@string/textview_label_high_score" />
+
+        <TextView
+            android:id="@+id/textViewHighScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_medium"
+            android:text="@string/textview_high_score" />
+    </LinearLayout>
+
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/eegRawHistoryPlot"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_weight="1"
+        title="EEG Raw Wave" />
+
+</LinearLayout>

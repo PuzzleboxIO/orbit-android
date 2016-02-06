@@ -11,7 +11,6 @@ package io.puzzlebox.orbit;
  */
 
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +20,6 @@ import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,25 +38,13 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.Toast;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
-import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.protocol.AudioHandler;
 import io.puzzlebox.orbit.ui.FragmentTabAdvanced;
 import io.puzzlebox.orbit.ui.FragmentTabFlightThinkGear;
-import io.puzzlebox.orbit.ui.FragmentTabSupport;
-import io.puzzlebox.orbit.ui.FragmentTabWelcome;
+//import io.puzzlebox.orbit.ui.FragmentTabSupport;
+//import io.puzzlebox.orbit.ui.FragmentTabWelcome;
 
 public class OrbitTabActivity extends FragmentActivity {
 
@@ -245,8 +231,8 @@ public class OrbitTabActivity extends FragmentActivity {
 
 		mTabsAdapter = new TabsAdapter(this, mTabHost, mViewPager);
 
-		mTabsAdapter.addTab(mTabHost.newTabSpec("Orbit").setIndicator(tabWelcomeLabel),
-				FragmentTabWelcome.class, null);
+//		mTabsAdapter.addTab(mTabHost.newTabSpec("Orbit").setIndicator(tabWelcomeLabel),
+//				FragmentTabWelcome.class, null);
 
 		if (eegDevice == "ThinkGear") {
 			mTabsAdapter.addTab(mTabHost.newTabSpec("Orbit").setIndicator(tabFlightLabel),
@@ -260,8 +246,8 @@ public class OrbitTabActivity extends FragmentActivity {
 		mTabsAdapter.addTab(mTabHost.newTabSpec("Orbit").setIndicator(tabAdvancedLabel),
 				FragmentTabAdvanced.class, null);
 
-		mTabsAdapter.addTab(mTabHost.newTabSpec("Orbit").setIndicator(tabSupportLabel),
-				FragmentTabSupport.class, null);
+//		mTabsAdapter.addTab(mTabHost.newTabSpec("Orbit").setIndicator(tabSupportLabel),
+//				FragmentTabSupport.class, null);
 
 
 		if (savedInstanceState != null) {
@@ -697,504 +683,504 @@ public class OrbitTabActivity extends FragmentActivity {
 
 	// ################################################################
 
-	public void updatePower() {
+//	public void updatePower() {
+//
+//		/**
+//		 * This method updates the power level of the
+//		 * "Throttle" and triggers the audio stream
+//		 * which is used to fly the helicopter
+//		 */
+//
+//		//		if (eegDevice == "ThinkGear") {
+//		//
+//		//			FragmentTabFlightThinkGear fragmentFlight =
+//		//					(FragmentTabFlightThinkGear) getSupportFragmentManager().findFragmentByTag( getTabFragmentFlightThinkGear() );
+//		//
+//		//			if (fragmentFlight != null)
+//		//				eegPower = fragmentFlight.updatePower();
+//		//
+//		//		}
+//		//		//		else if (eegDevice == "Emotiv") {
+//		//		//
+//		//		//			FragmentTabFlightEmotiv fragmentFlight =
+//		//		//					(FragmentTabFlightEmotiv) getSupportFragmentManager().findFragmentByTag( getTabFragmentFlightEmotiv() );
+//		//		//
+//		//		//			if (fragmentFlight != null)
+//		//		//				eegPower = fragmentFlight.updatePower();
+//		//		//
+//		//		//		}
+//
+//		if (eegPower > 0) {
+//
+//			/** Start playback of audio control stream */
+//			if (flightActive == false) {
+//				playControl();
+//			}
+//
+//			updateScore();
+//
+//			flightActive = true;
+//
+//		} else {
+//
+//			/** Land the helicopter */
+//			stopControl();
+//
+//			resetCurrentScore();
+//
+//		}
+//
+//		if (DEBUG)
+//			Log.v(TAG, "flightActive: " + flightActive);
+//
+//
+//	} // updatePower
 
-		/**
-		 * This method updates the power level of the
-		 * "Throttle" and triggers the audio stream
-		 * which is used to fly the helicopter
-		 */
 
-		//		if (eegDevice == "ThinkGear") {
-		//
-		//			FragmentTabFlightThinkGear fragmentFlight =
-		//					(FragmentTabFlightThinkGear) getSupportFragmentManager().findFragmentByTag( getTabFragmentFlightThinkGear() );
-		//
-		//			if (fragmentFlight != null)
-		//				eegPower = fragmentFlight.updatePower();
-		//
-		//		}
-		//		//		else if (eegDevice == "Emotiv") {
-		//		//
-		//		//			FragmentTabFlightEmotiv fragmentFlight =
-		//		//					(FragmentTabFlightEmotiv) getSupportFragmentManager().findFragmentByTag( getTabFragmentFlightEmotiv() );
-		//		//
-		//		//			if (fragmentFlight != null)
-		//		//				eegPower = fragmentFlight.updatePower();
-		//		//
-		//		//		}
-
-		if (eegPower > 0) {
-
-			/** Start playback of audio control stream */
-			if (flightActive == false) {
-				playControl();
-			}
-
-			updateScore();
-
-			flightActive = true;
-
-		} else {
-
-			/** Land the helicopter */
-			stopControl();
-
-			resetCurrentScore();
-
-		}
-
-		if (DEBUG)
-			Log.v(TAG, "flightActive: " + flightActive);
-
-
-	} // updatePower
+//	// ################################################################
+//
+//	public void playControl() {
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (generateAudio) {
+//
+//			/**
+//			 * Generate signal on the fly
+//			 */
+//
+//			// Handle controlled descent thread if activated
+//			if ((fragmentAdvanced.orbitControlledDescentTask != null) &&
+//					(fragmentAdvanced.orbitControlledDescentTask.keepDescending)) {
+//				fragmentAdvanced.orbitControlledDescentTask.callStopAudio = false;
+//				fragmentAdvanced.orbitControlledDescentTask.keepDescending = false;
+//			}
+//
+//
+//			//			if (audioHandler != null) {
+//
+//			//				serviceBinder.ifFlip = fragmentAdvanced.checkBoxInvertControlSignal.isChecked(); // if checked then flip
+//			audioHandler.ifFlip = invertControlSignal; // if checked then flip
+//
+//			int channel = 0; // default "A"
+//
+//			if (fragmentAdvanced != null)
+//				channel = fragmentAdvanced.radioGroupChannel.getCheckedRadioButtonId();
+//
+//			//				if (demoFlightMode)
+//			//					updateAudioHandlerLoopNumberWhileMindControl(200);
+//			//				else
+//			//					updateAudioHandlerLoopNumberWhileMindControl(4500);
+//			//
+//			//			updateAudioHandlerLoopNumberWhileMindControl(5000);
+//
+//			updateAudioHandlerLoopNumberWhileMindControl(-1); // Loop infinite for easier user testing
+//
+//			updateAudioHandlerChannel(channel);
+//
+//			audioHandler.mutexNotify();
+//			//			}
+//
+//
+//		} else {
+//
+//			/**
+//			 * Play audio control file
+//			 */
+//
+//			/** Getting the user sound settings */
+//			AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+//			//			float actualVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+//			float maxVolume = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+//			//			float volume = actualVolume / maxVolume;
+//
+//			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) maxVolume, 0);
+//			/** Is the sound loaded already? */
+//			if (loaded) {
+//				//				soundPool.play(soundID, volume, volume, 1, 0, 1f);
+//				//				soundPool.setVolume(soundID, 1f, 1f);
+//				//				soundPool.play(soundID, maxVolume, maxVolume, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
+//
+//				soundPool.play(soundID, 1f, 1f, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
+//
+//				// TODO No visible effects of changing these variables on digital oscilloscope
+//				//				soundPool.play(soundID, 0.5f, 0.5f, 1, 0, 0.5f);
+//				if (DEBUG)
+//					Log.v(TAG, "Played sound");
+//			}
+//
+//		}
+//
+//	} // playControl
+//
+//
+//	// ################################################################
+//
+//	public void stopControl() {
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//
+//		// Initial Controlled Descent if activated by user
+//		if ((generateAudio) &&
+//				(flightActive) &&
+//				(fragmentAdvanced != null) &&
+//				(fragmentAdvanced.checkBoxControlledDescent.isChecked()) &&
+//				(audioHandler != null)) {
+//
+//			fragmentAdvanced.registerControlledDescent();
+//
+//		} else {
+//
+//			stopAudio();
+//
+//		}
+//
+//		flightActive = false;
+//
+//
+//	} // stopControl
+//
+//
+//	// ################################################################
+//
+//	public void stopAudio() {
+//
+//		/**
+//		 * stop AudioTrack as well as destroy service.
+//		 */
+//
+//		audioHandler.keepPlaying = false;
+//
+//		/**
+//		 * Stop playing audio control file
+//		 */
+//
+//		if (soundPool != null) {
+//			try {
+//				soundPool.stop(soundID);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//
+//
+//	} // stopControl
+//
+//
+//	// ################################################################
+//
+//	public void demoMode(View view) {
+//
+//		/**
+//		 * Demo mode is called when the "Test Helicopter" button is pressed.
+//		 * This method can be easily adjusted for testing new features
+//		 * during development.
+//		 */
+//
+//		Log.v(TAG, "Sending Test Signal to Helicopter");
+//		appendDebugConsole("Sending Test Signal to Helicopter\n");
+//
+//		demoFlightMode = true;
+//		flightActive = true;
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		//		if (fragmentAdvanced.checkBoxGenerateAudio.isChecked())
+//		if (generateAudio && (fragmentAdvanced != null))
+//			eegPower = fragmentAdvanced.seekBarThrottle.getProgress();
+//		else
+//			eegPower = 100;
+//
+//		playControl();
+//
+//		demoFlightMode = false;
+//
+//
+//	} // demoMode
+//
+//
+//	// ################################################################
+//
+//	public void demoStop(View view) {
+//
+//		eegPower = 0;
+//
+//		stopControl();
+//
+//	} // demoStop
+//
+//
+//	// ################################################################
+//
+//	public void updateScore() {
+//
+//		FragmentTabFlightThinkGear fragmentFlight =
+//				(FragmentTabFlightThinkGear) getSupportFragmentManager().findFragmentByTag( getTabFragmentFlightThinkGear() );
+//
+//		if (fragmentFlight != null)
+//			fragmentFlight.updateScore();
+//
+//	} // updateScore
+//
+//
+//	// ################################################################
+//
+//	public void resetCurrentScore() {
+//
+//		FragmentTabFlightThinkGear fragmentFlight =
+//				(FragmentTabFlightThinkGear) getSupportFragmentManager().findFragmentByTag( getTabFragmentFlightThinkGear() );
+//
+//		if (fragmentFlight != null)
+//			fragmentFlight.resetCurrentScore();
+//
+//	} // resetCurrentScore
+//
+//
+//	// ################################################################
+//
+//	/**
+//	 * the audioHandler to update command
+//	 */
+//	public void updateAudioHandlerCommand(Integer[] command) {
+//
+//		this.audioHandler.command = command;
+//		this.audioHandler.updateControlSignal();
+//
+//
+//	} // updateServiceBinderCommand
+//
+//
+//	// ################################################################
+//
+//	/**
+//	 * the audioHandler to update channel
+//	 */
+//	public void updateAudioHandlerChannel(int channel) {
+//
+//		this.audioHandler.channel = channel;
+//		this.audioHandler.updateControlSignal();
+//
+//
+//	} // updateServiceBinderChannel
+//
+//
+//	// ################################################################
+//
+//	/**
+//	 * @param number the audioHandler to update loop number while mind control
+//	 */
+//	public void updateAudioHandlerLoopNumberWhileMindControl(int number) {
+//
+//		this.audioHandler.loopNumberWhileMindControl = number;
+//
+//
+//	} // updateServiceBinderLoopNumberWhileMindControl
+//
+//
+//	// ################################################################
+//
+//	public void resetControlSignal(View view) {
+//
+//		/**
+//		 * Called when the "Reset" button is pressed
+//		 */
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (fragmentAdvanced != null)
+//			fragmentAdvanced.resetControlSignal();
+//
+//
+//	} // resetControlSignal
+//
+//
+//	// ################################################################
+//
+//	public void setControlSignalHover(View view) {
+//
+//		/**
+//		 * Called when the "Hover" button is pressed
+//		 */
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (fragmentAdvanced != null)
+//			fragmentAdvanced.setControlSignalHover();
+//
+//
+//	} // setControlSignalHover
+//
+//
+//	// ################################################################
+//
+//	public void setControlSignalForward(View view) {
+//
+//		/**
+//		 * Called when the "Forward" button is pressed
+//		 */
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (fragmentAdvanced != null)
+//			fragmentAdvanced.setControlSignalForward();
+//
+//
+//	} // setControlSignalForward
+//
+//
+//	// ################################################################
+//
+//	public void setControlSignalLeft(View view) {
+//
+//		/**
+//		 * Called when the "Left" button is pressed
+//		 */
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (fragmentAdvanced != null)
+//			fragmentAdvanced.setControlSignalLeft();
+//
+//
+//	} // setControlSignalLeft
+//
+//
+//	// ################################################################
+//
+//	public void setControlSignalRight(View view) {
+//
+//		/**
+//		 * Called when the "Right" button is pressed
+//		 */
+//
+//		FragmentTabAdvanced fragmentAdvanced =
+//				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
+//
+//		if (fragmentAdvanced != null)
+//			fragmentAdvanced.setControlSignalRight();
+//
+//
+//	} // setControlSignalRight
 
 
 	// ################################################################
 
-	public void playControl() {
-
-		FragmentTabAdvanced fragmentAdvanced =
-				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
-
-		if (generateAudio) {
-
-			/**
-			 * Generate signal on the fly
-			 */
-
-			// Handle controlled descent thread if activated
-			if ((fragmentAdvanced.orbitControlledDescentTask != null) &&
-					(fragmentAdvanced.orbitControlledDescentTask.keepDescending)) {
-				fragmentAdvanced.orbitControlledDescentTask.callStopAudio = false;
-				fragmentAdvanced.orbitControlledDescentTask.keepDescending = false;
-			}
-
-
-			//			if (audioHandler != null) {
-
-			//				serviceBinder.ifFlip = fragmentAdvanced.checkBoxInvertControlSignal.isChecked(); // if checked then flip
-			audioHandler.ifFlip = invertControlSignal; // if checked then flip
-
-			int channel = 0; // default "A"
-
-			if (fragmentAdvanced != null)
-				channel = fragmentAdvanced.radioGroupChannel.getCheckedRadioButtonId();
-
-			//				if (demoFlightMode)
-			//					updateAudioHandlerLoopNumberWhileMindControl(200);
-			//				else
-			//					updateAudioHandlerLoopNumberWhileMindControl(4500);
-			//
-			//			updateAudioHandlerLoopNumberWhileMindControl(5000);
-
-			updateAudioHandlerLoopNumberWhileMindControl(-1); // Loop infinite for easier user testing
-
-			updateAudioHandlerChannel(channel);
-
-			audioHandler.mutexNotify();
-			//			}
-
-
-		} else {
-
-			/**
-			 * Play audio control file
-			 */
-
-			/** Getting the user sound settings */
-			AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-			//			float actualVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-			float maxVolume = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-			//			float volume = actualVolume / maxVolume;
-
-			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) maxVolume, 0);
-			/** Is the sound loaded already? */
-			if (loaded) {
-				//				soundPool.play(soundID, volume, volume, 1, 0, 1f);
-				//				soundPool.setVolume(soundID, 1f, 1f);
-				//				soundPool.play(soundID, maxVolume, maxVolume, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
-
-				soundPool.play(soundID, 1f, 1f, 1, 0, 1f); // Fixes Samsung Galaxy S4 [SGH-M919]
-
-				// TODO No visible effects of changing these variables on digital oscilloscope
-				//				soundPool.play(soundID, 0.5f, 0.5f, 1, 0, 0.5f);
-				if (DEBUG)
-					Log.v(TAG, "Played sound");
-			}
-
-		}
-
-	} // playControl
+//	public void sendMessage(View view) {
+//
+//		Log.v(TAG, "sendMessage()");
+//		Toast.makeText(this, "Thank you for your feedback!", Toast.LENGTH_LONG).show();
+//
+//
+//		FragmentTabSupport fragmentSupport =
+//				(FragmentTabSupport) getSupportFragmentManager().findFragmentByTag( getTabFragmentSupport() );
+//
+//		String name = fragmentSupport.editTextName.getText().toString();
+//		String email = fragmentSupport.editTextEmail.getText().toString();
+//		String message = fragmentSupport.editTextMessage.getText().toString();
+//
+//		String contactURL = FragmentTabSupport.contactURL;
+//
+//
+//		message = message + "\n\n" + getDeviceDetails();
+//
+//
+//		EmailMessage emailMessage = new EmailMessage();
+//
+//		emailMessage.setData(contactURL, name, email, message);
+//
+//		emailMessage.execute();
+//
+//
+//		fragmentSupport.editTextName.setText("");
+//		fragmentSupport.editTextEmail.setText("");
+//		fragmentSupport.editTextMessage.setText("");
+//
+//
+//	} // sendMessage
 
 
 	// ################################################################
 
-	public void stopControl() {
-
-		FragmentTabAdvanced fragmentAdvanced =
-				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
-
-
-		// Initial Controlled Descent if activated by user
-		if ((generateAudio) &&
-				(flightActive) &&
-				(fragmentAdvanced != null) &&
-				(fragmentAdvanced.checkBoxControlledDescent.isChecked()) &&
-				(audioHandler != null)) {
-
-			fragmentAdvanced.registerControlledDescent();
-
-		} else {
-
-			stopAudio();
-
-		}
-
-		flightActive = false;
-
-
-	} // stopControl
-
-
-	// ################################################################
-
-	public void stopAudio() {
-
-		/**
-		 * stop AudioTrack as well as destroy service.
-		 */
-
-		audioHandler.keepPlaying = false;
-
-		/**
-		 * Stop playing audio control file
-		 */
-
-		if (soundPool != null) {
-			try {
-				soundPool.stop(soundID);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-
-	} // stopControl
-
-
-	// ################################################################
-
-	public void demoMode(View view) {
-
-		/**
-		 * Demo mode is called when the "Test Helicopter" button is pressed.
-		 * This method can be easily adjusted for testing new features
-		 * during development.
-		 */
-
-		Log.v(TAG, "Sending Test Signal to Helicopter");
-		appendDebugConsole("Sending Test Signal to Helicopter\n");
-
-		demoFlightMode = true;
-		flightActive = true;
-
-		FragmentTabAdvanced fragmentAdvanced =
-				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
-
-		//		if (fragmentAdvanced.checkBoxGenerateAudio.isChecked())
-		if (generateAudio && (fragmentAdvanced != null))
-			eegPower = fragmentAdvanced.seekBarThrottle.getProgress();
-		else
-			eegPower = 100;
-
-		playControl();
-
-		demoFlightMode = false;
-
-
-	} // demoMode
-
-
-	// ################################################################
-
-	public void demoStop(View view) {
-
-		eegPower = 0;
-
-		stopControl();
-
-	} // demoStop
-
-
-	// ################################################################
-
-	public void updateScore() {
-
-		FragmentTabFlightThinkGear fragmentFlight =
-				(FragmentTabFlightThinkGear) getSupportFragmentManager().findFragmentByTag( getTabFragmentFlightThinkGear() );
-
-		if (fragmentFlight != null)
-			fragmentFlight.updateScore();
-
-	} // updateScore
-
-
-	// ################################################################
-
-	public void resetCurrentScore() {
-
-		FragmentTabFlightThinkGear fragmentFlight =
-				(FragmentTabFlightThinkGear) getSupportFragmentManager().findFragmentByTag( getTabFragmentFlightThinkGear() );
-
-		if (fragmentFlight != null)
-			fragmentFlight.resetCurrentScore();
-
-	} // resetCurrentScore
-
-
-	// ################################################################
-
-	/**
-	 * the audioHandler to update command
-	 */
-	public void updateAudioHandlerCommand(Integer[] command) {
-
-		this.audioHandler.command = command;
-		this.audioHandler.updateControlSignal();
-
-
-	} // updateServiceBinderCommand
-
-
-	// ################################################################
-
-	/**
-	 * the audioHandler to update channel
-	 */
-	public void updateAudioHandlerChannel(int channel) {
-
-		this.audioHandler.channel = channel;
-		this.audioHandler.updateControlSignal();
-
-
-	} // updateServiceBinderChannel
-
-
-	// ################################################################
-
-	/**
-	 * @param number the audioHandler to update loop number while mind control
-	 */
-	public void updateAudioHandlerLoopNumberWhileMindControl(int number) {
-
-		this.audioHandler.loopNumberWhileMindControl = number;
-
-
-	} // updateServiceBinderLoopNumberWhileMindControl
-
-
-	// ################################################################
-
-	public void resetControlSignal(View view) {
-
-		/**
-		 * Called when the "Reset" button is pressed
-		 */
-
-		FragmentTabAdvanced fragmentAdvanced =
-				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
-
-		if (fragmentAdvanced != null)
-			fragmentAdvanced.resetControlSignal();
-
-
-	} // resetControlSignal
-
-
-	// ################################################################
-
-	public void setControlSignalHover(View view) {
-
-		/**
-		 * Called when the "Hover" button is pressed
-		 */
-
-		FragmentTabAdvanced fragmentAdvanced =
-				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
-
-		if (fragmentAdvanced != null)
-			fragmentAdvanced.setControlSignalHover();
-
-
-	} // setControlSignalHover
-
-
-	// ################################################################
-
-	public void setControlSignalForward(View view) {
-
-		/**
-		 * Called when the "Forward" button is pressed
-		 */
-
-		FragmentTabAdvanced fragmentAdvanced =
-				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
-
-		if (fragmentAdvanced != null)
-			fragmentAdvanced.setControlSignalForward();
-
-
-	} // setControlSignalForward
-
-
-	// ################################################################
-
-	public void setControlSignalLeft(View view) {
-
-		/**
-		 * Called when the "Left" button is pressed
-		 */
-
-		FragmentTabAdvanced fragmentAdvanced =
-				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
-
-		if (fragmentAdvanced != null)
-			fragmentAdvanced.setControlSignalLeft();
-
-
-	} // setControlSignalLeft
-
-
-	// ################################################################
-
-	public void setControlSignalRight(View view) {
-
-		/**
-		 * Called when the "Right" button is pressed
-		 */
-
-		FragmentTabAdvanced fragmentAdvanced =
-				(FragmentTabAdvanced) getSupportFragmentManager().findFragmentByTag( getTabFragmentAdvanced() );
-
-		if (fragmentAdvanced != null)
-			fragmentAdvanced.setControlSignalRight();
-
-
-	} // setControlSignalRight
-
-
-	// ################################################################
-
-	public void sendMessage(View view) {
-
-		Log.v(TAG, "sendMessage()");
-		Toast.makeText(this, "Thank you for your feedback!", Toast.LENGTH_LONG).show();
-
-
-		FragmentTabSupport fragmentSupport =
-				(FragmentTabSupport) getSupportFragmentManager().findFragmentByTag( getTabFragmentSupport() );
-
-		String name = fragmentSupport.editTextName.getText().toString();
-		String email = fragmentSupport.editTextEmail.getText().toString();
-		String message = fragmentSupport.editTextMessage.getText().toString();
-
-		String contactURL = FragmentTabSupport.contactURL;
-
-
-		message = message + "\n\n" + getDeviceDetails();
-
-
-		EmailMessage emailMessage = new EmailMessage();
-
-		emailMessage.setData(contactURL, name, email, message);
-
-		emailMessage.execute();
-
-
-		fragmentSupport.editTextName.setText("");
-		fragmentSupport.editTextEmail.setText("");
-		fragmentSupport.editTextMessage.setText("");
-
-
-	} // sendMessage
-
-
-	// ################################################################
-
-	@SuppressLint("InlinedApi")
-	public String getDeviceDetails() {
-
-		String output = "";
-
-		output = "Manufacturer: " + Build.MANUFACTURER + "\n";
-		output = output + "Model: " + Build.MODEL + "\n";
-		output = output + "Product: " + Build.PRODUCT + "\n";
-		if (android.os.Build.VERSION.SDK_INT >= 8)
-			output = output + "Hardware: " + Build.HARDWARE + "\n";
-		output = output + "Device: " + Build.DEVICE + "\n";
-		output = output + "Android Version: " + android.os.Build.VERSION.SDK_INT + "\n";
-
-
-		return (output);
-
-
-	} // getDeviceDetails
+//	@SuppressLint("InlinedApi")
+//	public String getDeviceDetails() {
+//
+//		String output = "";
+//
+//		output = "Manufacturer: " + Build.MANUFACTURER + "\n";
+//		output = output + "Model: " + Build.MODEL + "\n";
+//		output = output + "Product: " + Build.PRODUCT + "\n";
+//		if (android.os.Build.VERSION.SDK_INT >= 8)
+//			output = output + "Hardware: " + Build.HARDWARE + "\n";
+//		output = output + "Device: " + Build.DEVICE + "\n";
+//		output = output + "Android Version: " + android.os.Build.VERSION.SDK_INT + "\n";
+//
+//
+//		return (output);
+//
+//
+//	} // getDeviceDetails
 
 
 	// ################################################################
 	// ################################################################
 
-	class EmailMessage extends AsyncTask<String, Void, Object> {
-
-		String contactURL = new String();
-		String name = new String();
-		String email = new String();
-		String message = new String();
-
-		public void setData(String contact, String full_name, String email_address, String content) {
-			contactURL = contact;
-			name = full_name;
-			email = email_address;
-			message = content;
-		}
-
-		protected Object doInBackground(String... vars) {
-			try {
-
-				// Create a new HttpClient and Post Header
-				HttpClient httpclient = new DefaultHttpClient();
-				HttpPost httppost = new HttpPost(contactURL);
-
-				try {
-					// Add your data
-					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-					nameValuePairs.add(new BasicNameValuePair("email_name", name));
-					nameValuePairs.add(new BasicNameValuePair("email_from", email));
-					nameValuePairs.add(new BasicNameValuePair("email_subject", "[Orbit Support] (Android " + versionName + ")"));
-					nameValuePairs.add(new BasicNameValuePair("email_body", message));
-					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-					// Execute HTTP Post Request
-					@SuppressWarnings("unused")
-					HttpResponse response = httpclient.execute(httppost);
-
-				} catch (ClientProtocolException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			return null;
-
-		}
-
-	} // emailMessage
+//	class EmailMessage extends AsyncTask<String, Void, Object> {
+//
+//		String contactURL = new String();
+//		String name = new String();
+//		String email = new String();
+//		String message = new String();
+//
+//		public void setData(String contact, String full_name, String email_address, String content) {
+//			contactURL = contact;
+//			name = full_name;
+//			email = email_address;
+//			message = content;
+//		}
+//
+//		protected Object doInBackground(String... vars) {
+//			try {
+//
+//				// Create a new HttpClient and Post Header
+//				HttpClient httpclient = new DefaultHttpClient();
+//				HttpPost httppost = new HttpPost(contactURL);
+//
+//				try {
+//					// Add your data
+//					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+//					nameValuePairs.add(new BasicNameValuePair("email_name", name));
+//					nameValuePairs.add(new BasicNameValuePair("email_from", email));
+//					nameValuePairs.add(new BasicNameValuePair("email_subject", "[Orbit Support] (Android " + versionName + ")"));
+//					nameValuePairs.add(new BasicNameValuePair("email_body", message));
+//					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//
+//					// Execute HTTP Post Request
+//					@SuppressWarnings("unused")
+//					HttpResponse response = httpclient.execute(httppost);
+//
+//				} catch (ClientProtocolException e) {
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//
+//			return null;
+//
+//		}
+//
+//	} // emailMessage
 
 
 } // OrbitTabActivity

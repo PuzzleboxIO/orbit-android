@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textViewLabelAttention"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_attention" />
+
+    <ProgressBar
+        android:id="@+id/progressBarAttention"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <SeekBar
+        android:id="@+id/seekBarAttention"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="72"
+        android:progressDrawable="@xml/progress_drawable"
+        android:thumb="@xml/thumb_drawable" />
+
+    <TextView
+        android:id="@+id/textViewLabelMeditation"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_meditation" />
+
+    <ProgressBar
+        android:id="@+id/progressBarMeditation"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <SeekBar
+        android:id="@+id/seekBarMeditation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@xml/progress_drawable"
+        android:thumb="@xml/thumb_drawable" />
+
+    <TextView
+        android:id="@+id/textViewLabelSignal"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_signal" />
+
+    <ProgressBar
+        android:id="@+id/progressBarSignal"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textViewLabelPower"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_power" />
+
+    <ProgressBar
+        android:id="@+id/progressBarPower"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" >
+    </View>
+
+    <LinearLayout
+        android:id="@+id/layoutControl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <View
+            android:layout_width="5dp"
+            android:layout_height="0dp" >
+        </View>
+
+        <Button
+            android:id="@+id/buttonConnect"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="connectHeadset"
+            android:text="@string/button_connect" />
+
+        <Button
+            android:id="@+id/buttonTestFly"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="demoMode"
+            android:text="@string/button_test_fly" />
+
+        <Button
+            android:id="@+id/buttonStopTest"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="demoStop"
+            android:text="@string/button_stop_test" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="0dp" >
+        </View>
+
+        <CheckBox
+            android:id="@+id/checkBoxAdvancedOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onCheckBoxAdvancedOptionsClicked"
+            android:text="@string/checkbox_advanced_options" />
+    </LinearLayout>
+
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/eegRawHistoryPlot"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_weight="1"
+        title="EEG Raw Wave" />
+
+    <LinearLayout
+        android:id="@+id/layoutAudioService"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textViewThrottle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/textview_throttle" />
+
+        <SeekBar
+            android:id="@+id/seekBarThrottle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="127"
+            android:progress="80" />
+
+        <TextView
+            android:id="@+id/textViewYaw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/textview_yaw" />
+
+        <SeekBar
+            android:id="@+id/seekBarYaw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="127"
+            android:progress="78" />
+
+        <TextView
+            android:id="@+id/textViewPitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/textview_pitch" />
+
+        <SeekBar
+            android:id="@+id/seekBarPitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="63"
+            android:progress="31" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutAdvancedOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="0dp" >
+        </View>
+
+        <RadioGroup
+            android:id="@+id/radioGroupChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/textViewChannel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_view_channel" />
+
+            <RadioButton
+                android:id="@+id/radioA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_a" />
+
+            <RadioButton
+                android:id="@+id/radioB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_b" />
+
+            <RadioButton
+                android:id="@+id/radioC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_c" />
+        </RadioGroup>
+
+        <View
+            android:id="@+id/viewSpaceGenerateAudio"
+            android:layout_width="5dp"
+            android:layout_height="0dp" >
+        </View>
+
+        <CheckBox
+            android:id="@+id/checkBoxGenerateAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:onClick="onCheckBoxGenerateAudioClicked"
+            android:text="@string/checkbox_generate_audio" />
+
+        <LinearLayout
+            android:id="@+id/layoutInvertControlSignal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="0dp" >
+            </View>
+
+            <CheckBox
+                android:id="@+id/checkBoxInvertControlSignal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onCheckBoxInvertControlSignalClicked"
+                android:text="@string/checkbox_invert_control_signal" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="0dp" >
+        </View>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageViewStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/image_description_status"
+        android:src="@+raw/status_default" />
+
+    <ScrollView
+        android:id="@+id/scrollViewDebugConsole"
+        android:layout_width="match_parent"
+        android:layout_height="0.0dip"
+        android:layout_weight="1.0"
+        android:fadeScrollbars="true"
+        android:scrollbars="vertical" >
+
+        <TextView
+            android:id="@+id/textViewDebugConsole"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:text="@string/label_debug_console" />
+    </ScrollView>
+
+</LinearLayout>

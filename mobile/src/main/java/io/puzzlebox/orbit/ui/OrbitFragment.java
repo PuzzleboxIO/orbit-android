@@ -39,6 +39,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import io.puzzlebox.jigsaw.protocol.InsightService;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.jigsaw.data.SessionSingleton;
 import io.puzzlebox.jigsaw.protocol.MuseService;
@@ -759,7 +760,6 @@ public class OrbitFragment extends Fragment
 
 			progressBarPower.setProgress(ThinkGearService.eegPower);
 
-
 		}
 
 		if (MuseService.eegConnected) {
@@ -777,6 +777,14 @@ public class OrbitFragment extends Fragment
 			progressBarPower.setProgress(MuseService.eegPower);
 			eegPower = MuseService.eegPower;
 
+		}
+
+		if (InsightService.eegConnected) {
+
+			InsightService.eegPower = calculateSpeed();
+
+			progressBarPower.setProgress(InsightService.eegPower);
+			eegPower = InsightService.eegPower;
 
 		}
 
