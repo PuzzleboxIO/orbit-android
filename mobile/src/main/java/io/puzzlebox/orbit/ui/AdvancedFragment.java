@@ -19,7 +19,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Fragment;
+//import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -1150,7 +1151,8 @@ public class AdvancedFragment extends Fragment
 	public class OrbitControlledDescentTask extends AsyncTask<Integer, Void, Integer> {
 
 		private String TAG = "OrbitControlledDescentTask";
-		FragmentTabAdvanced fragmentAdvanced;
+//		FragmentTabAdvanced fragmentAdvanced;
+		AdvancedFragment fragmentAdvanced;
 
 		private int throttleTarget = 28; // 30 is the minimum to keep the blades spinning
 		private double throttleStep = 0.5;
