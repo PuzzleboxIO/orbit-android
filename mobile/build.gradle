@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         applicationId "io.puzzlebox.orbit"
 //        minSdkVersion 9 // API 2.3 TODO getActivity()
         minSdkVersion 15 // API 4.0.3
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 13
         versionName "2.0.1"
     }
