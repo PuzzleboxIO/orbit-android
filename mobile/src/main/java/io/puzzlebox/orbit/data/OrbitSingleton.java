@@ -35,6 +35,7 @@ public class OrbitSingleton {
 	public boolean demoActive = false;
 
 	public boolean flightActive = false;
+	public boolean orbitActive = false;
 
 
 	/**

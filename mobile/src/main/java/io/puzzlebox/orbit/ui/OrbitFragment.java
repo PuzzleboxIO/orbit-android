@@ -45,7 +45,6 @@ import io.puzzlebox.jigsaw.data.SessionSingleton;
 import io.puzzlebox.jigsaw.protocol.MuseService;
 import io.puzzlebox.jigsaw.protocol.ThinkGearService;
 import io.puzzlebox.orbit.data.OrbitSingleton;
-import io.puzzlebox.orbit.protocol.AudioHandler;
 
 import static android.view.MenuItem.SHOW_AS_ACTION_ALWAYS;
 
@@ -99,6 +98,8 @@ public class OrbitFragment extends Fragment
 	TextView textViewHighScore;
 
 	ImageView imageViewStatus;
+
+	Button buttonConnectOrbit;
 
 //	private static TextView textViewSessionTime;
 
@@ -174,11 +175,11 @@ public class OrbitFragment extends Fragment
 //		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title);
 
 
-		Button buttonConnectOrbit = (Button) v.findViewById(R.id.buttonConnectOrbit);
+		buttonConnectOrbit = (Button) v.findViewById(R.id.buttonConnectOrbit);
 		buttonConnectOrbit.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				setButtonEnable();
+				setOrbitActivate();
 			}
 		});
 
@@ -517,9 +518,16 @@ public class OrbitFragment extends Fragment
 
 	// ################################################################
 
-	private void setButtonEnable() {
+	private void setOrbitActivate() {
 
-		Log.d(TAG, "setButtonEnable");
+		Log.d(TAG, "setOrbitActivate");
+
+		if (! OrbitSingleton.getInstance().orbitActive) {
+//			getActivity().startService(intentThinkGear);
+			OrbitSingleton.getInstance().orbitActive = true;
+		} else {
+			setOrbitDeactivate();
+		}
 
 //		OrbitSingleton.getInstance().flag = true;
 //		OrbitSingleton.getInstance().connState = true;
@@ -528,12 +536,18 @@ public class OrbitFragment extends Fragment
 //		connectBloom.setText("Disconnect Bloom");
 //
 //		buttonDemo.setEnabled(true);
+		buttonConnectOrbit.setEnabled(true);
 	}
 
 
 	// ################################################################
 
-	private void setButtonDisable() {
+	private void setOrbitDeactivate() {
+
+		Log.d(TAG, "setOrbitDeactivate");
+
+		OrbitSingleton.getInstance().orbitActive = false;
+
 //		OrbitSingleton.getInstance().flag = false;
 //		OrbitSingleton.getInstance().connState = false;
 //
@@ -541,6 +555,8 @@ public class OrbitFragment extends Fragment
 //		connectBloom.setText("Connect Bloom");
 //
 //		buttonDemo.setEnabled(false);
+
+		buttonConnectOrbit.setEnabled(false);
 //
 //		progressBarRange.setProgress(0);
 	}
