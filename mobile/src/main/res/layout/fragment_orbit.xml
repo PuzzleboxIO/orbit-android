@@ -120,11 +120,14 @@
                     android:id="@+id/buttonConnectOrbit"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/shape_rounded_corners_grey"
+                    android:visibility="gone"
                     />
 
                 <View
                     android:layout_width="16dp"
-                    android:layout_height="0dp" >
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    >
                 </View>
 
                 <Button

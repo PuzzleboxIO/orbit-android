@@ -29,6 +29,6 @@ dependencies {
     compile project(':jigsaw')
     wearApp project(':wear')
     //    provided files('libs/usb-serial-for-android-v010.jar')
+    //    compile 'com.android.support:support-v4:26.0.0-alpha1'
     compile 'com.android.support:support-v4:25.2.0'
-//    compile 'com.android.support:support-v4:26.0.0-alpha1'
 }
