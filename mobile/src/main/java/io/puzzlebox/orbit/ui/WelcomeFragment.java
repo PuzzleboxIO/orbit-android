@@ -33,9 +33,14 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	private int position = 0;
 
 	private OnTutorialListener mListenerTutorial;
+	private OnDevicesListener mListenerDevices;
 
 	public interface OnTutorialListener {
 		void loadTutorial();
+	}
+
+	public interface OnDevicesListener {
+		void loadDevices();
 	}
 
 	@Override
@@ -98,10 +103,14 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 			@Override
 			public void onClick(View v) {
 				Log.d(TAG, "onClick");
-				if (mListenerTutorial != null)
-					mListenerTutorial.loadTutorial();
+//				if (mListenerTutorial != null)
+//					mListenerTutorial.loadTutorial();
+//				else
+//					Log.d(TAG, "mListenerTutorial was null");
+				if (mListenerDevices != null)
+					mListenerDevices.loadDevices();
 				else
-					Log.d(TAG, "mListenerTutorial was null");
+					Log.d(TAG, "mListenerDevices was null");
 			}
 		});
 
@@ -115,9 +124,11 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-			mListenerTutorial = (OnTutorialListener) activity;
+//			mListenerTutorial = (OnTutorialListener) activity;
+			mListenerDevices = (OnDevicesListener) activity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " must implement mListenerTutorial");
+//			throw new ClassCastException(activity.toString() + " must implement mListenerTutorial");
+			throw new ClassCastException(activity.toString() + " must implement mListenerDevices");
 		}
 	}
 

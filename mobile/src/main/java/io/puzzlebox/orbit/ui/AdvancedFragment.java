@@ -19,10 +19,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-//import android.app.Fragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -35,7 +33,6 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.conn.util.InetAddressUtils;
@@ -48,9 +45,11 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-//import io.puzzlebox.orbit.OrbitTabActivity;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
+
+//import android.app.Fragment;
+//import io.puzzlebox.orbit.OrbitTabActivity;
 
 public class AdvancedFragment extends Fragment
 		  implements View.OnClickListener,
@@ -1150,7 +1149,7 @@ public class AdvancedFragment extends Fragment
 
 	public class OrbitControlledDescentTask extends AsyncTask<Integer, Void, Integer> {
 
-		private String TAG = "OrbitControlledDescentTask";
+		private String TAG = "OrbitControlledDescent";
 //		FragmentTabAdvanced fragmentAdvanced;
 		AdvancedFragment fragmentAdvanced;
 
