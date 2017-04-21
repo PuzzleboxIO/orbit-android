@@ -457,7 +457,8 @@ public class OrbitFragment extends Fragment
 		@Override
 		public boolean onMenuItemClick(MenuItem item) {
 
-			Intent i = SessionSingleton.getInstance().getExportSessionIntent(getActivity().getApplicationContext(), item);
+//			Intent i = SessionSingleton.getInstance().getExportSessionIntent(getActivity().getApplicationContext(), item);
+			Intent i = SessionSingleton.getInstance().getExportSessionIntent(getActivity().getApplicationContext());
 
 			if (i != null) {
 				startActivity(i);
