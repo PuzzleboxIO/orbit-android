@@ -9,17 +9,21 @@ android {
 //        minSdkVersion 9 // API 2.3 TODO getActivity()
         minSdkVersion 15 // API 4.0.3
         targetSdkVersion 25
-        versionCode 13
-        versionName "2.2.0"
+        versionCode 14
+        versionName "2.2.1"
+        multiDexEnabled true
     }
     buildTypes {
         release {
             debuggable true
             minifyEnabled false
+//            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    dexOptions {
+        javaMaxHeapSize "2g"
+    }
     useLibrary 'org.apache.http.legacy' // deprecated in Android 6.0
 
 }
@@ -27,8 +31,9 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':jigsaw')
-    wearApp project(':wear')
+//    wearApp project(':wear')
     //    provided files('libs/usb-serial-for-android-v010.jar')
     //    compile 'com.android.support:support-v4:26.0.0-alpha1'
     compile 'com.android.support:support-v4:25.2.0'
+    compile 'com.android.support:multidex:1.0.1'
 }

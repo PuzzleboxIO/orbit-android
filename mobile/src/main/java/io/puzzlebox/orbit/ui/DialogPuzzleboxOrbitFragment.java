@@ -42,6 +42,9 @@ import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
 
 import static android.view.MenuItem.SHOW_AS_ACTION_ALWAYS;
+import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegConnected;
+import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegConnecting;
+import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegSignal;
 
 public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		  implements SeekBar.OnSeekBarChangeListener {
@@ -468,28 +471,28 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //			Log.v(TAG, (new StringBuilder("Connected: ")).append(eegConnected).toString());
 //		}
 //
-//		if(eegPower > 0) {
-//			imageViewStatus.setImageResource(R.drawable.status_4_active);
-//			return;
-//		}
-//
-//		if(eegSignal > 90) {
-//			imageViewStatus.setImageResource(R.drawable.status_3_processing);
-//			return;
-//		}
-//
-//		if(eegConnected) {
-//			imageViewStatus.setImageResource(R.drawable.status_2_connected);
-//			return;
-//		}
-//
-//		if(eegConnecting) {
-//			imageViewStatus.setImageResource(R.drawable.status_1_connecting);
-//			return;
-//		} else {
-//			imageViewStatus.setImageResource(R.drawable.status_default);
-//			return;
-//		}
+		if(eegPower > 0) {
+			imageViewStatus.setImageResource(R.drawable.status_4_active);
+			return;
+		}
+
+		if(eegSignal > 90) {
+			imageViewStatus.setImageResource(R.drawable.status_3_processing);
+			return;
+		}
+
+		if(eegConnected) {
+			imageViewStatus.setImageResource(R.drawable.status_2_connected);
+			return;
+		}
+
+		if(eegConnecting) {
+			imageViewStatus.setImageResource(R.drawable.status_1_connecting);
+			return;
+		} else {
+			imageViewStatus.setImageResource(R.drawable.status_default);
+			return;
+		}
 
 	} // updateStatusImage
 
@@ -698,9 +701,9 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		 * which is used to fly the helicopter
 		 */
 
-		if (ThinkGearService.eegConnected) {
+		if (eegConnected) {
 
-			if (ThinkGearService.eegSignal < 100) {
+			if (eegSignal < 100) {
 				ThinkGearService.eegAttention = 0;
 				ThinkGearService.eegMeditation = 0;
 				progressBarAttention.setProgress(ThinkGearService.eegAttention);
