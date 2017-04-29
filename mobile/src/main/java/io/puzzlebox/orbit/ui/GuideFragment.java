@@ -230,11 +230,14 @@ public class GuideFragment extends TilesFragment {
 
 
 			// Input Icon(s)
-//			layersTile[2] = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
-			layersTemp = new Drawable[2];
+			layersTemp = new Drawable[3];
 			layersTemp[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
 			layersTemp[1] = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
+			layersTemp[2] = r.getDrawable(R.drawable.carousel_joystick);
 			layerDrawable = new LayerDrawable(layersTemp);
+			layerDrawable.setLayerInset(1, 0, 0, layersTemp[1].getIntrinsicWidth(), 0);
+			layerDrawable.setLayerInset(2, layersTemp[1].getIntrinsicWidth(), 0, 0, 0);
+
 
 			layersTile[1] = layerDrawable.getCurrent();
 
@@ -268,7 +271,8 @@ public class GuideFragment extends TilesFragment {
 			layerDrawable = new LayerDrawable(layersTile);
 
 			// Input icon inset
-			layerDrawable.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+//			layerDrawable.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+			layerDrawable.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 2, (int) (tileDimension * tileInputInsetScale));
 			// Output icon inset
 			layerDrawable.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
 			// Profile icon inset
