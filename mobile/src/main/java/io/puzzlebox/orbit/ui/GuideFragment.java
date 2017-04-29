@@ -1,12 +1,18 @@
 package io.puzzlebox.orbit.ui;
 
-import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +20,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.HashMap;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import io.puzzlebox.jigsaw.data.ProfileSingleton;
 import io.puzzlebox.jigsaw.ui.DialogAudioIRFragment;
@@ -28,6 +35,11 @@ import io.puzzlebox.orbit.R;
 public class GuideFragment extends TilesFragment {
 
 	private static final String TAG = GuideFragment.class.getSimpleName();
+
+//	double tileProfileInsetScale = 1.2;
+	double tileProfileInsetScale = 1.5;
+	double tileInputInsetScale = 8.0;
+	double tileOutputInsetScale = 8.0;
 
 	/**
 	 * Number of items visible in carousels.
@@ -45,12 +57,14 @@ public class GuideFragment extends TilesFragment {
 	TypedArray devicesOutputResourcesTypedArray;
 	TypedArray devicesProfileResourcesTypedArray;
 
-	TextView carouselDevicesOutputTextView;
-	LinearLayout carouselDevicesOutput;
-	TextView carouselDevicesProfileTextView;
-	LinearLayout carouselDevicesProfile;
+	private TextView carouselDevicesInputTextView;
+	private TextView carouselDevicesOutputTextView;
+	private TextView carouselDevicesProfileTextView;
 
-	int imageWidth;
+//	LinearLayout carouselDevicesOutput;
+//	LinearLayout carouselDevicesProfile;
+
+	int tileDimension;
 
 	private OnFragmentInteractionListener mListener;
 
@@ -67,14 +81,14 @@ public class GuideFragment extends TilesFragment {
 		// Get reference to carousel container
 		mInputCarouselContainer = (LinearLayout) v.findViewById(io.puzzlebox.jigsaw.R.id.carousel_devices_input);
 		mOutputCarouselContainer = (LinearLayout) v.findViewById(io.puzzlebox.jigsaw.R.id.carousel_devices_output);
-		mProfileCarouselContainer = (LinearLayout) v.findViewById(io.puzzlebox.jigsaw.R.id.carousel_device_profile);
+		mProfileCarouselContainer = (LinearLayout) v.findViewById(io.puzzlebox.jigsaw.R.id.carousel_devices_profile);
 
 
 		// Compute the width of a carousel item based on the screen width and number of initial items.
 		final DisplayMetrics displayMetrics = new DisplayMetrics();
 		getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-//		final int imageWidth = (int) (displayMetrics.widthPixels / INITIAL_ITEMS_COUNT);
-		imageWidth = (int) (displayMetrics.widthPixels / INITIAL_ITEMS_COUNT);
+//		final int tileDimension = (int) (displayMetrics.widthPixels / INITIAL_ITEMS_COUNT);
+		tileDimension = (int) (displayMetrics.widthPixels / INITIAL_ITEMS_COUNT);
 
 		// Get the array of input devices resources
 //		final TypedArray devicesInputResourcesTypedArray = getResources().obtainTypedArray(io.puzzlebox.jigsaw.R.array.devices_input_icon_array);
@@ -88,10 +102,12 @@ public class GuideFragment extends TilesFragment {
 		devicesProfileResourcesTypedArray = getResources().obtainTypedArray(io.puzzlebox.jigsaw.R.array.devices_profile_array);
 
 
-		carouselDevicesOutput = (LinearLayout) v. findViewById(R.id.carousel_devices_output);
+		carouselDevicesInputTextView = (TextView) v. findViewById(R.id.carousel_devices_input_textview);
 		carouselDevicesOutputTextView = (TextView) v. findViewById(R.id.carousel_devices_output_textview);
-		carouselDevicesProfile = (LinearLayout) v. findViewById(R.id.carousel_device_profile);
 		carouselDevicesProfileTextView = (TextView) v. findViewById(R.id.carousel_device_profile_textview);
+
+//		carouselDevicesOutput = (LinearLayout) v. findViewById(R.id.carousel_devices_output);
+//		carouselDevicesProfile = (LinearLayout) v. findViewById(R.id.carousel_device_profile);
 
 
 		displayInputCarousel();
@@ -108,6 +124,8 @@ public class GuideFragment extends TilesFragment {
 	public void displayInputCarousel() {
 
 		ImageView imageItem;
+
+		mInputCarouselContainer.removeAllViewsInLayout();
 
 		// Populate the input devices carousel with items
 
@@ -126,7 +144,7 @@ public class GuideFragment extends TilesFragment {
 //			imageItem.setImageResource(ProfileSingleton.getInstance().inputs.get(i).get("icon"));
 
 			// Set the size of the image view to the previously computed value
-			imageItem.setLayoutParams(new LinearLayout.LayoutParams(imageWidth, imageWidth));
+			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
 
 			imageItem.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -145,31 +163,8 @@ public class GuideFragment extends TilesFragment {
 
 		mInputCarouselContainer.setEnabled(true);
 		mInputCarouselContainer.setVisibility(View.VISIBLE);
-//		carouselDevicesInputTextView.setEnabled(true);
-//		carouselDevicesInputTextView.setVisibility(View.VISIBLE);
-
-
-//		for (HashMap<String, String> data : ProfileSingleton.getInstance().inputs) {
-//			imageItem = new ImageView(getActivity());
-//			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
-////			imageItem.setImageResource(devicesOutputResourcesTypedArray.getResourceId(i, -1));
-//			imageItem.setImageResource( g );
-//			imageItem.setLayoutParams(new LinearLayout.LayoutParams(imageWidth, imageWidth));
-//
-//			final int index = i;
-//			imageItem.setOnClickListener(new View.OnClickListener() {
-//				@Override
-//				public void onClick(View v) {
-//					showDialog("output", index);
-//				}
-//			});
-//
-//			TileViewAnimator tileViewAnimator = new TileViewAnimator(getContext());
-//			tileViewAnimator.addView(imageItem);
-//
-////			mOutputCarouselContainer.addView(imageItem);
-//			mOutputCarouselContainer.addView(tileViewAnimator);
-//		}
+		carouselDevicesInputTextView.setEnabled(true);
+		carouselDevicesInputTextView.setVisibility(View.VISIBLE);
 
 	}
 
@@ -178,12 +173,14 @@ public class GuideFragment extends TilesFragment {
 
 		ImageView imageItem;
 
+		mOutputCarouselContainer.removeAllViewsInLayout();
+
 		// Populate the output devices carousel with items
 		for (int i = 0; i < devicesOutputResourcesTypedArray.length(); ++i) {
 			imageItem = new ImageView(getActivity());
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
 			imageItem.setImageResource(devicesOutputResourcesTypedArray.getResourceId(i, -1));
-			imageItem.setLayoutParams(new LinearLayout.LayoutParams(imageWidth, imageWidth));
+			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
 
 			final int index = i;
 			imageItem.setOnClickListener(new View.OnClickListener() {
@@ -211,46 +208,94 @@ public class GuideFragment extends TilesFragment {
 	public void displayProfileCarousel() {
 
 		ImageView imageItem;
+		Resources r = getResources();
+		Drawable[] layers;
+
+		mProfileCarouselContainer.removeAllViewsInLayout();
 
 		// Populate the device profile carousel with items
 		for (int i = 0 ; i < devicesProfileResourcesTypedArray.length() ; ++i) {
 			imageItem = new ImageView(getActivity());
+
+
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
 
-//			imageItem.setImageResource(devicesProfileResourcesTypedArray.getResourceId(i, -1));
 
-			Log.e(TAG, "ProfileSingleton.getInstance().profiles.get(i).get(\"icon\"): " + ProfileSingleton.getInstance().profiles.get(i).get("icon"));
-//			Log.e(TAG, "ProfileSingleton.getInstance().profiles.get(i).get(\"icon\"): " + ProfileSingleton.getInstance().profiles.get(i).get("icon").split("res/drawable/")[1]);
+			layers = new Drawable[4];
 
-//			imageItem.setImageResource(ProfileSingleton.getInstance().inputs.get(i).get("icon"));
-//			imageItem.setImageResource( ProfileSingleton.getAndroidDrawable(
+			// Background/Highlight Color
+//			layers[0] = new ColorDrawable( getResources().getColor(R.color.white));
+			layers[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
+//			layers[0] = new ColorDrawable( getResources().getColor(R.color.tileRequired));
 
 
+			// Profile Icon
+			//Log.d(TAG, "ProfileSingleton.getInstance().profiles.get(i).get(\"icon\"): " + ProfileSingleton.getInstance().profiles.get(i).get("icon"));
 
 			int resource = ProfileSingleton.getInstance().getId(
-//					  ProfileSingleton.getInstance().profiles.get(i).get("icon").split("res/drawable/")[1], io.puzzlebox.jigsaw.R.drawable.class);
 					  ProfileSingleton.getInstance().profiles.get(i).get("icon"), io.puzzlebox.jigsaw.R.drawable.class);
 
-
-
-//			Uri imagePath = Uri.parse(
-//					  ProfileSingleton.getInstance().profiles.get(i).get("icon"));
-
-//			Uri imagePath = Uri.parse("android.resource://io.puzzlebox.jigsaw/" + resource);
 			Uri imagePath = Uri.parse("android.resource://io.puzzlebox.orbit/" + resource);
 
-			imageItem.setImageURI(imagePath);
-
-// 			imageItem.setImageDrawable( ProfileSingleton.getAndroidDrawable(
-//					  ProfileSingleton.getInstance().profiles.get(i).get("icon")));
-
-
-
-//					  .inputs.get(i).get("icon"));
-
+			try {
+				InputStream inputStream = getContext().getContentResolver().openInputStream(imagePath);
+				layers[1] = Drawable.createFromStream(inputStream, imagePath.toString() );
+			} catch (FileNotFoundException e) {
+//				layers[1] = getResources().getDrawable(R.drawable.default_image);
+				Log.e(TAG, "Error parsing Drawable: " + e.getStackTrace());
+			}
 
 
-			imageItem.setLayoutParams(new LinearLayout.LayoutParams(imageWidth, imageWidth));
+			layers[2] = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
+//			Drawable mDrawable = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
+////			layers[1] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
+////			LayerDrawable layerDrawable = new LayerDrawable(layers);
+////			imageItem.setImageDrawable(layerDrawable);
+//
+//
+////			layers[0] = layers[0];
+//
+////			layers[0].setBounds(0, 0, (int)(layers[0].getIntrinsicWidth()*0.5),
+////					  (int)(layers[0].getIntrinsicHeight()*0.5));
+//
+////			layers[0].setBounds(0, 0,
+////					  (int)(layers[0].getIntrinsicWidth()*0.2),
+////					  (int)(layers[0].getIntrinsicHeight()*0.2));
+//			mDrawable.setBounds(0, 0,
+//					  (int)(mDrawable.getIntrinsicWidth()*0.2f),
+//					  (int)(mDrawable.getIntrinsicHeight()*0.2f));
+//
+////			drawable.setBounds(0, 0, drawable.getIntrinsicWidth()*0.5, drawable.getIntrinsicHeight()*0.5);
+//
+//			ScaleDrawable sd = new ScaleDrawable(mDrawable, 0, scaleWidth, scaleHeight);
+//
+////			sd.setLevel(10000);
+//
+////			layers[0] = sd.getDrawable();
+//			layers[0] = mDrawable;
+
+
+			layers[3] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
+
+
+			LayerDrawable layerDrawable = new LayerDrawable(layers);
+
+
+			// Profile Icon
+			layerDrawable.setLayerInset(1, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+			// Input Icon
+			layerDrawable.setLayerInset(2, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+			// Output Icon
+			layerDrawable.setLayerInset(3, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+
+
+			imageItem.setImageDrawable(layerDrawable);
+////			imageItem.setImageDrawable(sd.getDrawable());
+//			imageItem.setImageDrawable(scaleImage(layerDrawable, 0.1f));
+
+
+			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
+
 
 			final int index = i;
 			imageItem.setOnClickListener(new View.OnClickListener() {
@@ -348,6 +393,25 @@ public class GuideFragment extends TilesFragment {
 		}
 	}
 
+
+	public Drawable scaleImage (Drawable image, float scaleFactor) {
+
+		if ((image == null) || !(image instanceof BitmapDrawable)) {
+			return image;
+		}
+
+		Bitmap b = ((BitmapDrawable)image).getBitmap();
+
+		int sizeX = Math.round(image.getIntrinsicWidth() * scaleFactor);
+		int sizeY = Math.round(image.getIntrinsicHeight() * scaleFactor);
+
+		Bitmap bitmapResized = Bitmap.createScaledBitmap(b, sizeX, sizeY, false);
+
+		image = new BitmapDrawable(getResources(), bitmapResized);
+
+		return image;
+
+	}
 
 
 
