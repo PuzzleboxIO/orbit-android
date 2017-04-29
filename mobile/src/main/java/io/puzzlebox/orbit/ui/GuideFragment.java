@@ -209,7 +209,9 @@ public class GuideFragment extends TilesFragment {
 
 		ImageView imageItem;
 		Resources r = getResources();
-		Drawable[] layers;
+		Drawable[] layersTile;
+		Drawable[] layersTemp;
+		LayerDrawable layerDrawable;
 
 		mProfileCarouselContainer.removeAllViewsInLayout();
 
@@ -217,16 +219,33 @@ public class GuideFragment extends TilesFragment {
 		for (int i = 0 ; i < devicesProfileResourcesTypedArray.length() ; ++i) {
 			imageItem = new ImageView(getActivity());
 
-
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
 
-
-			layers = new Drawable[4];
+			layersTile = new Drawable[4];
 
 			// Background/Highlight Color
-//			layers[0] = new ColorDrawable( getResources().getColor(R.color.white));
-			layers[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
-//			layers[0] = new ColorDrawable( getResources().getColor(R.color.tileRequired));
+//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.white));
+			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
+//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileRequired));
+
+
+			// Input Icon(s)
+//			layersTile[2] = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
+			layersTemp = new Drawable[2];
+			layersTemp[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
+			layersTemp[1] = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
+			layerDrawable = new LayerDrawable(layersTemp);
+
+			layersTile[1] = layerDrawable.getCurrent();
+
+
+			// Output Icon(s)
+			layersTemp = new Drawable[2];
+			layersTemp[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
+			layersTemp[1] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
+			layerDrawable = new LayerDrawable(layersTemp);
+
+			layersTile[2] = layerDrawable.getCurrent();
 
 
 			// Profile Icon
@@ -239,59 +258,23 @@ public class GuideFragment extends TilesFragment {
 
 			try {
 				InputStream inputStream = getContext().getContentResolver().openInputStream(imagePath);
-				layers[1] = Drawable.createFromStream(inputStream, imagePath.toString() );
+				layersTile[3] = Drawable.createFromStream(inputStream, imagePath.toString() );
 			} catch (FileNotFoundException e) {
-//				layers[1] = getResources().getDrawable(R.drawable.default_image);
+//				layersTile[1] = getResources().getDrawable(R.drawable.default_image);
 				Log.e(TAG, "Error parsing Drawable: " + e.getStackTrace());
 			}
 
 
-			layers[2] = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
-//			Drawable mDrawable = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
-////			layers[1] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
-////			LayerDrawable layerDrawable = new LayerDrawable(layers);
-////			imageItem.setImageDrawable(layerDrawable);
-//
-//
-////			layers[0] = layers[0];
-//
-////			layers[0].setBounds(0, 0, (int)(layers[0].getIntrinsicWidth()*0.5),
-////					  (int)(layers[0].getIntrinsicHeight()*0.5));
-//
-////			layers[0].setBounds(0, 0,
-////					  (int)(layers[0].getIntrinsicWidth()*0.2),
-////					  (int)(layers[0].getIntrinsicHeight()*0.2));
-//			mDrawable.setBounds(0, 0,
-//					  (int)(mDrawable.getIntrinsicWidth()*0.2f),
-//					  (int)(mDrawable.getIntrinsicHeight()*0.2f));
-//
-////			drawable.setBounds(0, 0, drawable.getIntrinsicWidth()*0.5, drawable.getIntrinsicHeight()*0.5);
-//
-//			ScaleDrawable sd = new ScaleDrawable(mDrawable, 0, scaleWidth, scaleHeight);
-//
-////			sd.setLevel(10000);
-//
-////			layers[0] = sd.getDrawable();
-//			layers[0] = mDrawable;
+			layerDrawable = new LayerDrawable(layersTile);
 
-
-			layers[3] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
-
-
-			LayerDrawable layerDrawable = new LayerDrawable(layers);
-
-
-			// Profile Icon
-			layerDrawable.setLayerInset(1, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
-			// Input Icon
-			layerDrawable.setLayerInset(2, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
-			// Output Icon
-			layerDrawable.setLayerInset(3, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
-
+			// Input icon inset
+			layerDrawable.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+			// Output icon inset
+			layerDrawable.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+			// Profile icon inset
+			layerDrawable.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
 
 			imageItem.setImageDrawable(layerDrawable);
-////			imageItem.setImageDrawable(sd.getDrawable());
-//			imageItem.setImageDrawable(scaleImage(layerDrawable, 0.1f));
 
 
 			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
@@ -307,7 +290,6 @@ public class GuideFragment extends TilesFragment {
 
 			TileViewAnimator tileViewAnimator = new TileViewAnimator(getContext());
 			tileViewAnimator.addView(imageItem);
-//			mProfileCarouselContainer.addView(imageItem);
 			mProfileCarouselContainer.addView(tileViewAnimator);
 		}
 
