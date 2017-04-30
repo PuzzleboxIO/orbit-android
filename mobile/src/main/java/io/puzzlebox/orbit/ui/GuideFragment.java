@@ -3,6 +3,8 @@ package io.puzzlebox.orbit.ui;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -36,7 +38,7 @@ public class GuideFragment extends TilesFragment {
 
 	private static final String TAG = GuideFragment.class.getSimpleName();
 
-//	double tileProfileInsetScale = 1.2;
+	//	double tileProfileInsetScale = 1.2;
 	double tileProfileInsetScale = 1.5;
 	double tileInputInsetScale = 8.0;
 	double tileOutputInsetScale = 8.0;
@@ -210,8 +212,19 @@ public class GuideFragment extends TilesFragment {
 		ImageView imageItem;
 		Resources r = getResources();
 		Drawable[] layersTile;
-		Drawable[] layersTemp;
-		LayerDrawable layerDrawable;
+		Drawable[] layersInput;
+		Drawable[] layersOutput;
+//		Drawable[] layersProfile;
+		LayerDrawable layerDrawableTile;
+		LayerDrawable layerDrawableInput;
+		LayerDrawable layerDrawableOutput;
+//		LayerDrawable layerDrawableProfile;
+
+		String id;
+		String[] inputArray;
+		String[] outputArray;
+		int resource;
+		Uri resourcePath;
 
 		mProfileCarouselContainer.removeAllViewsInLayout();
 
@@ -221,64 +234,215 @@ public class GuideFragment extends TilesFragment {
 
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
 
+
+
+			id = devicesProfileResourcesTypedArray.getString(i);
+			resource =  getResources().getIdentifier(id + "_input", "array", getActivity().getPackageName());
+			inputArray = getResources().getStringArray(resource);
+
+//			Log.e(TAG, "array: " + getResources().getStringArray(resource));
+
+			for (int j = 0 ; j < inputArray.length ; ++j) {
+
+				Log.e(TAG, "input device: " + inputArray[j]);
+
+			}
+
+
+
+//			id = devicesProfileResourcesTypedArray.getString(i);
+			resource =  getResources().getIdentifier(id + "_output", "array", getActivity().getPackageName());
+			outputArray = getResources().getStringArray(resource);
+
+			for (int j = 0 ; j < outputArray.length ; ++j) {
+
+				Log.e(TAG, "output device: " + outputArray[j]);
+
+			}
+
+//
+////			resource = ProfileSingleton.getInstance().getId(
+////					  ProfileSingleton.getInstance().profiles.get(i).get("input"), String[].class);
+//			resource = ProfileSingleton.getInstance().getId(
+//					  id + "_input", String[].class);
+//
+//			resourcePath = Uri.parse("android.resource://io.puzzlebox.orbit/" + resource);
+////			resourcePath = Uri.parse("android.resource://io.puzzlebox.jigsaw/" + resource);
+//
+//			Log.e(TAG, "resourcePath: " + resourcePath);
+//
+////			inputArray =  getString(resourcePath);
+
+
+
+
 			layersTile = new Drawable[4];
 
 			// Background/Highlight Color
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.white));
-			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
+			layersTile[0] = new ColorDrawable(Color.TRANSPARENT);
+//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileRequired));
 
 
 			// Input Icon(s)
-			layersTemp = new Drawable[3];
-			layersTemp[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
-			layersTemp[1] = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
-			layersTemp[2] = r.getDrawable(R.drawable.carousel_joystick);
-			layerDrawable = new LayerDrawable(layersTemp);
-			layerDrawable.setLayerInset(1, 0, 0, layersTemp[1].getIntrinsicWidth(), 0);
-			layerDrawable.setLayerInset(2, layersTemp[1].getIntrinsicWidth(), 0, 0, 0);
+			layersInput = new Drawable[5];
+			layersInput[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
+			layersInput[1] = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
+			layersInput[2] = r.getDrawable(R.drawable.carousel_joystick);
+			layersInput[3] = r.getDrawable(R.drawable.carousel_watch_android);
+//			layersInput[4] = r.getDrawable(R.mipmap.ic_session_color);
+			layersInput[4] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit);
+//			layersInput[4] = r.getDrawable(R.drawable.carousel_openbci_cyton_8_channel);
+//			layersInput[4] = new ColorDrawable(Color.TRANSPARENT);
+			layersInput[4].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+			layerDrawableInput = new LayerDrawable(layersInput);
 
 
-			layersTile[1] = layerDrawable.getCurrent();
+//			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[1].getIntrinsicWidth(), 0);
+//			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, 0, 0);
+//			layerDrawableInput.setLayerInset(3, layersInput[1].getIntrinsicWidth(), 0, 0, 0);
+
+
+			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[2].getIntrinsicWidth() + layersInput[3].getIntrinsicWidth() + layersInput[4].getIntrinsicWidth(), 0);
+			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, layersInput[3].getIntrinsicWidth() + layersInput[4].getIntrinsicWidth(), 0);
+			layerDrawableInput.setLayerInset(3, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth(), 0, layersInput[4].getIntrinsicWidth(), 0);
+			layerDrawableInput.setLayerInset(4, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth() + layersInput[3].getIntrinsicWidth(), 0, 0, 0);
+
+
+////			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[1].getIntrinsicWidth() * 3, 0);
+//			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[1].getIntrinsicWidth(), 0);
+////			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth(), 0);
+////			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth(), 0);
+////			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, layersInput[1].getIntrinsicWidth() * 2, 0);
+////			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, layersInput[2].getIntrinsicWidth(), 0);
+////			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth(), 0, 0, 0);
+//			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, 0, 0);
+////			layerDrawableInput.setLayerInset(3, layersInput[1].getIntrinsicWidth() * 2, 0, layersInput[1].getIntrinsicWidth(), 0);
+//			layerDrawableInput.setLayerInset(3, layersInput[1].getIntrinsicWidth(), 0, 0, 0);
+////			layerDrawableInput.setLayerInset(4, layersInput[1].getIntrinsicWidth() * 3, 0, 0, 0);
+
+//			layerDrawableInput.set
+
+			layersTile[1] = layerDrawableInput.getCurrent();
+
+
+//			// Output Icon(s)
+////			layersOutput = new Drawable[2];
+//			layersOutput = new Drawable[5];
+//			layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
+////			layersOutput[0] = new ColorDrawable(Color.TRANSPARENT);
+//
+//			layersOutput[1] = new ColorDrawable(Color.TRANSPARENT);
+//			layersOutput[1].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+//			layersOutput[2] = new ColorDrawable(Color.TRANSPARENT);
+//			layersOutput[2].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+//			layersOutput[3] = new ColorDrawable(Color.TRANSPARENT);
+//			layersOutput[3].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+//
+//			layersOutput[4] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
+//
+////			layersOutput[1] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
+//			layerDrawableOutput = new LayerDrawable(layersOutput);
+//
+//
+////			layerDrawableOutput.setLayerInset(4, layersOutput[1].getIntrinsicWidth() + layersOutput[2].getIntrinsicWidth() + layersOutput[3].getIntrinsicWidth(), 0, 0, 0);
+////			layerDrawableOutput.setLayerInset(4, tileDimension * 3, 0, 0, 0);
+//			layerDrawableOutput.setLayerInset(0, layersOutput[4].getIntrinsicWidth() * 3, 0, 0, 0);
+//			layerDrawableOutput.setLayerInset(4, layersOutput[4].getIntrinsicWidth() * 3, 0, 0, 0);
 
 
 			// Output Icon(s)
-			layersTemp = new Drawable[2];
-			layersTemp[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
-			layersTemp[1] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
-			layerDrawable = new LayerDrawable(layersTemp);
+			layersOutput = new Drawable[2];
+//			layersOutput = new Drawable[5];
+			layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
+//			layersOutput[0] = new ColorDrawable(Color.TRANSPARENT);
 
-			layersTile[2] = layerDrawable.getCurrent();
+//			layersOutput[1] = new ColorDrawable(Color.TRANSPARENT);
+//			layersOutput[1].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+//			layersOutput[2] = new ColorDrawable(Color.TRANSPARENT);
+//			layersOutput[2].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+//			layersOutput[3] = new ColorDrawable(Color.TRANSPARENT);
+//			layersOutput[3].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+//
+//			layersOutput[4] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
+
+			layersOutput[1] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
+
+			layerDrawableOutput = new LayerDrawable(layersOutput);
+
+
+////			layerDrawableOutput.setLayerInset(4, layersOutput[1].getIntrinsicWidth() + layersOutput[2].getIntrinsicWidth() + layersOutput[3].getIntrinsicWidth(), 0, 0, 0);
+////			layerDrawableOutput.setLayerInset(4, tileDimension * 3, 0, 0, 0);
+//			layerDrawableOutput.setLayerInset(0, layersOutput[4].getIntrinsicWidth() * 3, 0, 0, 0);
+			layerDrawableOutput.setLayerInset(0, tileDimension * 4, 0, 0, 0);
+//			layerDrawableOutput.setLayerInset(4, layersOutput[4].getIntrinsicWidth() * 3, 0, 0, 0);
+//			layerDrawableOutput.setLayerInset(1, tileDimension, 0, tileDimension * 2, 0);
+//			layerDrawableOutput.setLayerInset(1, tileDimension * 3 , 0, tileDimension, 0);
+			layerDrawableOutput.setLayerInset(1, tileDimension * 4 , 0, 0, 0);
+
+
+
+			layersTile[2] = layerDrawableOutput.getCurrent();
 
 
 			// Profile Icon
 			//Log.d(TAG, "ProfileSingleton.getInstance().profiles.get(i).get(\"icon\"): " + ProfileSingleton.getInstance().profiles.get(i).get("icon"));
 
-			int resource = ProfileSingleton.getInstance().getId(
+			resource = ProfileSingleton.getInstance().getId(
 					  ProfileSingleton.getInstance().profiles.get(i).get("icon"), io.puzzlebox.jigsaw.R.drawable.class);
 
-			Uri imagePath = Uri.parse("android.resource://io.puzzlebox.orbit/" + resource);
+			resourcePath = Uri.parse("android.resource://io.puzzlebox.orbit/" + resource);
 
 			try {
-				InputStream inputStream = getContext().getContentResolver().openInputStream(imagePath);
-				layersTile[3] = Drawable.createFromStream(inputStream, imagePath.toString() );
+				InputStream inputStream = getContext().getContentResolver().openInputStream(resourcePath);
+				layersTile[3] = Drawable.createFromStream(inputStream, resourcePath.toString() );
 			} catch (FileNotFoundException e) {
-//				layersTile[1] = getResources().getDrawable(R.drawable.default_image);
+//				layersTile[3] = getResources().getDrawable(R.drawable.default_image);
 				Log.e(TAG, "Error parsing Drawable: " + e.getStackTrace());
 			}
 
 
-			layerDrawable = new LayerDrawable(layersTile);
+			layerDrawableTile = new LayerDrawable(layersTile);
 
-			// Input icon inset
-//			layerDrawable.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
-			layerDrawable.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 2, (int) (tileDimension * tileInputInsetScale));
-			// Output icon inset
-			layerDrawable.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
-			// Profile icon inset
-			layerDrawable.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
 
-			imageItem.setImageDrawable(layerDrawable);
+			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale * 1.575));
+			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale * 1.575), 0, 0);
+			layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 5, (int) (tileDimension * tileInputInsetScale * 1.52));
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 5, (int) (tileDimension * tileInputInsetScale * 1.52));
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale));
+//			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale * 1.575));
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 5, (int) (tileDimension * tileProfileInsetScale));
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 5, (int) (tileDimension * tileInputInsetScale + (tileDimension * tileProfileInsetScale)));
+////			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale) / 5, (int) (tileDimension * tileOutputInsetScale * 1.5), 0, 0);
+////			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale * 1.5), 0, 0);
+////			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+////			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+//			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale * 1.575), 0, 0);
+//			layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+
+
+//			// Input icon inset
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale));
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale * 1.6));
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale * 1.5));
+//			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 5, (int) (tileDimension * tileInputInsetScale * 1.5));
+////			layerDrawableTile.setLayerInset(2, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale));
+//			// Output icon inset
+////			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+////			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale) / 4, (int) (tileDimension * tileOutputInsetScale * 1.6), 0, 0);
+////			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale) / 4, (int) (tileDimension * tileOutputInsetScale * 1.5), 0, 0);
+//			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale) / 5, (int) (tileDimension * tileOutputInsetScale * 1.5), 0, 0);
+////			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale * 1.6), 0, 0);
+//			// Profile icon inset
+//			layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+
+
+			imageItem.setImageDrawable(layerDrawableTile);
 
 
 			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
