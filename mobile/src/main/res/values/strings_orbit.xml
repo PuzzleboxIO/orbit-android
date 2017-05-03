@@ -10,7 +10,8 @@
     <string name="title_fragment_orbit">Flight</string>
     <string name="title_fragment_steering">Steering</string>
     <string name="title_fragment_settings">Settings</string>
-    <string name="title_fragment_support">Support</string>
+    <!--<string name="title_fragment_support">Support</string>-->
+    <string name="title_fragment_support">Feedback</string>
     <string name="title_fragment_credits">Credits</string>
 
     <string name="welcome_message">Welcome to Puzzlebox Orbit</string>

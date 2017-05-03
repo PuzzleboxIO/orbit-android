@@ -20,14 +20,14 @@ import io.puzzlebox.jigsaw.ui.DialogJoystickFragment;
 import io.puzzlebox.jigsaw.ui.DialogNeuroSkyMindWaveFragment;
 import io.puzzlebox.jigsaw.ui.DialogSessionFragment;
 import io.puzzlebox.jigsaw.ui.DrawerItem;
-import io.puzzlebox.jigsaw.ui.EEGFragment;
-import io.puzzlebox.jigsaw.ui.SessionFragment;
+//import io.puzzlebox.jigsaw.ui.EEGFragment;
+//import io.puzzlebox.jigsaw.ui.SessionFragment;
 import io.puzzlebox.jigsaw.ui.SupportFragment;
 import io.puzzlebox.orbit.ui.DialogPuzzleboxOrbitFragment;
-import io.puzzlebox.orbit.ui.SteeringFragment;
-import io.puzzlebox.orbit.ui.AdvancedFragment;
+//import io.puzzlebox.orbit.ui.SteeringFragment;
+//import io.puzzlebox.orbit.ui.AdvancedFragment;
 import io.puzzlebox.orbit.ui.CreditsFragment;
-import io.puzzlebox.orbit.ui.OrbitFragment;
+//import io.puzzlebox.orbit.ui.OrbitFragment;
 import io.puzzlebox.orbit.ui.GuideFragment;
 import io.puzzlebox.orbit.ui.TutorialFragment;
 import io.puzzlebox.orbit.ui.WelcomeFragment;
@@ -110,8 +110,10 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 //		dataList.add(new DrawerItem(getString(R.string.title_fragment_orbit), R.mipmap.ic_orbit));
 ////		dataList.add(new DrawerItem(getString(R.string.title_fragment_steering), R.mipmap.ic_joystick));
 ////		dataList.add(new DrawerItem(getString(R.string.title_fragment_settings), R.mipmap.ic_settings));
-		dataList.add(new DrawerItem(getString(R.string.title_fragment_tutorial), R.mipmap.ic_brain));
-		dataList.add(new DrawerItem(getString(R.string.title_fragment_support), io.puzzlebox.jigsaw.R.mipmap.ic_support));
+//		dataList.add(new DrawerItem(getString(R.string.title_fragment_tutorial), R.mipmap.ic_brain));
+		dataList.add(new DrawerItem(getString(R.string.title_fragment_tutorial), R.mipmap.ic_support));
+//		dataList.add(new DrawerItem(getString(R.string.title_fragment_support), io.puzzlebox.jigsaw.R.mipmap.ic_support));
+		dataList.add(new DrawerItem(getString(R.string.title_fragment_support), io.puzzlebox.jigsaw.R.mipmap.ic_brain));
 		dataList.add(new DrawerItem(getString(R.string.title_fragment_credits), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
 
 
