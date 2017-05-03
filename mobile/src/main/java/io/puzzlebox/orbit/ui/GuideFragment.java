@@ -233,11 +233,11 @@ public class GuideFragment extends TilesFragment {
 
 			// Background/Highlight Color
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.white));
-//			layersTile[0] = new ColorDrawable(Color.TRANSPARENT); // TODO
+			layersTile[0] = new ColorDrawable(Color.TRANSPARENT); // TODO
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileRequired));
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileAvailable));
-			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileDisabled));
+//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileDisabled));
 
 
 			id = devicesProfileResourcesTypedArray.getString(i);
