@@ -37,17 +37,6 @@
             android:background="@color/WhiteTint"
             android:orientation="horizontal">
 
-            <!--<LinearLayout-->
-            <!--android:id="@+id/linearLayoutLogo"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:minHeight="48dp"-->
-            <!--android:maxHeight="178dp"-->
-            <!--android:background="@color/WhiteTint">-->
-            <!--&lt;!&ndash;android:paddingLeft="32dp"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:paddingRight="32dp"&ndash;&gt;-->
-
             <ImageView
                 android:id="@+id/imageViewLogo"
                 android:layout_width="match_parent"
@@ -55,66 +44,6 @@
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/puzzlebox_logo"
                 />
-
-            <!--<ImageView-->
-            <!--android:id="@+id/imageViewLogo"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/puzzlebox_logo"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:layout_marginTop="4dp"-->
-            <!--android:layout_marginBottom="4dp"-->
-            <!--/>-->
-            <!--android:scaleType="fitCenter"-->
-            <!--android:scaleType="centerInside"-->
-            <!--android:paddingLeft="16dp"-->
-            <!--android:paddingRight="16dp"-->
-            <!--android:minHeight="160dp"-->
-
-            <!--<ImageView-->
-            <!--android:id="@+id/imageView"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:layout_marginBottom="0dp"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:layout_marginTop="0dp"-->
-            <!--android:scaleType="fitCenter"-->
-            <!--android:src="@drawable/puzzlebox_logo"/>-->
-            <!--&lt;!&ndash;android:minHeight="170dp"&ndash;&gt;-->
-
-            <!--<ImageView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/imageView"-->
-            <!--android:src="@drawable/puzzlebox_logo"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:layout_marginTop="-42dp"-->
-            <!--android:layout_marginBottom="-42dp"/>-->
-
-            <!--<ImageView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/imageView"-->
-            <!--android:src="@drawable/puzzlebox_logo"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:layout_marginTop="-32dp"-->
-            <!--android:layout_marginBottom="-16dp"/>-->
-
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/welcome_message"-->
-            <!--android:id="@+id/textView"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:textSize="24sp" />-->
 
         </LinearLayout>
 
@@ -141,7 +70,6 @@
             android:layout_gravity="center_horizontal"
             android:id="@+id/layoutWelcomeMessage"
             >
-
             <!--android:background="@color/WhiteTint">-->
 
             <TextView

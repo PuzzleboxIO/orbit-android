@@ -111,16 +111,6 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 			}
 		});
 
-//		layoutParams = new LinearLayout.LayoutParams(
-//				  LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-////		layoutParams.setMargins(16, 2, 16, 2);
-////		layoutParams.setMargins(16, 4, 16, 2);
-////		layoutParams.gravity(Gravity.CENTER_HORIZONTAL);
-////		layoutParams.setMargins(6, 2, 6, 2);
-//		llWelcomeMessage.setLayoutParams(layoutParams);
-//		llWelcomeMessage.setGravity(Gravity.CENTER);
-//		llWelcomeMessage.setWeightSum(1.0f);
-
 
 		RelativeLayout relativeLayoutWelcome = (RelativeLayout) v.findViewById(R.id.relativeLayoutWelcome);
 		relativeLayoutWelcome.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +133,7 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 		imageViewLogo.setLayoutParams(layoutParams);
 
 
-		// Set logo banner to ~20% of verticle screen size
+		// Set logo banner to ~15% of verticle screen size
 //		int newHeight = (int) (0.20 * ConfigurationSingleton.getInstance().displayHeight);
 		int newHeight = (int) (0.15 * ConfigurationSingleton.getInstance().displayHeight);
 		Log.d(TAG, "newHeight: " + newHeight);
