@@ -38,10 +38,11 @@ public class GuideFragment extends TilesFragment {
 
 	private static final String TAG = GuideFragment.class.getSimpleName();
 
-	//	double tileProfileInsetScale = 1.2;
-	double tileProfileInsetScale = 1.5;
 	double tileInputInsetScale = 8.0;
 	double tileOutputInsetScale = 8.0;
+//	double tileProfileInsetScale = 1.2;
+//	double tileProfileInsetScale = 1.5;
+	double tileProfileInsetScale = 0.1;
 
 	/**
 	 * Number of items visible in carousels.
@@ -142,7 +143,9 @@ public class GuideFragment extends TilesFragment {
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
 
 			// Set the image view resource
-			imageItem.setImageResource(devicesInputResourcesTypedArray.getResourceId(i, -1));
+//			imageItem.setImageResource(devicesInputResourcesTypedArray.getResourceId(i, -1));
+			imageItem.setImageResource(
+					  getResources().getIdentifier(devicesInputResourcesTypedArray.getString(i), "drawable", getActivity().getPackageName()));
 //			imageItem.setImageResource(ProfileSingleton.getInstance().inputs.get(i).get("icon"));
 
 			// Set the size of the image view to the previously computed value
@@ -181,7 +184,9 @@ public class GuideFragment extends TilesFragment {
 		for (int i = 0; i < devicesOutputResourcesTypedArray.length(); ++i) {
 			imageItem = new ImageView(getActivity());
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
-			imageItem.setImageResource(devicesOutputResourcesTypedArray.getResourceId(i, -1));
+//			imageItem.setImageResource(devicesOutputResourcesTypedArray.getResourceId(i, -1));
+			imageItem.setImageResource(
+					  getResources().getIdentifier(devicesOutputResourcesTypedArray.getString(i), "drawable", getActivity().getPackageName()));
 			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
 
 			final int index = i;
@@ -225,40 +230,221 @@ public class GuideFragment extends TilesFragment {
 		String[] outputArray;
 		int resource;
 		Uri resourcePath;
+		int maxSubtiles = 1;
+		int maxDimension;
 
 		mProfileCarouselContainer.removeAllViewsInLayout();
 
-		// Populate the device profile carousel with items
+
+		// Populate the profile input device row with items
 		for (int i = 0 ; i < devicesProfileResourcesTypedArray.length() ; ++i) {
 			imageItem = new ImageView(getActivity());
 
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
 
 
+//			layersTile = new Drawable[4];
+			layersTile = new Drawable[5];
+			// layersTile[0]: Background/Highlight Color
+			// layersTile[1]: Inputs
+			// layersTile[2]: Outputs
+			// layersTile[3]: Profile Icon
+			// layersTile[4]: Resize Image
+
+
+			// Background/Highlight Color
+//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.white));
+//			layersTile[0] = new ColorDrawable(Color.TRANSPARENT); // TODO
+			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
+//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileRequired));
+
 
 			id = devicesProfileResourcesTypedArray.getString(i);
 			resource =  getResources().getIdentifier(id + "_input", "array", getActivity().getPackageName());
 			inputArray = getResources().getStringArray(resource);
-
-//			Log.e(TAG, "array: " + getResources().getStringArray(resource));
-
-			for (int j = 0 ; j < inputArray.length ; ++j) {
-
-				Log.e(TAG, "input device: " + inputArray[j]);
-
-			}
-
-
-
-//			id = devicesProfileResourcesTypedArray.getString(i);
 			resource =  getResources().getIdentifier(id + "_output", "array", getActivity().getPackageName());
 			outputArray = getResources().getStringArray(resource);
 
-			for (int j = 0 ; j < outputArray.length ; ++j) {
+//			Log.e(TAG, "array: " + getResources().getStringArray(resource));
 
-				Log.e(TAG, "output device: " + outputArray[j]);
+
+			maxSubtiles = inputArray.length;
+			if (outputArray.length > maxSubtiles)
+				maxSubtiles = outputArray.length;
+
+			Log.e(TAG, "maxSubtiles: " + maxSubtiles);
+
+
+//			layersInput = new Drawable[5];
+//			layersInput = new Drawable[inputArray.length + 1];
+			layersInput = new Drawable[maxSubtiles + 1];
+			layersInput[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
+			layersInput[0].setBounds(0,0,tileDimension*inputArray.length,tileDimension);
+
+
+//			for (int j = 0 ; j < inputArray.length ; ++j) {
+			for (int j = 0 ; j < maxSubtiles ; ++j) {
+
+//				layersInput[1] = ProfileSingleton.getInstance().getDeviceDrawable(inputArray[j]);
+				try {
+					Log.e(TAG, "input device: " + inputArray[j]);
+					layersInput[j+1] = getResources().getDrawable(
+							  getResources().getIdentifier(
+										 ProfileSingleton.getInstance().getDeviceIconPath(inputArray[j]),
+										 "drawable", getActivity().getPackageName())
+					);
+					layersInput[j+1].setBounds(0,0,tileDimension,tileDimension);
+				} catch (Exception e) {
+					Log.d(TAG, "Exception: " + e.getStackTrace());
+//				if (layersInput[j+1] == null) {
+//					layersInput[j+1] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
+					layersInput[j+1] = new ColorDrawable(Color.TRANSPARENT);
+					layersInput[j+1].setBounds(0,0,tileDimension,tileDimension);
+				}
+//				getResources().getIdentifier(devicesOutputResourcesTypedArray.getString(i), "drawable", getActivity().getPackageName()));
 
 			}
+
+			layerDrawableInput = new LayerDrawable(layersInput);
+
+//			layerDrawableInput.setLayerInset(1, 0, 0, tileDimension, 0);
+
+			for (int j = 1 ; j <= inputArray.length ; ++j) {
+//				Log.e(TAG, "input index: " + j + ", tileDimension * (j-1): " + tileDimension * (j-1) + ", tileDimension * (j): " + tileDimension * (j));
+//				layerDrawableInput.setLayerInset(j, tileDimension * (j-1), 0, tileDimension * (j), 0);
+////				Log.e(TAG, "input index: " + j + ", tileDimension * (j-1): " + (int) tileInputInsetScale * tileDimension * (j-1) + ", tileDimension * (j): " + (int) tileInputInsetScale * tileDimension * (j));
+////				layerDrawableInput.setLayerInset(j, (int) tileInputInsetScale * tileDimension * (j-1), 0, (int) tileInputInsetScale * tileDimension * (j), 0);
+				Log.e(TAG, "input index: " + j + ", " + layersInput[j].getIntrinsicWidth() * (j-1) + ", 0, " + layersInput[j].getIntrinsicWidth() * (inputArray.length - j) + ", 0");
+				layerDrawableInput.setLayerInset(j, layersInput[j].getIntrinsicWidth() * (j-1), 0, layersInput[j].getIntrinsicWidth() * (inputArray.length - j), 0);
+			}
+
+			// TODO
+//			switch (i) {
+//				case 0:
+////					layerDrawableInput.setLayerInset(1, 0, 0, tileDimension, 0);
+////					layerDrawableInput.setLayerInset(1, 0, 0, 0, 0);
+//					break;
+//				case 1:
+////					layerDrawableInput.setLayerInset(1, 0, 0, layersInput[2].getIntrinsicWidth(), 0);
+////					layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, 0, 0);
+//					layerDrawableInput.setLayerInset(1, 0, 0, tileDimension * 3, 0);
+//					layerDrawableInput.setLayerInset(2, tileDimension, 0, tileDimension * 2, 0);
+//					layerDrawableInput.setLayerInset(3, tileDimension * 2, 0, tileDimension, 0);
+//					layerDrawableInput.setLayerInset(4, tileDimension * 3, 0, 0, 0);
+//					break;
+//				case 2:
+//////					layerDrawableInput.setLayerInset(1, 0, 0, tileDimension, 0);
+////					layerDrawableInput.setLayerInset(1, 0, 0, tileDimension * 4, 0);
+////					layerDrawableInput.setLayerInset(2, tileDimension * 4, 0, 0, 0);
+//					layerDrawableInput.setLayerInset(1, 0, 0, layersInput[2].getIntrinsicWidth() + layersInput[3].getIntrinsicWidth(), 0);
+//					layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, layersInput[3].getIntrinsicWidth(), 0);
+//					layerDrawableInput.setLayerInset(3, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth(), 0, 0, 0);
+//					break;
+//
+//			}
+
+
+//			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[2].getIntrinsicWidth() + layersInput[3].getIntrinsicWidth() + layersInput[4].getIntrinsicWidth(), 0);
+//			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, layersInput[3].getIntrinsicWidth() + layersInput[4].getIntrinsicWidth(), 0);
+//			layerDrawableInput.setLayerInset(3, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth(), 0, layersInput[4].getIntrinsicWidth(), 0);
+//			layerDrawableInput.setLayerInset(4, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth() + layersInput[3].getIntrinsicWidth(), 0, 0, 0);
+
+			layersTile[1] = layerDrawableInput.getCurrent();
+
+
+//			resource =  getResources().getIdentifier(id + "_output", "array", getActivity().getPackageName());
+//			outputArray = getResources().getStringArray(resource);
+
+//			layersOutput = new Drawable[outputArray.length + 1];
+			layersOutput = new Drawable[maxSubtiles + 1];
+			layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
+			layersOutput[0].setBounds(0,0,tileDimension*outputArray.length,tileDimension);
+
+//			for (int j = 0 ; j < outputArray.length ; ++j) {
+			for (int j = 0 ; j < maxSubtiles ; ++j) {
+
+				try {
+					Log.e(TAG, "output device: " + outputArray[j]);
+
+					layersOutput[j+1] = getResources().getDrawable(
+							  getResources().getIdentifier(
+										 ProfileSingleton.getInstance().getDeviceIconPath(outputArray[j]),
+										 "drawable", getActivity().getPackageName())
+					);
+					layersOutput[j+1].setBounds(0,0,tileDimension,tileDimension);
+				} catch (Exception e) {
+					Log.d(TAG, "Exception: " + e.getStackTrace());
+//				if (layersOutput[j+1] == null) {
+					layersOutput[j+1] = new ColorDrawable(Color.TRANSPARENT);
+					layersOutput[j+1].setBounds(0,0,tileDimension,tileDimension);
+				}
+
+			}
+
+			layerDrawableOutput = new LayerDrawable(layersOutput);
+
+//			for (int j = 1 ; j <= outputArray.length ; ++j) {
+//				layerDrawableOutput.setLayerInset(j, tileDimension * (j-1), 0, 0, 0);
+//			}
+
+
+			for (int j = 1 ; j <= outputArray.length ; ++j) {
+//				Log.e(TAG, "output index: " + j + ", tileDimension * (j-1): " + tileDimension * (j-1) + ", tileDimension * (j): " + tileDimension * (j));
+//				Log.e(TAG, "output index: " + j + ", " + tileDimension * (j-1) + ", 0, " + tileDimension * (j) + ", 0");
+//				Log.e(TAG, "output index: " + j + ", " + tileDimension * (j-1) + ", 0, " + tileDimension * (j) + ", 0");
+//				Log.e(TAG, "output index: " + j + ", " + layersOutput[j].getIntrinsicWidth() * (j-1) + ", 0, " + layersOutput[j].getIntrinsicWidth() * (j) + ", 0");
+				Log.e(TAG, "output index: " + j + ", " + layersOutput[j].getIntrinsicWidth() * (j-1) + ", 0, " + layersOutput[j].getIntrinsicWidth() * (outputArray.length - j) + ", 0");
+//				layerDrawableOutput.setLayerInset(j, tileDimension * (j-1), 0, tileDimension * (j), 0);
+//				layerDrawableOutput.setLayerInset(j, layersOutput[j].getIntrinsicWidth() * (j-1), 0, layersOutput[j].getIntrinsicWidth() * (j), 0);
+				layerDrawableOutput.setLayerInset(j, layersOutput[j].getIntrinsicWidth() * (j-1), 0, layersOutput[j].getIntrinsicWidth() * (outputArray.length - j), 0);
+
+			}
+
+
+			// TODO
+//			switch (i) {
+//				case 0:
+////					layerDrawableOutput.setLayerInset(1, 0, 0, 0, 0);
+//					break;
+//				case 1:
+////					layerDrawableOutput.setLayerInset(1, 0, 0, tileDimension * 4, 0);
+////					layerDrawableOutput.setLayerInset(2, tileDimension * 4, 0, 0, 0);
+//					layerDrawableOutput.setLayerInset(1, 0, 0, layersOutput[2].getIntrinsicWidth() + layersOutput[3].getIntrinsicWidth() + layersOutput[4].getIntrinsicWidth(), 0);
+//					Log.e(TAG, "1, 0, 0, " + (layersOutput[2].getIntrinsicWidth() + layersOutput[3].getIntrinsicWidth() + layersOutput[4].getIntrinsicWidth()) + ", 0");
+//
+//					layerDrawableOutput.setLayerInset(2, layersOutput[1].getIntrinsicWidth(), 0, layersOutput[3].getIntrinsicWidth() + layersOutput[4].getIntrinsicWidth(), 0);
+//					Log.e(TAG, "2, " + layersOutput[1].getIntrinsicWidth() + ", 0, " + (layersOutput[3].getIntrinsicWidth() + layersOutput[4].getIntrinsicWidth()) + ", 0");
+//
+//					layerDrawableOutput.setLayerInset(3, layersOutput[1].getIntrinsicWidth() + layersOutput[2].getIntrinsicWidth(), 0, layersOutput[4].getIntrinsicWidth(), 0);
+//					Log.e(TAG, "3, " + (layersOutput[1].getIntrinsicWidth() + layersOutput[2].getIntrinsicWidth()) + ", 0, " + layersOutput[4].getIntrinsicWidth() + ", 0");
+//
+//					layerDrawableOutput.setLayerInset(4, layersOutput[1].getIntrinsicWidth() + layersOutput[2].getIntrinsicWidth() + layersOutput[3].getIntrinsicWidth(), 0, 0, 0);
+//					Log.e(TAG, "4, " + (layersOutput[1].getIntrinsicWidth() + layersOutput[2].getIntrinsicWidth() + layersOutput[3].getIntrinsicWidth()) + ", 0, 0, 0");
+//
+//
+//
+//					Log.e(TAG, "layersOutput[1].getIntrinsicWidth(): " + layersOutput[1].getIntrinsicWidth());
+//					Log.e(TAG, "layersOutput[2].getIntrinsicWidth(): " + layersOutput[2].getIntrinsicWidth());
+//					Log.e(TAG, "layersOutput[3].getIntrinsicWidth(): " + layersOutput[3].getIntrinsicWidth());
+//					Log.e(TAG, "layersOutput[4].getIntrinsicWidth(): " + layersOutput[4].getIntrinsicWidth());
+//
+//
+//
+//					break;
+//				case 2:
+//					layerDrawableOutput.setLayerInset(1, layersOutput[1].getIntrinsicWidth() * 2, 0, 0, 0);
+//					break;
+//
+//			}
+
+
+
+
+//			layerDrawableOutput.setLayerInset(0, tileDimension * 4, 0, 0, 0);
+//			layerDrawableOutput.setLayerInset(1, tileDimension * 4 , 0, 0, 0);
+
+			layersTile[2] = layerDrawableOutput.getCurrent();
+
 
 //
 ////			resource = ProfileSingleton.getInstance().getId(
@@ -276,38 +462,30 @@ public class GuideFragment extends TilesFragment {
 
 
 
-			layersTile = new Drawable[4];
-
-			// Background/Highlight Color
-//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.white));
-			layersTile[0] = new ColorDrawable(Color.TRANSPARENT);
-//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
-//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileRequired));
-
 
 			// Input Icon(s)
-			layersInput = new Drawable[5];
-			layersInput[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
-			layersInput[1] = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
-			layersInput[2] = r.getDrawable(R.drawable.carousel_joystick);
-			layersInput[3] = r.getDrawable(R.drawable.carousel_watch_android);
-//			layersInput[4] = r.getDrawable(R.mipmap.ic_session_color);
-			layersInput[4] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit);
-//			layersInput[4] = r.getDrawable(R.drawable.carousel_openbci_cyton_8_channel);
-//			layersInput[4] = new ColorDrawable(Color.TRANSPARENT);
-			layersInput[4].setBounds(new Rect(0, 0, tileDimension, tileDimension));
-			layerDrawableInput = new LayerDrawable(layersInput);
-
-
-//			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[1].getIntrinsicWidth(), 0);
-//			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, 0, 0);
-//			layerDrawableInput.setLayerInset(3, layersInput[1].getIntrinsicWidth(), 0, 0, 0);
-
-
-			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[2].getIntrinsicWidth() + layersInput[3].getIntrinsicWidth() + layersInput[4].getIntrinsicWidth(), 0);
-			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, layersInput[3].getIntrinsicWidth() + layersInput[4].getIntrinsicWidth(), 0);
-			layerDrawableInput.setLayerInset(3, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth(), 0, layersInput[4].getIntrinsicWidth(), 0);
-			layerDrawableInput.setLayerInset(4, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth() + layersInput[3].getIntrinsicWidth(), 0, 0, 0);
+////			layersInput = new Drawable[5];
+////			layersInput[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
+////			layersInput[1] = r.getDrawable(R.drawable.carousel_neurosky_mindwave_mobile);
+//			layersInput[2] = r.getDrawable(R.drawable.carousel_joystick);
+//			layersInput[3] = r.getDrawable(R.drawable.carousel_watch_android);
+////			layersInput[4] = r.getDrawable(R.mipmap.ic_session_color);
+//			layersInput[4] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit);
+////			layersInput[4] = r.getDrawable(R.drawable.carousel_openbci_cyton_8_channel);
+////			layersInput[4] = new ColorDrawable(Color.TRANSPARENT);
+//			layersInput[4].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+//			layerDrawableInput = new LayerDrawable(layersInput);
+//
+//
+////			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[1].getIntrinsicWidth(), 0);
+////			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, 0, 0);
+////			layerDrawableInput.setLayerInset(3, layersInput[1].getIntrinsicWidth(), 0, 0, 0);
+//
+//
+//			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[2].getIntrinsicWidth() + layersInput[3].getIntrinsicWidth() + layersInput[4].getIntrinsicWidth(), 0);
+//			layerDrawableInput.setLayerInset(2, layersInput[1].getIntrinsicWidth(), 0, layersInput[3].getIntrinsicWidth() + layersInput[4].getIntrinsicWidth(), 0);
+//			layerDrawableInput.setLayerInset(3, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth(), 0, layersInput[4].getIntrinsicWidth(), 0);
+//			layerDrawableInput.setLayerInset(4, layersInput[1].getIntrinsicWidth() + layersInput[2].getIntrinsicWidth() + layersInput[3].getIntrinsicWidth(), 0, 0, 0);
 
 
 ////			layerDrawableInput.setLayerInset(1, 0, 0, layersInput[1].getIntrinsicWidth() * 3, 0);
@@ -324,7 +502,7 @@ public class GuideFragment extends TilesFragment {
 
 //			layerDrawableInput.set
 
-			layersTile[1] = layerDrawableInput.getCurrent();
+//			layersTile[1] = layerDrawableInput.getCurrent();
 
 
 //			// Output Icon(s)
@@ -352,38 +530,38 @@ public class GuideFragment extends TilesFragment {
 //			layerDrawableOutput.setLayerInset(4, layersOutput[4].getIntrinsicWidth() * 3, 0, 0, 0);
 
 
-			// Output Icon(s)
-			layersOutput = new Drawable[2];
-//			layersOutput = new Drawable[5];
-			layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
-//			layersOutput[0] = new ColorDrawable(Color.TRANSPARENT);
-
-//			layersOutput[1] = new ColorDrawable(Color.TRANSPARENT);
-//			layersOutput[1].setBounds(new Rect(0, 0, tileDimension, tileDimension));
-//			layersOutput[2] = new ColorDrawable(Color.TRANSPARENT);
-//			layersOutput[2].setBounds(new Rect(0, 0, tileDimension, tileDimension));
-//			layersOutput[3] = new ColorDrawable(Color.TRANSPARENT);
-//			layersOutput[3].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+//			// Output Icon(s)
+//			layersOutput = new Drawable[2];
+////			layersOutput = new Drawable[5];
+//			layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.WhiteTint));
+////			layersOutput[0] = new ColorDrawable(Color.TRANSPARENT);
 //
-//			layersOutput[4] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
+////			layersOutput[1] = new ColorDrawable(Color.TRANSPARENT);
+////			layersOutput[1].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+////			layersOutput[2] = new ColorDrawable(Color.TRANSPARENT);
+////			layersOutput[2].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+////			layersOutput[3] = new ColorDrawable(Color.TRANSPARENT);
+////			layersOutput[3].setBounds(new Rect(0, 0, tileDimension, tileDimension));
+////
+////			layersOutput[4] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
+//
+//			layersOutput[1] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
 
-			layersOutput[1] = r.getDrawable(R.drawable.carousel_puzzlebox_orbit_ir);
-
-			layerDrawableOutput = new LayerDrawable(layersOutput);
-
-
-////			layerDrawableOutput.setLayerInset(4, layersOutput[1].getIntrinsicWidth() + layersOutput[2].getIntrinsicWidth() + layersOutput[3].getIntrinsicWidth(), 0, 0, 0);
-////			layerDrawableOutput.setLayerInset(4, tileDimension * 3, 0, 0, 0);
-//			layerDrawableOutput.setLayerInset(0, layersOutput[4].getIntrinsicWidth() * 3, 0, 0, 0);
-			layerDrawableOutput.setLayerInset(0, tileDimension * 4, 0, 0, 0);
-//			layerDrawableOutput.setLayerInset(4, layersOutput[4].getIntrinsicWidth() * 3, 0, 0, 0);
-//			layerDrawableOutput.setLayerInset(1, tileDimension, 0, tileDimension * 2, 0);
-//			layerDrawableOutput.setLayerInset(1, tileDimension * 3 , 0, tileDimension, 0);
-			layerDrawableOutput.setLayerInset(1, tileDimension * 4 , 0, 0, 0);
+//			layerDrawableOutput = new LayerDrawable(layersOutput);
 
 
+//////			layerDrawableOutput.setLayerInset(4, layersOutput[1].getIntrinsicWidth() + layersOutput[2].getIntrinsicWidth() + layersOutput[3].getIntrinsicWidth(), 0, 0, 0);
+//////			layerDrawableOutput.setLayerInset(4, tileDimension * 3, 0, 0, 0);
+////			layerDrawableOutput.setLayerInset(0, layersOutput[4].getIntrinsicWidth() * 3, 0, 0, 0);
+//			layerDrawableOutput.setLayerInset(0, tileDimension * 4, 0, 0, 0);
+////			layerDrawableOutput.setLayerInset(4, layersOutput[4].getIntrinsicWidth() * 3, 0, 0, 0);
+////			layerDrawableOutput.setLayerInset(1, tileDimension, 0, tileDimension * 2, 0);
+////			layerDrawableOutput.setLayerInset(1, tileDimension * 3 , 0, tileDimension, 0);
+//			layerDrawableOutput.setLayerInset(1, tileDimension * 4 , 0, 0, 0);
 
-			layersTile[2] = layerDrawableOutput.getCurrent();
+
+
+//			layersTile[2] = layerDrawableOutput.getCurrent();
 
 
 			// Profile Icon
@@ -402,13 +580,109 @@ public class GuideFragment extends TilesFragment {
 				Log.e(TAG, "Error parsing Drawable: " + e.getStackTrace());
 			}
 
+			layersTile[4] = new ColorDrawable(Color.TRANSPARENT);
 
 			layerDrawableTile = new LayerDrawable(layersTile);
 
+//			int max = inputArray.length;
+//			if (outputArray.length > max)
+//				max = outputArray.length;
 
-			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale * 1.575));
-			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale * 1.575), 0, 0);
-			layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+			// TODO
+//			if (inputArray.length == outputArray.length) {
+//				layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+//				layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+//			} else if (inputArray.length > outputArray.length) {
+//				layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / maxSubtiles, (int) (tileDimension * tileInputInsetScale));
+////				layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / (inputArray.length - outputArray.length), (int) (tileDimension * tileInputInsetScale));
+//				layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+//			} else {
+//				layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+//				layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale) / maxSubtiles, (int) (tileDimension * tileOutputInsetScale), 0, 0);
+////				layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale) / (outputArray.length - inputArray.length), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+//			}
+
+			maxDimension = layerDrawableTile.getIntrinsicWidth();
+			if (layerDrawableTile.getIntrinsicHeight() > maxDimension)
+				maxDimension = layerDrawableTile.getIntrinsicHeight();
+
+			Log.e(TAG, "maxDimension: " + maxDimension);
+
+//			switch (inputArray.length) {
+//
+////				case 1:
+////
+////					switch (outputArray.length) {
+////						case 1:
+////							Log.d(TAG, "1,1");
+////							layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+////							layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+////							break;
+////					}
+////					break;
+//
+////				case 3:
+////					Log.d(TAG, "3," + outputArray.length);
+////					layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+////					layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale * 1.575), 0, 0);
+//////					layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+////					break;
+//
+//				case 4:
+//					Log.d(TAG, "4," + outputArray.length);
+////					layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale * 1.575));
+////					layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale));
+////					layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 5, (int) (tileDimension * tileInputInsetScale));
+//					layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+////					layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale * 1.575), 0, 0);
+////					layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale * 1.575), 0, 0);
+////					layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale * 1.2), 0, 0);
+//					layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+////					layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+//					break;
+//
+//				default:
+//					Log.d(TAG, "default: " + i + "," + outputArray.length);
+//					layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+//					layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+//					break;
+//
+//			}
+
+			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+
+			maxDimension = layerDrawableTile.getIntrinsicWidth();
+			if (layerDrawableTile.getIntrinsicHeight() > maxDimension)
+				maxDimension = layerDrawableTile.getIntrinsicHeight();
+
+			Log.e(TAG, "maxDimension: " + maxDimension);
+
+
+//			layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+			layerDrawableTile.setLayerInset(3, (int) (maxDimension * tileProfileInsetScale), (int) (maxDimension * tileProfileInsetScale), (int) (maxDimension * tileProfileInsetScale), (int) (maxDimension * tileProfileInsetScale));
+
+//			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / maxSubtiles, (int) (tileDimension * tileInputInsetScale));
+//			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale) / maxSubtiles, (int) (tileDimension * tileOutputInsetScale), 0, 0);
+//			layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+
+//			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / (inputArray.length), (int) (tileDimension * tileInputInsetScale));
+//			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale) / (outputArray.length), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+//			layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+
+
+//			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / (inputArray.length), (int) (tileDimension * tileInputInsetScale));
+//			layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
+//			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+
+
+
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 4, (int) (tileDimension * tileInputInsetScale * 1.575));
+////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale * 1.575));
+//			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension * tileInputInsetScale));
+//			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale * 1.575), 0, 0);
+////			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (tileDimension * tileOutputInsetScale), 0, 0);
+//			layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
 
 ////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 5, (int) (tileDimension * tileInputInsetScale * 1.52));
 ////			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale) / 5, (int) (tileDimension * tileInputInsetScale * 1.52));
@@ -442,10 +716,107 @@ public class GuideFragment extends TilesFragment {
 //			layerDrawableTile.setLayerInset(3, (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale), (int) (tileDimension * tileProfileInsetScale));
 
 
-			imageItem.setImageDrawable(layerDrawableTile);
+			Log.e(TAG, "layerDrawableTile.getIntrinsicWidth(): " + layerDrawableTile.getIntrinsicWidth());
+			Log.e(TAG, "layerDrawableTile.getIntrinsicHeight(): " + layerDrawableTile.getIntrinsicHeight());
 
+			maxDimension = layerDrawableTile.getIntrinsicWidth();
+			if (layerDrawableTile.getIntrinsicHeight() > maxDimension)
+				maxDimension = layerDrawableTile.getIntrinsicHeight();
+
+			Log.e(TAG, "maxDimension: " + maxDimension);
+
+////			layersTile[4] = new ColorDrawable(Color.TRANSPARENT);
+//			layersTile[4].setBounds(0,0,maxDimension,maxDimension);
+
+
+//			layerDrawableTile.setLayerInset(4, 0, 0, maxDimension, maxDimension);
+			layerDrawableTile.setLayerInset(4, (int) maxDimension / 2, (int) maxDimension / 2, (int) maxDimension / 2, (int) maxDimension / 2);
+
+
+//			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (tileDimension / tileInputInsetScale));
+//			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (maxDimension - (maxDimension / tileInputInsetScale)));
+//			layerDrawableTile.setLayerInset(1, 0, 0, (int) (maxDimension * tileInputInsetScale), (int) (maxDimension * tileInputInsetScale));
+//			layerDrawableTile.setLayerInset(1, 0, 0, (int) (maxDimension / tileInputInsetScale), (int) (maxDimension / tileInputInsetScale));
+
+			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (maxDimension - (maxDimension / tileInputInsetScale)));
+			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (maxDimension - (maxDimension / tileInputInsetScale)), 0, 0);
+
+
+			layerDrawableTile.setLayerInset(3, (int) (maxDimension * tileProfileInsetScale), (int) (maxDimension * tileProfileInsetScale), (int) (maxDimension * tileProfileInsetScale), (int) (maxDimension * tileProfileInsetScale));
+
+
+			maxDimension = layerDrawableTile.getIntrinsicWidth();
+			if (layerDrawableTile.getIntrinsicHeight() > maxDimension)
+				maxDimension = layerDrawableTile.getIntrinsicHeight();
+
+			Log.e(TAG, "maxDimension: " + maxDimension);
+
+			layerDrawableTile.setLayerInset(4, (int) maxDimension / 2, (int) maxDimension / 2, (int) maxDimension / 2, (int) maxDimension / 2);
+
+//			Drawable temp = layerDrawableTile;
+//
+//			Log.e(TAG, "temp: " + temp.getIntrinsicWidth());
+//			Log.e(TAG, "temp: " + temp.getIntrinsicHeight());
+//
+//			temp.setBounds(0,0,tileDimension,tileDimension);
+
+
+////			Log.e(TAG, "layerDrawableTile.getIntrinsicWidth(): " + layerDrawableTile.getIntrinsicWidth());
+////			Log.e(TAG, "layerDrawableTile.getIntrinsicHeight(): " + layerDrawableTile.getIntrinsicHeight());
+//			Log.e(TAG, "temp: " + temp.getIntrinsicWidth());
+//			Log.e(TAG, "temp: " + temp.getIntrinsicHeight());
+
+//			Drawable temp = new ColorDrawable(Color.TRANSPARENT);
+//			temp.setBounds(0, 0, maxDimension, maxDimension);
+//			temp.set
+
+//			layerDrawableTile.addLayer(temp);
+
+
+//			Log.e(TAG, "layersTile[3].getIntrinsicWidth(): " + layersTile[3].getIntrinsicWidth());
+//			Log.e(TAG, "layersTile[3].getIntrinsicHeight(): " + layersTile[3].getIntrinsicHeight());
+//
+//			Log.e(TAG, "layerDrawableTile.getDrawable(3).getIntrinsicWidth(): " + layerDrawableTile.getDrawable(3).getIntrinsicWidth());
+//			Log.e(TAG, "layerDrawableTile.getDrawable(3).getIntrinsicHeight(): " + layerDrawableTile.getDrawable(3).getIntrinsicHeight());
+//
+
+
+			imageItem.setImageDrawable(layerDrawableTile);
+//			imageItem.setImageDrawable(temp);
+
+
+
+//			imageItem.setBackground(layerDrawableTile);
+
+//			Log.e(TAG, "imageItem.getDrawable().getIntrinsicWidth(): " + imageItem.getDrawable().getIntrinsicWidth());
+//			Log.e(TAG, "imageItem.getDrawable().getIntrinsicHeight(): " + imageItem.getDrawable().getIntrinsicHeight());
+
+//			imageItem.setAdjustViewBounds(true);
+
+//			imageItem.setScaleType(ImageView.ScaleType.CENTER);
+//			imageItem.setScaleType(ImageView.ScaleType.CENTER_CROP); // Close
+//			imageItem.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//			imageItem.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//			imageItem.setScaleType(ImageView.ScaleType.FIT_END);
+//			imageItem.setScaleType(ImageView.ScaleType.FIT_START); // Close
+//			imageItem.setScaleType(ImageView.ScaleType.FIT_XY);
+//			imageItem.setScaleType(ImageView.ScaleType.MATRIX);
+
+//			ImageView iv = new ImageView(getContext());
+
+//			LinearLayout ll = new LinearLayout(new LinearLayout.LayoutParams(tileDimension, tileDimension));
+
+//			imageItem.setMinimumHeight(imageItem.getDrawable().getIntrinsicWidth());
+//			imageItem.setMaxHeight(imageItem.getDrawable().getIntrinsicWidth());
+//
+//			Log.e(TAG, "imageItem.getDrawable().getIntrinsicWidth(): " + imageItem.getDrawable().getIntrinsicWidth());
+//			Log.e(TAG, "imageItem.getDrawable().getIntrinsicHeight(): " + imageItem.getDrawable().getIntrinsicHeight());
 
 			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
+
+//			imageItem.getLayoutParams().height = 12800;
+//			imageItem.getLayoutParams().width = 12800;
+
 
 
 			final int index = i;

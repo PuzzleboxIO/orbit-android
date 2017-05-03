@@ -6,7 +6,6 @@ android {
 
     defaultConfig {
         applicationId "io.puzzlebox.orbit"
-//        minSdkVersion 9 // API 2.3 TODO getActivity()
         minSdkVersion 15 // API 4.0.3
         targetSdkVersion 25
         versionCode 14
@@ -34,6 +33,6 @@ dependencies {
 //    wearApp project(':wear')
     //    provided files('libs/usb-serial-for-android-v010.jar')
     //    compile 'com.android.support:support-v4:26.0.0-alpha1'
-    compile 'com.android.support:support-v4:25.2.0'
+    compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:multidex:1.0.1'
 }

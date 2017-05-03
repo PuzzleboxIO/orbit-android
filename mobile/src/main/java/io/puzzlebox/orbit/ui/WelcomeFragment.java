@@ -1,18 +1,23 @@
 package io.puzzlebox.orbit.ui;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
+import io.puzzlebox.jigsaw.data.ConfigurationSingleton;
 import io.puzzlebox.orbit.R;
 
 /**
@@ -45,20 +50,19 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
+									 Bundle savedInstanceState) {
+
+		LinearLayout.LayoutParams layoutParams;
+
 		// Inflate the layout for this fragment
 //		View v = inflater.inflate(io.puzzlebox.jigsaw.R.layout.fragment_welcome, container, false);
 		View v = inflater.inflate(io.puzzlebox.orbit.R.layout.fragment_welcome, container, false);
 
 
 //		WebView webview = (WebView) v.findViewById(R.id.webViewWelcome);
-//
 //		webview.getSettings().setJavaScriptEnabled(true);
-//
 //		webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
-//
 //		webview.setWebViewClient(new compatibilityWebViewClient());
-//
 //		webview.loadUrl(URL);
 
 
@@ -98,25 +102,72 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 		});
 
 
-		LinearLayout ll = (LinearLayout) v.findViewById(R.id.layoutWelcome);
-		ll.setOnClickListener(new View.OnClickListener() {
+		LinearLayout llWelcomeMessage = (LinearLayout) v.findViewById(R.id.layoutWelcomeMessage);
+		llWelcomeMessage.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Log.d(TAG, "onClick");
-//				if (mListenerTutorial != null)
-//					mListenerTutorial.loadTutorial();
-//				else
-//					Log.d(TAG, "mListenerTutorial was null");
-				if (mListenerDevices != null)
-					mListenerDevices.loadDevices();
-				else
-					Log.d(TAG, "mListenerDevices was null");
+//				Log.d(TAG, "llWelcomeMessage onClick");
+				loadMain();
+			}
+		});
+
+//		layoutParams = new LinearLayout.LayoutParams(
+//				  LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+////		layoutParams.setMargins(16, 2, 16, 2);
+////		layoutParams.setMargins(16, 4, 16, 2);
+////		layoutParams.gravity(Gravity.CENTER_HORIZONTAL);
+////		layoutParams.setMargins(6, 2, 6, 2);
+//		llWelcomeMessage.setLayoutParams(layoutParams);
+//		llWelcomeMessage.setGravity(Gravity.CENTER);
+//		llWelcomeMessage.setWeightSum(1.0f);
+
+
+		RelativeLayout relativeLayoutWelcome = (RelativeLayout) v.findViewById(R.id.relativeLayoutWelcome);
+		relativeLayoutWelcome.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+//				Log.d(TAG, "relativeLayoutWelcome onClick");
+				loadMain();
 			}
 		});
 
 
+		LinearLayout llLogo = (LinearLayout) v.findViewById(R.id.linearLayoutLogo);
+
+
+		ImageView imageViewLogo = (ImageView) v.findViewById(R.id.imageViewLogo);
+
+		layoutParams = new LinearLayout.LayoutParams(
+				  LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		layoutParams.setMargins(16, 2, 16, 2);
+		imageViewLogo.setLayoutParams(layoutParams);
+
+
+		// Set logo banner to ~20% of verticle screen size
+//		int newHeight = (int) (0.20 * ConfigurationSingleton.getInstance().displayHeight);
+		int newHeight = (int) (0.15 * ConfigurationSingleton.getInstance().displayHeight);
+		Log.d(TAG, "newHeight: " + newHeight);
+
+		layoutParams = new LinearLayout.LayoutParams(
+				  LinearLayout.LayoutParams.WRAP_CONTENT, newHeight);
+
+		llLogo.setLayoutParams(layoutParams);
+
+
 		return v;
 
+	}
+
+
+	public void loadMain() {
+		if (mListenerTutorial != null)
+			mListenerTutorial.loadTutorial();
+		else
+			Log.d(TAG, "mListenerTutorial was null");
+		if (mListenerDevices != null)
+			mListenerDevices.loadDevices();
+		else
+			Log.d(TAG, "mListenerDevices was null");
 	}
 
 

@@ -17,7 +17,8 @@
                 android:id="@+id/webViewSupport"
                 android:layout_width="fill_parent"
                 android:layout_height="140dp"
-                android:scrollbars="none" />
+                android:scrollbars="none"
+                android:visibility="invisible"/>
 
             <View
                 android:layout_width="fill_parent"
@@ -109,6 +110,7 @@
                     android:gravity="center"
                     android:onClick="sendMessage"
                     android:paddingLeft="@dimen/padding_medium"
+                    android:background="@drawable/shape_rounded_corners_grey"
                     android:paddingRight="@dimen/padding_medium"
                     android:text="@string/button_support_send" />
             </LinearLayout>

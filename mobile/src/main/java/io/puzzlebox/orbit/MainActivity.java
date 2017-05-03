@@ -37,11 +37,11 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 //		  WelcomeFragment.OnTutorialListener,
 		  WelcomeFragment.OnDevicesListener,
 		  GuideFragment.OnFragmentInteractionListener,
-		  SessionFragment.OnFragmentInteractionListener,
-		  EEGFragment.OnFragmentInteractionListener,
-		  OrbitFragment.OnFragmentInteractionListener,
-//		  SteeringFragment.OnFragmentInteractionListener,
-		  AdvancedFragment.OnFragmentInteractionListener,
+//		  SessionFragment.OnFragmentInteractionListener,
+//		  EEGFragment.OnFragmentInteractionListener,
+//		  OrbitFragment.OnFragmentInteractionListener,
+////		  SteeringFragment.OnFragmentInteractionListener,
+//		  AdvancedFragment.OnFragmentInteractionListener,
 		  SupportFragment.OnFragmentInteractionListener,
 		  DialogNeuroSkyMindWaveFragment.OnFragmentInteractionListener,
 		  DialogJoystickFragment.OnFragmentInteractionListener,
@@ -105,11 +105,11 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 
 		dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_welcome), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
 		dataList.add(new DrawerItem(getString(R.string.title_fragment_tiles), R.mipmap.ic_joystick));
-		dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_session), io.puzzlebox.jigsaw.R.mipmap.ic_session));
-		dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_eeg), io.puzzlebox.jigsaw.R.mipmap.ic_eeg));
-		dataList.add(new DrawerItem(getString(R.string.title_fragment_orbit), R.mipmap.ic_orbit));
-//		dataList.add(new DrawerItem(getString(R.string.title_fragment_steering), R.mipmap.ic_joystick));
-//		dataList.add(new DrawerItem(getString(R.string.title_fragment_settings), R.mipmap.ic_settings));
+//		dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_session), io.puzzlebox.jigsaw.R.mipmap.ic_session));
+//		dataList.add(new DrawerItem(getString(io.puzzlebox.jigsaw.R.string.title_fragment_eeg), io.puzzlebox.jigsaw.R.mipmap.ic_eeg));
+//		dataList.add(new DrawerItem(getString(R.string.title_fragment_orbit), R.mipmap.ic_orbit));
+////		dataList.add(new DrawerItem(getString(R.string.title_fragment_steering), R.mipmap.ic_joystick));
+////		dataList.add(new DrawerItem(getString(R.string.title_fragment_settings), R.mipmap.ic_settings));
 		dataList.add(new DrawerItem(getString(R.string.title_fragment_tutorial), R.mipmap.ic_brain));
 		dataList.add(new DrawerItem(getString(R.string.title_fragment_support), io.puzzlebox.jigsaw.R.mipmap.ic_support));
 		dataList.add(new DrawerItem(getString(R.string.title_fragment_credits), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
@@ -151,54 +151,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				if (fragment == null)
 					fragment = new GuideFragment();
 				break;
-			case 2:
-				backStackName = getResources().getString(R.string.title_fragment_session);
-				try{
-//					fragment = getFragmentManager().findFragmentByTag(backStackName);
-					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				if (fragment == null)
-					fragment = new SessionFragment();
-				break;
-			case 3:
-				backStackName = getResources().getString(R.string.title_fragment_eeg);
-				try{
-//					fragment = getFragmentManager().findFragmentByTag(backStackName);
-					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				if (fragment == null)
-					fragment = new EEGFragment();
-
-				break;
-			case 4:
-				backStackName = getResources().getString(R.string.title_fragment_orbit);
-				try{
-//					fragment = getFragmentManager().findFragmentByTag(backStackName);
-					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				if (fragment == null)
-					fragment = new OrbitFragment();
-
-				break;
-//			case 5:
-//				backStackName = getResources().getString(R.string.title_fragment_steering);
-//				try{
-//					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				if (fragment == null)
-//					fragment = new SteeringFragment();
-//
-//				break;
-//			case 5:
-//				backStackName = getResources().getString(R.string.title_fragment_settings);
+//			case 2:
+//				backStackName = getResources().getString(R.string.title_fragment_session);
 //				try{
 ////					fragment = getFragmentManager().findFragmentByTag(backStackName);
 //					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
@@ -206,10 +160,57 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 //					e.printStackTrace();
 //				}
 //				if (fragment == null)
-//					fragment = new AdvancedFragment();
+//					fragment = new SessionFragment();
+//				break;
+//			case 3:
+//				backStackName = getResources().getString(R.string.title_fragment_eeg);
+//				try{
+////					fragment = getFragmentManager().findFragmentByTag(backStackName);
+//					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				if (fragment == null)
+//					fragment = new EEGFragment();
 //
 //				break;
-			case 5:
+//			case 4:
+//				backStackName = getResources().getString(R.string.title_fragment_orbit);
+//				try{
+////					fragment = getFragmentManager().findFragmentByTag(backStackName);
+//					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				if (fragment == null)
+//					fragment = new OrbitFragment();
+//
+//				break;
+////			case 5:
+////				backStackName = getResources().getString(R.string.title_fragment_steering);
+////				try{
+////					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
+////				} catch (Exception e) {
+////					e.printStackTrace();
+////				}
+////				if (fragment == null)
+////					fragment = new SteeringFragment();
+////
+////				break;
+////			case 5:
+////				backStackName = getResources().getString(R.string.title_fragment_settings);
+////				try{
+//////					fragment = getFragmentManager().findFragmentByTag(backStackName);
+////					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
+////				} catch (Exception e) {
+////					e.printStackTrace();
+////				}
+////				if (fragment == null)
+////					fragment = new AdvancedFragment();
+////
+////				break;
+//			case 5:
+			case 2:
 				backStackName = getResources().getString(R.string.title_fragment_tutorial);
 				try{
 //					fragment = getFragmentManager().findFragmentByTag(backStackName);
@@ -220,7 +221,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				if (fragment == null)
 					fragment = new TutorialFragment();
 				break;
-			case 6:
+//			case 6:
+			case 3:
 				backStackName = getResources().getString(R.string.title_fragment_support);
 				try{
 //					fragment = getFragmentManager().findFragmentByTag(backStackName);
@@ -232,7 +234,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 					fragment = new SupportFragment();
 
 				break;
-			case 7:
+//			case 7:
+			case 4:
 				backStackName = getResources().getString(R.string.title_fragment_credits);
 				try{
 //					fragment = getFragmentManager().findFragmentByTag(backStackName);
