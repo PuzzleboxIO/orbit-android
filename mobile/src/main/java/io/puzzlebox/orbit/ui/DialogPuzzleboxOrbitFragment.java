@@ -43,6 +43,8 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	private final static String TAG = DialogPuzzleboxOrbitFragment.class.getSimpleName();
 
+	public final static String profileID = "profile_puzzlebox_orbit_mobile_edition";
+
 	/**
 	 * Configuration
 	 */

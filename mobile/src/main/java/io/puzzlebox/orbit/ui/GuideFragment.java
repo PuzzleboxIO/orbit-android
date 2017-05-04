@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -545,6 +546,11 @@ public class GuideFragment extends TilesFragment {
 				break;
 
 			case "profiles":
+
+				if (! ProfileSingleton.getInstance().profiles.get(index).get("status").equals("available")) {
+					Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_warning_profile_unavailable), Toast.LENGTH_LONG).show();
+					break;
+				}
 
 				switch (index) {
 					case 0:

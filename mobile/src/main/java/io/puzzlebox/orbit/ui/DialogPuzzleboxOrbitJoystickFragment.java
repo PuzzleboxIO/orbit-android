@@ -1,9 +1,13 @@
 package io.puzzlebox.orbit.ui;
 
 import android.content.Context;
+import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import io.puzzlebox.jigsaw.data.ConfigurationSingleton;
+import io.puzzlebox.jigsaw.data.ProfileSingleton;
 import io.puzzlebox.jigsaw.ui.JoystickView;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
@@ -20,6 +26,8 @@ import io.puzzlebox.orbit.data.OrbitSingleton;
 public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 
 	private final static String TAG = DialogPuzzleboxOrbitJoystickFragment.class.getSimpleName();
+
+	public final static String profileID = "profile_puzzlebox_orbit_joystick";
 
 	// UI
 	public SeekBar seekBarThrottle;
@@ -101,6 +109,41 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 			}
 		});
 
+
+
+		/**
+		 * AudioHandler
+		 */
+
+		if (!OrbitSingleton.getInstance().audioHandler.isAlive()) {
+
+
+			/**
+			 * Prepare audio stream
+			 */
+
+			/** Set the hardware buttons to control the audio output */
+//			getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+			/** Preload the flight control WAV file into memory */
+//			OrbitSingleton.getInstance().soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+//			OrbitSingleton.getInstance().soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+//				public void onLoadComplete(SoundPool soundPool,
+//													int sampleId,
+//													int status) {
+//					OrbitSingleton.getInstance().loaded = true;
+//				}
+//			});
+//			OrbitSingleton.getInstance().soundID = OrbitSingleton.getInstance().soundPool.load(getActivity().getApplicationContext(), OrbitSingleton.getInstance().audioFile, 1);
+
+
+			OrbitSingleton.getInstance().audioHandler.start();
+
+
+		}
+
+
+
 		return v;
 	}
 
@@ -123,6 +166,34 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 
 	public interface OnFragmentInteractionListener {
 		void onFragmentInteraction(Uri uri);
+	}
+
+
+	// ################################################################
+
+	public void onPause() {
+
+		super.onPause();
+
+		stopControl();
+
+	} // onPause
+
+
+	// ################################################################
+
+	public void onResume() {
+
+		super.onResume();
+
+		// TODO (hardcoded)
+//		if (ProfileSingleton.getInstance().isActive("outputs", 0))
+//		if (profiles.get(1).get)
+		if (ProfileSingleton.getInstance().getStatus(profileID).equals("available"))
+			playControl();
+		else
+			Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_puzzlebox_orbit_joystick_audio_ir_warning), Toast.LENGTH_LONG).show();
+
 	}
 
 	// ################################################################
@@ -166,10 +237,13 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 				seekBarYaw.setProgress(newY);
 			}
 
+			updateControlSignal();
 
 		}
 	};
 
+
+	// ################################################################
 
 	private JoystickView.OnMoveListener onMoveJoystickThrottle = new JoystickView.OnMoveListener(){
 		public void onMove(int angle, int strength) {
@@ -191,7 +265,122 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 				seekBarThrottle.setProgress(0);
 			}
 
+			updateControlSignal();
+
 		}
 	};
+
+
+	// ################################################################
+
+	public void updateControlSignal() {
+
+		// We subtract the current Yaw position from the maximum slider value
+		// because smaller values instruct the helicopter to spin to the right
+		// (clockwise if looking down from above) whereas intuitively moving
+		// the slider to the left should cause it to spin left
+		Integer[] command =  {
+				  seekBarThrottle.getProgress(),
+				  seekBarYaw.getMax() - seekBarYaw.getProgress(),
+				  seekBarPitch.getProgress(),
+				  1};
+
+		OrbitSingleton.getInstance().audioHandler.command = command;
+		OrbitSingleton.getInstance().audioHandler.updateControlSignal();
+
+	} // updateControlSignal
+
+
+	// ################################################################
+
+	/**
+	 * @param number the audioHandler to update loop number while mind control
+	 */
+	public void updateAudioHandlerLoopNumberWhileMindControl(int number) {
+
+//		this.audioHandler.loopNumberWhileMindControl = number;
+		OrbitSingleton.getInstance().audioHandler.loopNumberWhileMindControl = number;
+
+
+	} // updateServiceBinderLoopNumberWhileMindControl
+
+
+	// ################################################################
+
+	/**
+	 * the audioHandler to update channel
+	 */
+	public void updateAudioHandlerChannel(int channel) {
+
+//		this.audioHandler.channel = channel;
+//		this.audioHandler.updateControlSignal();
+		OrbitSingleton.getInstance().audioHandler.channel = channel;
+		OrbitSingleton.getInstance().audioHandler.updateControlSignal();
+
+
+	} // updateServiceBinderChannel
+
+
+	// ################################################################
+
+	public void playControl() {
+
+		Log.d(TAG, "playControl()");
+
+		OrbitSingleton.getInstance().flightActive = true;
+
+		OrbitSingleton.getInstance().audioHandler.ifFlip = OrbitSingleton.getInstance().invertControlSignal; // if checked then flip
+
+		int channel = 0; // default "A"
+
+		updateAudioHandlerLoopNumberWhileMindControl(-1); // Loop infinite for easier user testing
+
+		updateAudioHandlerChannel(channel);
+
+		OrbitSingleton.getInstance().audioHandler.mutexNotify();
+
+	} // playControl
+
+
+	// ################################################################
+
+	public void stopControl() {
+
+		Log.d(TAG, "stopControl()");
+
+		stopAudio();
+
+		OrbitSingleton.getInstance().flightActive = false;
+
+	} // stopControl
+
+
+	// ################################################################
+
+	public void stopAudio() {
+
+		/**
+		 * stop AudioTrack as well as destroy service.
+		 */
+
+		OrbitSingleton.getInstance().audioHandler.keepPlaying = false;
+
+		/**
+		 * Stop playing audio control file
+		 */
+
+		if (OrbitSingleton.getInstance().soundPool != null) {
+			try {
+				OrbitSingleton.getInstance().soundPool.stop(OrbitSingleton.getInstance().soundID);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+
+	} // stopControl
+
+
+
 
 }

@@ -19,6 +19,8 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 
 	private final static String TAG = DialogPuzzleboxOrbitJoystickMindwaveFragment.class.getSimpleName();
 
+	public final static String profileID = "profile_puzzlebox_orbit_joystick_mindwave";
+
 	// UI
 	public SeekBar seekBarX;
 	public SeekBar seekBarY;
