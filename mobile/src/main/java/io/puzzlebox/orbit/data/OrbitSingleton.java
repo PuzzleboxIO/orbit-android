@@ -49,6 +49,14 @@ public class OrbitSingleton {
 
 
 	/**
+	 * Joystick Configuration
+	 */
+	public int defaultJoystickThrottle = 0;
+	public int defaultJoystickYaw = 63;
+	public int defaultJoystickPitch = 31;
+
+
+	/**
 	 * Advanced Configuration
 	 */
 	public int defaultControlThrottle = 80;

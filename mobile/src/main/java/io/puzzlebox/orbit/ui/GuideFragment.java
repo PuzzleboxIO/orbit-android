@@ -473,9 +473,19 @@ public class GuideFragment extends TilesFragment {
 
 				switch (index) {
 					case 0:
-						// Puzzlebox Orbit
+						// Puzzlebox Orbit with EEG
 						DialogPuzzleboxOrbitFragment dialogPuzzleboxOrbitFragment = new DialogPuzzleboxOrbitFragment();
 						dialogPuzzleboxOrbitFragment.show(fm, getResources().getString(R.string.title_fragment_orbit));
+						break;
+					case 1:
+						// Puzzlebox Orbit with Joystick
+						DialogPuzzleboxOrbitJoystickFragment dialogPuzzleboxOrbitJoystickFragment = new DialogPuzzleboxOrbitJoystickFragment();
+						dialogPuzzleboxOrbitJoystickFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_joystick));
+						break;
+					case 2:
+						// Puzzlebox Orbit with EEG and Joystick
+						DialogPuzzleboxOrbitJoystickMindwaveFragment dialogPuzzleboxOrbitJoystickMindwaveFragment = new DialogPuzzleboxOrbitJoystickMindwaveFragment();
+						dialogPuzzleboxOrbitJoystickMindwaveFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_joystick_mindwave));
 						break;
 				}
 				break;

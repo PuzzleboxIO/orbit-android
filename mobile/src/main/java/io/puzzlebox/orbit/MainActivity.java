@@ -24,30 +24,28 @@ import io.puzzlebox.jigsaw.ui.DrawerItem;
 //import io.puzzlebox.jigsaw.ui.SessionFragment;
 import io.puzzlebox.jigsaw.ui.SupportFragment;
 import io.puzzlebox.orbit.ui.DialogPuzzleboxOrbitFragment;
+import io.puzzlebox.orbit.ui.DialogPuzzleboxOrbitJoystickFragment;
 //import io.puzzlebox.orbit.ui.SteeringFragment;
 //import io.puzzlebox.orbit.ui.AdvancedFragment;
 import io.puzzlebox.orbit.ui.CreditsFragment;
 //import io.puzzlebox.orbit.ui.OrbitFragment;
+import io.puzzlebox.orbit.ui.DialogPuzzleboxOrbitJoystickMindwaveFragment;
 import io.puzzlebox.orbit.ui.GuideFragment;
 import io.puzzlebox.orbit.ui.TutorialFragment;
 import io.puzzlebox.orbit.ui.WelcomeFragment;
 
 public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		  WelcomeFragment.OnFragmentInteractionListener,
-//		  WelcomeFragment.OnTutorialListener,
 		  WelcomeFragment.OnDevicesListener,
 		  GuideFragment.OnFragmentInteractionListener,
-//		  SessionFragment.OnFragmentInteractionListener,
-//		  EEGFragment.OnFragmentInteractionListener,
-//		  OrbitFragment.OnFragmentInteractionListener,
-////		  SteeringFragment.OnFragmentInteractionListener,
-//		  AdvancedFragment.OnFragmentInteractionListener,
 		  SupportFragment.OnFragmentInteractionListener,
 		  DialogNeuroSkyMindWaveFragment.OnFragmentInteractionListener,
 		  DialogJoystickFragment.OnFragmentInteractionListener,
 		  DialogAudioIRFragment.OnFragmentInteractionListener,
 		  DialogSessionFragment.OnFragmentInteractionListener,
-		  DialogPuzzleboxOrbitFragment.OnFragmentInteractionListener
+		  DialogPuzzleboxOrbitFragment.OnFragmentInteractionListener,
+		  DialogPuzzleboxOrbitJoystickFragment.OnFragmentInteractionListener,
+		  DialogPuzzleboxOrbitJoystickMindwaveFragment.OnFragmentInteractionListener
 {
 
 	private final static String TAG = MainActivity.class.getSimpleName();

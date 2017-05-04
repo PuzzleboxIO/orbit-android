@@ -14,15 +14,11 @@ import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -31,17 +27,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import io.puzzlebox.jigsaw.data.SessionSingleton;
 import io.puzzlebox.jigsaw.protocol.ThinkGearService;
-import io.puzzlebox.jigsaw.ui.DialogJoystickFragment;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
 
-import static android.view.MenuItem.SHOW_AS_ACTION_ALWAYS;
 import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegConnected;
 import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegConnecting;
 import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegSignal;
@@ -98,7 +90,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 									 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View v = inflater.inflate(R.layout.fragment_dialog_puzzlebox_orbit, container, false);
+		View v = inflater.inflate(R.layout.dialog_profile_puzzlebox_orbit, container, false);
 
 		Button buttonTestFlight = (Button) v.findViewById(R.id.buttonTestFlight);
 		buttonTestFlight.setOnClickListener(new View.OnClickListener() {
