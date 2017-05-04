@@ -426,7 +426,8 @@
             android:layout_height="30dp"
             android:paddingLeft="@dimen/padding_medium"
             android:background="@drawable/shape_rounded_corners_grey"
-            android:text="@string/buttonDeviceCancel"/>
+            android:text="@string/buttonDeviceBack"/>
+            <!--android:text="@string/buttonDeviceCancel"/>-->
 
         <View
             android:layout_height="0dp"
@@ -442,8 +443,9 @@
             android:enabled="false"
             android:visibility="invisible"
             android:paddingLeft="@dimen/padding_medium"
-            android:text="@string/buttonDeviceEnable"
+            android:text="@string/buttonDeviceBack"
             />
+        <!--android:text="@string/buttonDeviceEnable"-->
         <!--android:enabled="false"-->
         <!--android:visibility="invisible"-->
         <!--android:enabled="true"-->

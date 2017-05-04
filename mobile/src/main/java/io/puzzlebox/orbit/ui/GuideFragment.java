@@ -1,5 +1,9 @@
 package io.puzzlebox.orbit.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -12,6 +16,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -111,9 +116,22 @@ public class GuideFragment extends TilesFragment {
 
 	}
 
+
+	@Override
+	public void onViewCreated(View v, Bundle savedInstanceState) {
+		super.onViewCreated(v, savedInstanceState);
+
+		// Change to high-speed animation after first display
+		ProfileSingleton.getInstance().tilesAnimationId = R.anim.tiles_fast;
+	}
+
+
+
 	public void displayInputCarousel() {
 
 		ImageView imageItem;
+		Drawable[] layersInput;
+		LayerDrawable layerDrawableInput;
 
 		mInputCarouselContainer.removeAllViewsInLayout();
 
@@ -129,9 +147,23 @@ public class GuideFragment extends TilesFragment {
 			// Set the shadow background
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
 
+			layersInput = new Drawable[2];
+			if (ProfileSingleton.getInstance().isActive("inputs", i)) {
+				layersInput[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
+			} else {
+				layersInput[0] = new ColorDrawable( getResources().getColor(R.color.white));
+			}
+
 			// Set the image view resource
-			imageItem.setImageResource(
+//			imageItem.setImageResource(
+//					  getResources().getIdentifier(devicesInputResourcesTypedArray.getString(i), "drawable", getActivity().getPackageName()));
+
+			layersInput[1] =  getResources().getDrawable(
 					  getResources().getIdentifier(devicesInputResourcesTypedArray.getString(i), "drawable", getActivity().getPackageName()));
+
+			layerDrawableInput = new LayerDrawable(layersInput);
+
+			imageItem.setImageDrawable(layerDrawableInput);
 
 			// Set the size of the image view to the previously computed value
 			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
@@ -139,7 +171,7 @@ public class GuideFragment extends TilesFragment {
 			imageItem.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					showDialog("input", index);
+					showDialog("inputs", index);
 				}
 			});
 
@@ -161,6 +193,9 @@ public class GuideFragment extends TilesFragment {
 	public void displayOutputCarousel() {
 
 		ImageView imageItem;
+		Drawable[] layersOutput;
+		LayerDrawable layerDrawableOutput;
+
 
 		mOutputCarouselContainer.removeAllViewsInLayout();
 
@@ -168,15 +203,47 @@ public class GuideFragment extends TilesFragment {
 		for (int i = 0; i < devicesOutputResourcesTypedArray.length(); ++i) {
 			imageItem = new ImageView(getActivity());
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
-			imageItem.setImageResource(
+
+			layersOutput = new Drawable[2];
+
+
+//			Log.e(TAG, "(ProfileSingleton.getInstance().isActive(\"outputs\", i): " + (ProfileSingleton.getInstance().isActive("output", i)));
+
+			if (ProfileSingleton.getInstance().isActive("outputs", i)) {
+				layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
+			} else {
+				layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.white));
+			}
+
+//			switch (ProfileSingleton.getInstance().outputs.get(i).get("status")) {
+//				case "true":
+//					layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
+//					break;
+//				case "false":
+//					layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.white));
+//					break;
+//			}
+
+//			layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.tileRequired));
+
+//			imageItem.setImageResource(
+//					  getResources().getIdentifier(devicesOutputResourcesTypedArray.getString(i), "drawable", getActivity().getPackageName()));
+
+			layersOutput[1] =  getResources().getDrawable(
 					  getResources().getIdentifier(devicesOutputResourcesTypedArray.getString(i), "drawable", getActivity().getPackageName()));
+
+			layerDrawableOutput = new LayerDrawable(layersOutput);
+
+			imageItem.setImageDrawable(layerDrawableOutput);
+
 			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
+
 
 			final int index = i;
 			imageItem.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					showDialog("output", index);
+					showDialog("outputs", index);
 				}
 			});
 
@@ -233,11 +300,19 @@ public class GuideFragment extends TilesFragment {
 
 			// Background/Highlight Color
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.white));
-			layersTile[0] = new ColorDrawable(Color.TRANSPARENT); // TODO
+//			layersTile[0] = new ColorDrawable(Color.TRANSPARENT);
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileRequired));
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileAvailable));
 //			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileDisabled));
+
+//			if (ProfileSingleton.getInstance().isActive("profiles", i)) {
+//				layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
+//			} else {
+//				layersTile[0] = new ColorDrawable( getResources().getColor(R.color.white));
+//			}
+
+			layersTile[0] = ProfileSingleton.getInstance().getProfileTileColor(getContext(), i);
 
 
 			id = devicesProfileResourcesTypedArray.getString(i);
@@ -391,7 +466,7 @@ public class GuideFragment extends TilesFragment {
 			imageItem.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					showDialog("profile", index);
+					showDialog("profiles", index);
 				}
 			});
 
@@ -437,7 +512,7 @@ public class GuideFragment extends TilesFragment {
 
 		switch (type) {
 
-			case "input":
+			case "inputs":
 
 				switch (index) {
 					case 0:
@@ -453,7 +528,7 @@ public class GuideFragment extends TilesFragment {
 				}
 				break;
 
-			case "output":
+			case "outputs":
 
 				switch (index) {
 					case 0:
@@ -469,7 +544,7 @@ public class GuideFragment extends TilesFragment {
 				}
 				break;
 
-			case "profile":
+			case "profiles":
 
 				switch (index) {
 					case 0:
@@ -493,6 +568,71 @@ public class GuideFragment extends TilesFragment {
 	}
 
 
+	// ################################################################
+
+	public void onPause() {
+
+		super.onPause();
+
+		LocalBroadcastManager.getInstance(
+				  getActivity().getApplicationContext()).unregisterReceiver(
+				  mTileReceiver);
+
+	} // onPause
+
+
+	// ################################################################
+
+	public void onResume() {
+
+		super.onResume();
+
+		LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(
+				  mTileReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.tile.event"));
+
+	}
+
+
+	// ################################################################
+
+	private BroadcastReceiver mTileReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			String id = intent.getStringExtra("id");
+			String name = intent.getStringExtra("name");
+			String value = intent.getStringExtra("value");
+			String category = intent.getStringExtra("category");
+
+//			Log.e(TAG, "mTileReceiver.onReceive() id: " + id);
+//			Log.e(TAG, "mTileReceiver.onReceive() name: " + name);
+//			Log.e(TAG, "mTileReceiver.onReceive() value: " + value);
+//			Log.e(TAG, "mTileReceiver.onReceive() category: " + category);
+
+			ProfileSingleton.getInstance().updateStatus(id, name , value);
+
+			switch(category) {
+				case "inputs":
+					displayInputCarousel();
+					displayProfileCarousel();
+					break;
+				case "outputs":
+					displayOutputCarousel();
+					displayProfileCarousel();
+					break;
+				case "profiles":
+					displayProfileCarousel();
+					break;
+			}
+
+		}
+
+	};
+
+
+	// ################################################################
+
 	public Drawable scaleImage (Drawable image, float scaleFactor) {
 
 		if ((image == null) || !(image instanceof BitmapDrawable)) {
@@ -511,7 +651,6 @@ public class GuideFragment extends TilesFragment {
 		return image;
 
 	}
-
 
 
 }
