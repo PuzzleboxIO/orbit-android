@@ -50,6 +50,8 @@ public class GuideFragment extends TilesFragment {
 //	double tileProfileInsetScale = 1.5;
 	double tileProfileInsetScale = 0.1;
 
+	private int counterToastMessages = 3;
+
 	/**
 	 * Number of items visible in carousels.
 	 */
@@ -548,8 +550,17 @@ public class GuideFragment extends TilesFragment {
 			case "profiles":
 
 				if (! ProfileSingleton.getInstance().profiles.get(index).get("status").equals("available")) {
-					Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_warning_profile_unavailable), Toast.LENGTH_LONG).show();
-					break;
+					// Skip warning message from block access after a number of attempts
+					--counterToastMessages;
+					if (counterToastMessages > 2) {
+						Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_warning_profile_unavailable), Toast.LENGTH_LONG).show();
+						break;
+					} else if (counterToastMessages > 0) {
+						Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_warning_profile_unavailable), Toast.LENGTH_SHORT).show();
+						break;
+					} else {
+						counterToastMessages = 3;
+					}
 				}
 
 				switch (index) {

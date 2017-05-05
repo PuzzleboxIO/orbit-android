@@ -94,6 +94,8 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		// Inflate the layout for this fragment
 		View v = inflater.inflate(R.layout.dialog_profile_puzzlebox_orbit, container, false);
 
+		getDialog().getWindow().setTitle( getString(R.string.title_dialog_fragment_puzzlebox_orbit));
+
 		Button buttonTestFlight = (Button) v.findViewById(R.id.buttonTestFlight);
 		buttonTestFlight.setOnClickListener(new View.OnClickListener() {
 			@Override

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import io.puzzlebox.jigsaw.data.ConfigurationSingleton;
 import io.puzzlebox.jigsaw.data.ProfileSingleton;
+import io.puzzlebox.jigsaw.ui.DialogAudioIRFragment;
 import io.puzzlebox.jigsaw.ui.JoystickView;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
@@ -49,6 +50,8 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 		// Inflate the layout for this fragment
 		View v = inflater.inflate(R.layout.dialog_profile_puzzlebox_orbit_joystick, container, false);
 
+		getDialog().getWindow().setTitle( getString(R.string.title_dialog_fragment_puzzlebox_orbit_joystick));
+
 		seekBarThrottle = (SeekBar) v.findViewById(R.id.seekBarThrottle);
 //		seekBarThrottle.setProgress(seekBarThrottle.getMax() / 2);
 		seekBarThrottle.setProgress(OrbitSingleton.getInstance().defaultJoystickThrottle);
@@ -76,13 +79,11 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 		ViewGroup.LayoutParams lp = llJoysticks.getLayoutParams();
 		lp = joystickViewThrottle.getLayoutParams();
 
-		Log.e(TAG, "ConfigurationSingleton.getInstance().displayWidth: " + ConfigurationSingleton.getInstance().displayWidth);
-		Log.e(TAG, "lp.width: " + lp.width);
+//		Log.e(TAG, "ConfigurationSingleton.getInstance().displayWidth: " + ConfigurationSingleton.getInstance().displayWidth);
+//		Log.e(TAG, "lp.width: " + lp.width);
 
 		if (((int) (ConfigurationSingleton.getInstance().displayWidth / 2))
 				  < (lp.width * 2 + paddingJoysticks * 2)) {
-
-			Log.e(TAG, "here");
 
 			lp.width = ((int) (ConfigurationSingleton.getInstance().displayWidth / 2)) - paddingJoysticks;
 			joystickViewThrottle.setLayoutParams(lp);
@@ -186,10 +187,8 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 
 		super.onResume();
 
-		// TODO (hardcoded)
-//		if (ProfileSingleton.getInstance().isActive("outputs", 0))
-//		if (profiles.get(1).get)
-		if (ProfileSingleton.getInstance().getStatus(profileID).equals("available"))
+//		if (ProfileSingleton.getInstance().getStatus(profileID).equals("available"))
+		if (ProfileSingleton.getInstance().getValue(DialogAudioIRFragment.profileID, "active").equals("true"))
 			playControl();
 		else
 			Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_puzzlebox_orbit_joystick_audio_ir_warning), Toast.LENGTH_LONG).show();
