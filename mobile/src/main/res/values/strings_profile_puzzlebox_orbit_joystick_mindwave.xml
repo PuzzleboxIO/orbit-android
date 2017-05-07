@@ -2,4 +2,13 @@
 <resources>
     <string name="title_dialog_fragment_puzzlebox_orbit_joystick_mindwave">Puzzlebox Orbit</string>
     <string name="label_puzzlebox_orbit_joystick_mindwave_instruction">EEG Control with Joystick Steering</string>
+
+    <string name="label_puzzlebox_orbit_joystick_mindwave_switch_text">Yaw / Throttle</string>
+    <string name="label_puzzlebox_orbit_joystick_mindwave_switch_text_alt">Yaw / Pitch</string>
+    <string name="label_puzzlebox_orbit_joystick_mindwave_switch_textOff">Y: Throttle</string>
+    <string name="label_puzzlebox_orbit_joystick_mindwave_switch_textOn">Y: Pitch</string>
+
+    <!--<string name="label_puzzlebox_orbit_joystick_mindwave_switch_text">Throttle/Yaw</string>-->
+    <!--<string name="label_puzzlebox_orbit_joystick_mindwave_switch_text_alt">Pitch/Yaw</string>-->
+
 </resources>

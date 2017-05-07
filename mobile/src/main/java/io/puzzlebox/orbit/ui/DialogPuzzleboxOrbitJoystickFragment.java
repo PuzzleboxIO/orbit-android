@@ -220,8 +220,7 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 				newX = seekBarPitch.getMax() / 2 - newX;
 				seekBarPitch.setProgress(newX);
 			}
-
-			if ((angle >= 150) && (angle <= 210)) {
+			else if ((angle >= 150) && (angle <= 210)) {
 				// Left
 				int newY = seekBarYaw.getMax() / 2;
 				newY = (int) (newY * (strength / 100.0));
@@ -254,8 +253,16 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 //			else if ((angle >= 0) && (angle <= 180)) {
 			else if ((angle >= 30) && (angle <= 150)) {
 				// Up
-				int newX = (int) (seekBarThrottle.getMax() * (strength / 100.0));
+
 				// Ensure lower half of seekBarThrottle can be accessed from the top half of throttle joystick
+				int newX = (int) (seekBarThrottle.getMax() * (strength / 100.0));
+
+				// Set a minimum about of throttle to send if anywhere above zero level
+				// of Orbit. Normally it takes some small amount of throttle to trigger
+				// any flight or visible reaction.
+				if (newX < OrbitSingleton.getInstance().minimumJoystickThrottle)
+					newX = OrbitSingleton.getInstance().minimumJoystickThrottle;
+
 				seekBarThrottle.setProgress(newX);
 			}
 //			else if ((angle >= 180) && (angle <= 359)) {

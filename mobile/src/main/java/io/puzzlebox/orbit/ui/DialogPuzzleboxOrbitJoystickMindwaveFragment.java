@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import io.puzzlebox.jigsaw.data.ConfigurationSingleton;
@@ -21,19 +22,21 @@ import io.puzzlebox.jigsaw.ui.JoystickView;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
 
-public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment {
+public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
+		  implements SeekBar.OnSeekBarChangeListener {
 
 	private final static String TAG = DialogPuzzleboxOrbitJoystickMindwaveFragment.class.getSimpleName();
 
 	public final static String profileID = "profile_puzzlebox_orbit_joystick_mindwave";
 
 	// UI
+	public Switch switchThrottlePitch;
 	public SeekBar seekBarX;
 	public SeekBar seekBarY;
 
-	public SeekBar seekBarThrottle;
-	public SeekBar seekBarYaw;
-	public SeekBar seekBarPitch;
+//	public SeekBar seekBarThrottle;
+//	public SeekBar seekBarYaw;
+//	public SeekBar seekBarPitch;
 
 	Button buttonDeviceEnable;
 
@@ -55,41 +58,27 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 
 		getDialog().getWindow().setTitle( getString(R.string.title_dialog_fragment_puzzlebox_orbit_joystick_mindwave));
 
-		seekBarThrottle = (SeekBar) v.findViewById(R.id.seekBarThrottle);
-//		seekBarThrottle.setProgress(seekBarThrottle.getMax() / 2);
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().defaultJoystickThrottle);
-//		seekBarThrottle.setOnSeekBarChangeListener(this);
+		switchThrottlePitch = (Switch) v.findViewById(R.id.switchThrottlePitch);
+		switchThrottlePitch.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+//				onCheckBoxInvertControlSignalClicked(v);
+				Log.e(TAG, "switchThrottlePitch.onClick(): " + switchThrottlePitch.isChecked());
+				onSwitchClicked(switchThrottlePitch.isChecked());
+			}
+		});
 
-		seekBarYaw = (SeekBar) v.findViewById(R.id.seekBarYaw);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().defaultJoystickYaw);
-//		seekBarYaw.setProgress(seekBarYaw.getMax() / 2);
-//		seekBarYaw.setOnSeekBarChangeListener(this);
+		seekBarX = (SeekBar) v.findViewById(io.puzzlebox.jigsaw.R.id.seekBarX);
+		seekBarX.setProgress(seekBarX.getMax() / 2);
+		seekBarX.setOnSeekBarChangeListener(this);
 
-		seekBarPitch = (SeekBar) v.findViewById(R.id.seekBarPitch);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().defaultJoystickPitch);
+		seekBarY = (SeekBar) v.findViewById(io.puzzlebox.jigsaw.R.id.seekBarY);
+		seekBarY.setProgress(seekBarY.getMax() / 2);
+		seekBarY.setOnSeekBarChangeListener(this);
 
-		LinearLayout llJoysticks = (LinearLayout) v.findViewById(R.id.linearLayoutJoysticks);
+		JoystickView joystickView = (JoystickView) v.findViewById(io.puzzlebox.jigsaw.R.id.joystickView);
+		joystickView.setOnMoveListener(onMoveJoystick);
 
-		JoystickView joystickViewThrottle = (JoystickView) v.findViewById(R.id.joystickViewThrottle);
-		joystickViewThrottle.setOnMoveListener(onMoveJoystickThrottle);
-
-		JoystickView joystickViewYawPitch = (JoystickView) v.findViewById(R.id.joystickViewYawPitch);
-		joystickViewYawPitch.setOnMoveListener(onMoveJoystickYawPitch);
-
-
-		ViewGroup.LayoutParams lp = llJoysticks.getLayoutParams();
-		lp = joystickViewThrottle.getLayoutParams();
-
-		if (((int) (ConfigurationSingleton.getInstance().displayWidth / 2))
-				  < (lp.width * 2 + paddingJoysticks * 2)) {
-
-			lp.width = ((int) (ConfigurationSingleton.getInstance().displayWidth / 2)) - paddingJoysticks;
-			joystickViewThrottle.setLayoutParams(lp);
-
-			lp = joystickViewYawPitch.getLayoutParams();
-			lp.width = ((int) (ConfigurationSingleton.getInstance().displayWidth / 2)) - paddingJoysticks;
-			joystickViewYawPitch.setLayoutParams(lp);
-		}
 
 		Button buttonDeviceCancel = (Button) v.findViewById(io.puzzlebox.jigsaw.R.id.buttonDeviceCancel);
 		buttonDeviceCancel.setOnClickListener(new View.OnClickListener() {
@@ -164,73 +153,91 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 
 	}
 
+
 	// ################################################################
 
-	private JoystickView.OnMoveListener onMoveJoystickYawPitch = new JoystickView.OnMoveListener(){
-		public void onMove(int angle, int strength) {
-			Log.v(TAG, "onMoveJoystickYawPitch(int angle, int strength): " + angle + ", " + strength);
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
 
-			if ((angle == 0) && (strength == 0)) {
-				seekBarYaw.setProgress(OrbitSingleton.getInstance().defaultJoystickYaw);
-				seekBarPitch.setProgress(OrbitSingleton.getInstance().defaultJoystickPitch);
-			}
+//		updateControlSignal();
 
-			if ((angle >= 60) && (angle <= 120)) {
-				// Up
-				int newX = seekBarPitch.getMax() / 2;
-				newX = (int) (newX * (strength / 100.0));
-				newX = seekBarPitch.getMax() / 2 + newX;
-				seekBarPitch.setProgress(newX);
-			}
-			else if ((angle >= 240) && (angle <= 300)) {
-				// Down
-				int newX = seekBarPitch.getMax() / 2;
-				newX = (int) (newX * (strength / 100.0));
-				newX = seekBarPitch.getMax() / 2 - newX;
-				seekBarPitch.setProgress(newX);
-			}
+	} // onProgressChanged
 
-			if ((angle >= 150) && (angle <= 210)) {
-				// Left
-				int newY = seekBarYaw.getMax() / 2;
-				newY = (int) (newY * (strength / 100.0));
-				newY = seekBarYaw.getMax() / 2 - newY;
-				seekBarYaw.setProgress(newY);
-			}
-			else if ((angle >= 330) || (angle <= 30)) {
-				// Right
-				int newY = seekBarYaw.getMax() / 2;
-				newY = (int) (newY * (strength / 100.0));
-				newY = seekBarYaw.getMax() / 2 + newY;
-				seekBarYaw.setProgress(newY);
-			}
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
 
-			updateControlSignal();
+	}
 
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
+
+	}
+
+	// ################################################################
+
+	public void onSwitchClicked(Boolean activated) {
+
+		if (! activated) {
+			switchThrottlePitch.setText(R.string.label_puzzlebox_orbit_joystick_mindwave_switch_text);
+		} else {
+			switchThrottlePitch.setText(R.string.label_puzzlebox_orbit_joystick_mindwave_switch_text_alt);
 		}
-	};
+
+	}
 
 
 	// ################################################################
 
-	private JoystickView.OnMoveListener onMoveJoystickThrottle = new JoystickView.OnMoveListener(){
+	private JoystickView.OnMoveListener onMoveJoystick = new JoystickView.OnMoveListener(){
 		public void onMove(int angle, int strength) {
-			Log.v(TAG, "onMoveJoystickThrottle(int angle, int strength): " + angle + ", " + strength);
+			Log.v(TAG, "onMoveJoystick(int angle, int strength): " + angle + ", " + strength);
 
 			if ((angle == 0) && (strength == 0)) {
-				seekBarThrottle.setProgress(OrbitSingleton.getInstance().defaultJoystickThrottle);
+				seekBarX.setProgress(OrbitSingleton.getInstance().defaultJoystickYaw);
+
+				if (! switchThrottlePitch.isChecked())
+					seekBarY.setProgress(OrbitSingleton.getInstance().defaultJoystickThrottle);
+				else
+					seekBarY.setProgress(OrbitSingleton.getInstance().defaultJoystickPitch);
 			}
 //			else if ((angle >= 0) && (angle <= 180)) {
 			else if ((angle >= 30) && (angle <= 150)) {
 				// Up
-				int newX = (int) (seekBarThrottle.getMax() * (strength / 100.0));
+
 				// Ensure lower half of seekBarThrottle can be accessed from the top half of throttle joystick
-				seekBarThrottle.setProgress(newX);
+				int newY = (int) (seekBarY.getMax() * (strength / 100.0));
+
+				// Set a minimum about of throttle to send if anywhere above zero level
+				// of Orbit. Normally it takes some small amount of throttle to trigger
+				// any flight or visible reaction.
+				if (newY < OrbitSingleton.getInstance().minimumJoystickThrottle)
+					newY = OrbitSingleton.getInstance().minimumJoystickThrottle;
+
+				seekBarY.setProgress(newY);
+
+//				newY = seekBarY.getMax() / 2;
+//				newY = (int) (newY * (strength / 100.0));
+//				newY = seekBarY.getMax() / 2 + newY;
+//				seekBarY.setProgress(newY);
+
 			}
 //			else if ((angle >= 180) && (angle <= 359)) {
 			else if ((angle >= 210) && (angle <= 330)) {
 				// Down
-				seekBarThrottle.setProgress(0);
+				seekBarY.setProgress(0);
+			}
+			else if ((angle >= 150) && (angle <= 210)) {
+				// Left
+				int newX = seekBarX.getMax() / 2;
+				newX = (int) (newX * (strength / 100.0));
+				newX = seekBarX.getMax() / 2 - newX;
+				seekBarX.setProgress(newX);
+			}
+			else if ((angle >= 330) || (angle <= 30)) {
+				// Right
+				int newX = seekBarX.getMax() / 2;
+				newX = (int) (newX * (strength / 100.0));
+				newX = seekBarX.getMax() / 2 + newX;
+				seekBarX.setProgress(newX);
 			}
 
 			updateControlSignal();
@@ -247,13 +254,41 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 		// because smaller values instruct the helicopter to spin to the right
 		// (clockwise if looking down from above) whereas intuitively moving
 		// the slider to the left should cause it to spin left
-		Integer[] command =  {
-				  seekBarThrottle.getProgress(),
-				  seekBarYaw.getMax() - seekBarYaw.getProgress(),
-				  seekBarPitch.getProgress(),
-				  1};
 
-		OrbitSingleton.getInstance().audioHandler.command = command;
+//		Integer[] command = {
+//				  seekBarThrottle.getProgress(),
+//				  seekBarYaw.getMax() - seekBarYaw.getProgress(),
+//				  seekBarPitch.getProgress(),
+//				  1};
+
+//		Integer[] command = {
+//				  OrbitSingleton.getInstance().defaultJoystickThrottle,
+//				  OrbitSingleton.getInstance().defaultJoystickYaw,
+//				  OrbitSingleton.getInstance().defaultJoystickPitch
+//		};
+
+		if (! switchThrottlePitch.isChecked()) {
+
+			Integer[] command = {
+					  OrbitSingleton.getInstance().defaultJoystickThrottle,
+					  seekBarX.getMax() - seekBarX.getProgress(),
+					  seekBarY.getProgress(),
+					  1};
+
+			OrbitSingleton.getInstance().audioHandler.command = command;
+
+		} else {
+			Integer[] command = {
+					  seekBarY.getProgress(),
+					  seekBarX.getMax() - seekBarX.getProgress(),
+					  OrbitSingleton.getInstance().defaultJoystickPitch,
+					  1};
+
+			OrbitSingleton.getInstance().audioHandler.command = command;
+
+		}
+
+//		OrbitSingleton.getInstance().audioHandler.command = command;
 		OrbitSingleton.getInstance().audioHandler.updateControlSignal();
 
 	} // updateControlSignal
