@@ -32,7 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import io.puzzlebox.jigsaw.data.ProfileSingleton;
-import io.puzzlebox.jigsaw.ui.DialogAudioIRFragment;
+//import io.puzzlebox.jigsaw.ui.DialogAudioIRFragment;
 import io.puzzlebox.jigsaw.ui.DialogJoystickFragment;
 import io.puzzlebox.jigsaw.ui.DialogNeuroSkyMindWaveFragment;
 import io.puzzlebox.jigsaw.ui.DialogSessionFragment;
@@ -536,8 +536,10 @@ public class GuideFragment extends TilesFragment {
 				switch (index) {
 					case 0:
 						// Audio IR Transmitter
-						DialogAudioIRFragment dialogAudioIRFragment = new DialogAudioIRFragment();
-						dialogAudioIRFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_audio_ir));
+//						DialogAudioIRFragment dialogAudioIRFragment = new DialogAudioIRFragment();
+//						dialogAudioIRFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_audio_ir));
+						DialogOutputAudioIRFragment dialogOutputAudioIRFragment = new DialogOutputAudioIRFragment();
+						dialogOutputAudioIRFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_audio_ir));
 						break;
 					case 1:
 						// Session Data

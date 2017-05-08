@@ -23,6 +23,7 @@ import io.puzzlebox.jigsaw.ui.DrawerItem;
 //import io.puzzlebox.jigsaw.ui.EEGFragment;
 //import io.puzzlebox.jigsaw.ui.SessionFragment;
 import io.puzzlebox.jigsaw.ui.SupportFragment;
+import io.puzzlebox.orbit.ui.DialogOutputAudioIRFragment;
 import io.puzzlebox.orbit.ui.DialogPuzzleboxOrbitFragment;
 import io.puzzlebox.orbit.ui.DialogPuzzleboxOrbitJoystickFragment;
 //import io.puzzlebox.orbit.ui.SteeringFragment;
@@ -41,7 +42,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		  SupportFragment.OnFragmentInteractionListener,
 		  DialogNeuroSkyMindWaveFragment.OnFragmentInteractionListener,
 		  DialogJoystickFragment.OnFragmentInteractionListener,
-		  DialogAudioIRFragment.OnFragmentInteractionListener,
+//		  DialogAudioIRFragment.OnFragmentInteractionListener,
+		  DialogOutputAudioIRFragment.OnFragmentInteractionListener,
 		  DialogSessionFragment.OnFragmentInteractionListener,
 		  DialogPuzzleboxOrbitFragment.OnFragmentInteractionListener,
 		  DialogPuzzleboxOrbitJoystickFragment.OnFragmentInteractionListener,
