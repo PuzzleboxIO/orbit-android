@@ -16,13 +16,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:weightSum="1">
-            <!--android:padding="20dp"-->
 
             <TextView
                 android:id="@+id/textViewInstruction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_medium"
                 android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
                 style="@style/DialogStyle"
                 android:text="@string/label_puzzlebox_orbit_instruction" />
 
@@ -49,29 +50,31 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical">
-                    <!--android:layout_gravity="left"-->
-                    <!--android:gravity="left"-->
 
                     <LinearLayout
                         android:id="@+id/layoutScore"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:gravity="left"
+                        android:layout_gravity="start"
+                        android:gravity="start"
                         android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/textViewLabelScore"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:paddingStart="@dimen/padding_medium"
                             android:paddingLeft="@dimen/padding_medium"
+                            android:paddingRight="@dimen/padding_medium"
                             android:text="@string/textview_label_score"/>
 
                         <TextView
                             android:id="@+id/textViewScore"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:paddingStart="@dimen/padding_medium"
                             android:paddingLeft="@dimen/padding_medium"
+                            android:paddingRight="@dimen/padding_medium"
                             android:text="@string/textview_score"/>
 
                     </LinearLayout>
@@ -80,22 +83,26 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:gravity="left"
+                        android:layout_gravity="start"
+                        android:gravity="start"
                         android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/textViewLabelLastScore"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:paddingStart="@dimen/padding_medium"
                             android:paddingLeft="@dimen/padding_medium"
+                            android:paddingRight="@dimen/padding_medium"
                             android:text="@string/textview_label_last_score"/>
 
                         <TextView
                             android:id="@+id/textViewLastScore"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:paddingStart="@dimen/padding_medium"
                             android:paddingLeft="@dimen/padding_medium"
+                            android:paddingRight="@dimen/padding_medium"
                             android:text="@string/textview_last_score"/>
 
                     </LinearLayout>
@@ -104,29 +111,32 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:gravity="left"
+                        android:layout_gravity="start"
+                        android:gravity="start"
                         android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/textViewLabelHighScore"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:paddingStart="@dimen/padding_medium"
                             android:paddingLeft="@dimen/padding_medium"
+                            android:paddingRight="@dimen/padding_medium"
                             android:text="@string/textview_label_high_score"/>
 
                         <TextView
                             android:id="@+id/textViewHighScore"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:paddingStart="@dimen/padding_medium"
                             android:paddingLeft="@dimen/padding_medium"
+                            android:paddingRight="@dimen/padding_medium"
                             android:text="@string/textview_high_score"/>
 
                     </LinearLayout>
                 </LinearLayout>
 
-                <View
-                    android:id="@+id/view"
+                <Space
                     android:layout_width="64dp"
                     android:layout_height="0dp"/>
 
@@ -149,12 +159,11 @@
                         android:visibility="gone"
                         />
 
-                    <View
+                    <Space
                         android:layout_width="16dp"
                         android:layout_height="0dp"
                         android:visibility="gone"
-                        >
-                    </View>
+                        />
 
                     <Button
                         android:id="@+id/buttonTestFlight"
@@ -167,7 +176,6 @@
 
                 </LinearLayout>
 
-
             </LinearLayout>
 
             <TextView
@@ -175,7 +183,9 @@
                 style="@android:style/TextAppearance.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_medium"
                 android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
                 android:text="@string/label_attention"
                 android:paddingTop="20dp"
                 />
@@ -185,8 +195,9 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="20dip"
-                android:paddingLeft="@dimen/padding_small"
-                android:paddingRight="@dimen/padding_small"
+                android:paddingStart="@dimen/padding_medium"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"/>
 
@@ -204,7 +215,9 @@
                 style="@android:style/TextAppearance.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_medium"
                 android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
                 android:text="@string/label_meditation" />
 
             <ProgressBar
@@ -212,8 +225,9 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="20dip"
-                android:paddingLeft="@dimen/padding_small"
-                android:paddingRight="@dimen/padding_small"
+                android:paddingStart="@dimen/padding_medium"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"/>
 
@@ -232,7 +246,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
+                android:paddingStart="@dimen/padding_medium"
                 android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
                 android:text="@string/label_signal" />
 
             <ProgressBar
@@ -250,7 +266,9 @@
                 style="@android:style/TextAppearance.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_medium"
                 android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
                 android:text="@string/label_power" />
 
             <ProgressBar
@@ -262,150 +280,6 @@
                 android:paddingRight="@dimen/padding_small"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"/>
-
-
-            <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:gravity="center"-->
-            <!--android:paddingTop="10dp">-->
-
-            <!--<LinearLayout-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="center"-->
-            <!--android:orientation="vertical">-->
-            <!--&lt;!&ndash;android:layout_gravity="left"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:gravity="left"&ndash;&gt;-->
-
-            <!--<LinearLayout-->
-            <!--android:id="@+id/layoutScore"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="left"-->
-            <!--android:gravity="left"-->
-            <!--android:orientation="horizontal">-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/textViewLabelScore"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:paddingLeft="@dimen/padding_medium"-->
-            <!--android:text="@string/textview_label_score"/>-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/textViewScore"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:paddingLeft="@dimen/padding_medium"-->
-            <!--android:text="@string/textview_score"/>-->
-
-            <!--</LinearLayout>-->
-
-
-            <!--<LinearLayout-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="left"-->
-            <!--android:gravity="left"-->
-            <!--android:orientation="horizontal">-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/textViewLabelLastScore"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:paddingLeft="@dimen/padding_medium"-->
-            <!--android:text="@string/textview_label_last_score"/>-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/textViewLastScore"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:paddingLeft="@dimen/padding_medium"-->
-            <!--android:text="@string/textview_last_score"/>-->
-
-            <!--</LinearLayout>-->
-
-            <!--<LinearLayout-->
-
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="left"-->
-            <!--android:gravity="left"-->
-            <!--android:orientation="horizontal">-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/textViewLabelHighScore"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:paddingLeft="@dimen/padding_medium"-->
-            <!--android:text="@string/textview_label_high_score"/>-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/textViewHighScore"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:paddingLeft="@dimen/padding_medium"-->
-            <!--android:text="@string/textview_high_score"/>-->
-
-            <!--</LinearLayout>-->
-            <!--</LinearLayout>-->
-
-            <!--<View-->
-            <!--android:id="@+id/view"-->
-            <!--android:layout_width="30dp"-->
-            <!--android:layout_height="0dp"/>-->
-
-            <!--<LinearLayout-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--android:gravity="center"-->
-            <!--android:orientation="horizontal"-->
-            <!--&gt;-->
-
-            <!--<Button-->
-            <!--android:id="@+id/buttonConnectOrbit"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:background="@drawable/shape_rounded_corners_grey"-->
-            <!--android:text="@string/button_connect"-->
-            <!--android:visibility="gone"-->
-            <!--/>-->
-
-            <!--<View-->
-            <!--android:layout_width="16dp"-->
-            <!--android:layout_height="0dp"-->
-            <!--android:visibility="gone"-->
-            <!--&gt;-->
-            <!--</View>-->
-
-            <!--<Button-->
-            <!--android:id="@+id/buttonTestFlight"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:background="@drawable/shape_rounded_corners_grey"-->
-            <!--android:text="@string/button_test_fly"-->
-            <!--/>-->
-
-            <!--</LinearLayout>-->
-
-
-            <!--</LinearLayout>-->
-
-
-            <!--<ImageView-->
-            <!--android:id="@+id/imageViewStatus"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="78dp"-->
-            <!--android:contentDescription="@string/image_description_status"-->
-            <!--android:maxHeight="20dp"-->
-            <!--android:src="@drawable/status_default"-->
-            <!--/>-->
 
         </LinearLayout>
 
@@ -419,22 +293,21 @@
         android:gravity="center"
         android:paddingTop="10dp">
 
-        <!--style="@style/button_text"-->
         <Button
             android:id="@+id/buttonDeviceCancel"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:paddingStart="@dimen/padding_medium"
             android:paddingLeft="@dimen/padding_medium"
+            android:paddingRight="@dimen/padding_medium"
             android:background="@drawable/shape_rounded_corners_grey"
             android:text="@string/buttonDeviceBack"/>
-            <!--android:text="@string/buttonDeviceCancel"/>-->
 
-        <View
+        <Space
             android:layout_height="0dp"
             android:layout_width="30dp"
             />
 
-        <!--style="@style/button_text"-->
         <Button
             android:id="@+id/buttonDeviceEnable"
             android:layout_width="wrap_content"
@@ -442,14 +315,11 @@
             android:background="@drawable/shape_rounded_corners_grey"
             android:enabled="false"
             android:visibility="invisible"
+            android:paddingStart="@dimen/padding_medium"
             android:paddingLeft="@dimen/padding_medium"
+            android:paddingRight="@dimen/padding_medium"
             android:text="@string/buttonDeviceBack"
             />
-        <!--android:text="@string/buttonDeviceEnable"-->
-        <!--android:enabled="false"-->
-        <!--android:visibility="invisible"-->
-        <!--android:enabled="true"-->
-        <!--android:visibility="visible"-->
 
     </LinearLayout>
 

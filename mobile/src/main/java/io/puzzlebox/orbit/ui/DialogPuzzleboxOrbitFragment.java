@@ -914,7 +914,8 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 			//				serviceBinder.ifFlip = fragmentAdvanced.checkBoxInvertControlSignal.isChecked(); // if checked then flip
 			OrbitSingleton.getInstance().audioHandler.ifFlip = OrbitSingleton.getInstance().invertControlSignal; // if checked then flip
 
-			int channel = 0; // default "A"
+//			int channel = 0; // default "A"
+			int channel = OrbitSingleton.getInstance().defaultChannel;
 
 //			if (fragmentAdvanced != null)
 //				channel = fragmentAdvanced.radioGroupChannel.getCheckedRadioButtonId();

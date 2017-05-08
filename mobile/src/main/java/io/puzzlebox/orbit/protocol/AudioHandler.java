@@ -8,6 +8,8 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
+import io.puzzlebox.orbit.data.OrbitSingleton;
+
 //import android.os.Handler;
 //import android.os.Looper;
 
@@ -38,10 +40,17 @@ public class AudioHandler extends Thread implements Callback {
 
 	short[] audioData = new short[6144];
 	public boolean ifFlip = false;
+
 	int throttle=80;
-	int yaw=78;
+//	int yaw=78;
+	int yaw=49;
 	int pitch=31;
 	public int channel=1;
+//	int throttle=OrbitSingleton.getInstance().defaultControlThrottle;
+//	int yaw=OrbitSingleton.getInstance().defaultControlYaw;
+//	int pitch=OrbitSingleton.getInstance().defaultControlPitch;
+//	public int channel=OrbitSingleton.getInstance().defaultChannel;
+
 	public Integer[] command={throttle,yaw,pitch,channel};
 	public int loopNumberWhileMindControl=20;
 
@@ -58,11 +67,6 @@ public class AudioHandler extends Thread implements Callback {
 	 * 
 	 * Four periods exist in the wave
 	 */
-	//	private final double longHIGH = 0.000829649;
-	//	private final double longLOW = 0.000797027;
-	//	private final double shortHIGH = 0.000412649;
-	//	private final double shortLOW = 0.000378351;
-
 	private final double longHIGH = 0.000829649;
 	private final double longLOW = 0.000797027;
 	private final double shortHIGH = 0.000412649;
@@ -87,12 +91,6 @@ public class AudioHandler extends Thread implements Callback {
 
 
 	// ################################################################
-
-	/**
-	 * Object constructor.
-	 * @param sps sampleRate of the specific Android device. (only 44100 is tested so far)
-	 * @param ifFlip 
-	 */
 
 	public AudioHandler() {
 		Log.v(TAG, "public AudioHandler()");

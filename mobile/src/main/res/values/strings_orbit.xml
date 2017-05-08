@@ -18,6 +18,7 @@
     <!--<string name="welcome_message_help">To begin please use menu at top-left\nor click here for tutorial</string>-->
     <!--<string name="welcome_message_help">To begin please use menu at top-left\nor PRESS HERE</string>-->
     <string name="welcome_message_help">Please touch screen to begin</string>
+    <string name="contentDescription_imageViewLogo">Puzzlebox Logo</string>
 
     <!--<string name="button_connect">Connect</string>-->
     <string name="button_connect">Activate Orbit</string>

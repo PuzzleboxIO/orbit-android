@@ -20,7 +20,9 @@
                 android:id="@+id/textViewInstruction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_medium"
                 android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
                 style="@style/DialogStyle"
                 android:text="@string/label_puzzlebox_orbit_joystick_instruction" />
             <!--style="@android:style/TextAppearance.DeviceDefault.DialogWindowTitle"-->
@@ -35,7 +37,9 @@
                     android:id="@+id/textViewThrottle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/padding_medium"
                     android:paddingLeft="@dimen/padding_medium"
+                    android:paddingRight="@dimen/padding_medium"
                     android:text="@string/textview_throttle" />
 
                 <SeekBar
@@ -49,7 +53,9 @@
                     android:id="@+id/textViewYaw"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/padding_medium"
                     android:paddingLeft="@dimen/padding_medium"
+                    android:paddingRight="@dimen/padding_medium"
                     android:text="@string/textview_yaw" />
 
                 <SeekBar
@@ -63,7 +69,9 @@
                     android:id="@+id/textViewPitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/padding_medium"
                     android:paddingLeft="@dimen/padding_medium"
+                    android:paddingRight="@dimen/padding_medium"
                     android:text="@string/textview_pitch" />
 
                 <SeekBar
@@ -134,7 +142,9 @@
             android:id="@+id/buttonDeviceCancel"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:paddingStart="@dimen/padding_medium"
             android:paddingLeft="@dimen/padding_medium"
+            android:paddingRight="@dimen/padding_medium"
             android:background="@drawable/shape_rounded_corners_grey"
             android:text="@string/buttonDeviceBack"
             />
@@ -153,7 +163,9 @@
             android:background="@drawable/shape_rounded_corners_grey"
             android:enabled="false"
             android:visibility="invisible"
+            android:paddingStart="@dimen/padding_medium"
             android:paddingLeft="@dimen/padding_medium"
+            android:paddingRight="@dimen/padding_medium"
             android:text="@string/buttonDeviceEnable"
             />
         <!--android:text="@string/buttonDeviceEnable"-->

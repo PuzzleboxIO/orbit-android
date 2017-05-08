@@ -102,6 +102,9 @@ public class OrbitSingleton {
 	public int audioFile = R.raw.throttle_hover_android_common;
 	//	int audioFile = R.raw.throttle_hover_android_htc_one_x;
 
+//	public int defaultChannel = 0; // B
+	public int defaultChannel = 1; // A
+
 	public boolean generateAudio = true;
 	public boolean invertControlSignal = false;
 

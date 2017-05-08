@@ -103,6 +103,8 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 			OrbitSingleton.getInstance().audioHandler.start();
 		}
 
+		updateControlSignal();
+
 		return v;
 
 	}
@@ -334,7 +336,7 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 
 		OrbitSingleton.getInstance().audioHandler.ifFlip = OrbitSingleton.getInstance().invertControlSignal; // if checked then flip
 
-		int channel = 0; // default "A"
+		int channel = OrbitSingleton.getInstance().defaultChannel;
 
 		updateAudioHandlerLoopNumberWhileMindControl(-1); // Loop infinite for easier user testing
 

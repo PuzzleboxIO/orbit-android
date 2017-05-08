@@ -11,8 +11,10 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:fitsSystemWindows="true"
         android:id="@+id/video_view" />
@@ -43,6 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/puzzlebox_logo"
+                android:contentDescription="@string/contentDescription_imageViewLogo"
                 />
 
         </LinearLayout>
