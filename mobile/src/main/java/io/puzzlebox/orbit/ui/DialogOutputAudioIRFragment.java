@@ -293,6 +293,17 @@ public class DialogOutputAudioIRFragment extends DialogFragment {
 
 	// ################################################################
 
+	public void onPause() {
+
+		super.onPause();
+
+		stopControl();
+
+	} // onPause
+
+
+	// ################################################################
+
 	@Override
 	public void onResume() {
 		super.onResume();
