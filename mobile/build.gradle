@@ -6,10 +6,11 @@ android {
 
     defaultConfig {
         applicationId "io.puzzlebox.orbit"
-        minSdkVersion 15 // API 4.0.3
+//        minSdkVersion 15 // API 4.0.3
+        minSdkVersion 16 // API 4.1 [Manifest.permission.READ_EXTERNAL_STORAGE]
         targetSdkVersion 25
         versionCode 14
-        versionName "2.2.1"
+        versionName "2.2.2"
         multiDexEnabled true
     }
     buildTypes {

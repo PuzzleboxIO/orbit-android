@@ -7,6 +7,18 @@
               android:orientation="vertical"
               tools:context="io.puzzlebox.orbit.ui.DialogPuzzleboxOrbitJoystickFragment">
 
+    <TextView
+        android:id="@+id/textViewLabelPuzzleboxOrbitJoystickInstruction"
+        style="@style/DialogStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="10dp"
+        android:paddingStart="@dimen/padding_medium"
+        android:paddingLeft="@dimen/padding_medium"
+        android:paddingEnd="@dimen/padding_medium"
+        android:text="@string/label_puzzlebox_orbit_joystick_instruction"/>
+
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
@@ -16,16 +28,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textViewInstruction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/padding_medium"
-                android:paddingLeft="@dimen/padding_medium"
-                android:paddingRight="@dimen/padding_medium"
-                style="@style/DialogStyle"
-                android:text="@string/label_puzzlebox_orbit_joystick_instruction" />
-            <!--style="@android:style/TextAppearance.DeviceDefault.DialogWindowTitle"-->
+            <!--<TextView-->
+                <!--android:id="@+id/textViewInstruction"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingStart="@dimen/padding_medium"-->
+                <!--android:paddingLeft="@dimen/padding_medium"-->
+                <!--android:paddingRight="@dimen/padding_medium"-->
+                <!--style="@style/DialogStyle"-->
+                <!--android:text="@string/label_puzzlebox_orbit_joystick_instruction" />-->
+            <!--&lt;!&ndash;style="@android:style/TextAppearance.DeviceDefault.DialogWindowTitle"&ndash;&gt;-->
 
             <LinearLayout
                 android:id="@+id/layoutJoystick"
@@ -89,6 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:orientation="horizontal"
                 >
                 <!--android:layout_width="match_parent"-->
@@ -96,8 +109,8 @@
                 <io.puzzlebox.jigsaw.ui.JoystickView
                     xmlns:custom="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/joystickViewThrottle"
-                    android:layout_width="256dp"
-                    android:layout_height="256dp"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
                     android:layout_gravity="end"
                     custom:JV_buttonColor="#ff0000"
                     custom:JV_borderColor="#000478"
@@ -111,8 +124,8 @@
                 <io.puzzlebox.jigsaw.ui.JoystickView
                     xmlns:custom="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/joystickViewYawPitch"
-                    android:layout_width="256dp"
-                    android:layout_height="256dp"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
                     android:layout_gravity="start"
                     custom:JV_buttonColor="#ff0000"
                     custom:JV_borderColor="#000478"

@@ -30,7 +30,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import io.puzzlebox.jigsaw.data.ProfileSingleton;
 import io.puzzlebox.jigsaw.protocol.ThinkGearService;
+import io.puzzlebox.jigsaw.ui.DialogAudioIRFragment;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
 
@@ -61,13 +63,8 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 	ProgressBar progressBarPower;
 //	ProgressBar progressBarBlink;
 
-	TextView textViewLabelScores;
-	TextView textViewLabelScore;
-	TextView textViewLabelLastScore;
-	TextView textViewLabelHighScore;
-	View viewSpaceScore;
-	View viewSpaceScoreLast;
-	View viewSpaceScoreHigh;
+	Button buttonTestFlight;
+
 	TextView textViewScore;
 	TextView textViewLastScore;
 	TextView textViewHighScore;
@@ -79,7 +76,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 	int minimumPower = 0; // minimum power for the bloom
 	int maximumPower = 100; // maximum power for the bloom
 
-	private static Intent intentThinkGear;
+//	private static Intent intentThinkGear;
 
 	private OnFragmentInteractionListener mListener;
 
@@ -96,7 +93,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 		getDialog().getWindow().setTitle( getString(R.string.title_dialog_fragment_puzzlebox_orbit));
 
-		Button buttonTestFlight = (Button) v.findViewById(R.id.buttonTestFlight);
+		buttonTestFlight = (Button) v.findViewById(R.id.buttonTestFlight);
 		buttonTestFlight.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -158,15 +155,10 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 		imageViewStatus = (ImageView) v.findViewById(R.id.imageViewStatus);
 
+//		textViewLabelScore = (TextView) v.findViewById(R.id.textViewLabelScore);
+//		textViewLabelLastScore = (TextView) v.findViewById(R.id.textViewLabelLastScore);
+//		textViewLabelHighScore = (TextView) v.findViewById(R.id.textViewLabelHighScore);
 
-//		textViewLabelScores = (TextView) v.findViewById(R.id.textViewLabelScores);
-		textViewLabelScore = (TextView) v.findViewById(R.id.textViewLabelScore);
-		textViewLabelLastScore = (TextView) v.findViewById(R.id.textViewLabelLastScore);
-		textViewLabelHighScore = (TextView) v.findViewById(R.id.textViewLabelHighScore);
-
-//		viewSpaceScore = (View) v.findViewById(R.id.viewSpaceScore);
-//		viewSpaceScoreLast = (View) v.findViewById(R.id.viewSpaceScoreLast);
-//		viewSpaceScoreHigh = (View) v.findViewById(R.id.viewSpaceScoreHigh);
 
 		textViewScore = (TextView) v.findViewById(R.id.textViewScore);
 		textViewLastScore = (TextView) v.findViewById(R.id.textViewLastScore);
@@ -195,7 +187,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		});
 
 
-		intentThinkGear = new Intent(getActivity(), ThinkGearService.class);
+//		intentThinkGear = new Intent(getActivity(), ThinkGearService.class);
 
 
 		/**
@@ -213,18 +205,18 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //			maximizeAudioVolume(); // Automatically set media volume to maximum
 
 			/** Set the hardware buttons to control the audio output */
-			getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
+//			getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 			/** Preload the flight control WAV file into memory */
-			OrbitSingleton.getInstance().soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-			OrbitSingleton.getInstance().soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-				public void onLoadComplete(SoundPool soundPool,
-													int sampleId,
-													int status) {
-					OrbitSingleton.getInstance().loaded = true;
-				}
-			});
-			OrbitSingleton.getInstance().soundID = OrbitSingleton.getInstance().soundPool.load(getActivity().getApplicationContext(), OrbitSingleton.getInstance().audioFile, 1);
+//			OrbitSingleton.getInstance().soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+//			OrbitSingleton.getInstance().soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+//				public void onLoadComplete(SoundPool soundPool,
+//													int sampleId,
+//													int status) {
+//					OrbitSingleton.getInstance().loaded = true;
+//				}
+//			});
+//			OrbitSingleton.getInstance().soundID = OrbitSingleton.getInstance().soundPool.load(getActivity().getApplicationContext(), OrbitSingleton.getInstance().audioFile, 1);
 
 
 			OrbitSingleton.getInstance().audioHandler.start();
@@ -245,6 +237,8 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 		updatePowerThresholds();
 //		updatePower();
+
+		updateControlSignal();
 
 
 		return v;
@@ -286,6 +280,8 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 				  getActivity().getApplicationContext()).unregisterReceiver(
 				  mEventReceiver);
 
+		stopControl();
+
 	} // onPause
 
 
@@ -317,8 +313,15 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		// Call super onResume after sizing
 		super.onResume();
 
+		if (ProfileSingleton.getInstance().getValue(DialogAudioIRFragment.profileID, "active").equals("true")) {
+			playControl();
+		} else {
+			Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_puzzlebox_orbit_joystick_audio_ir_warning), Toast.LENGTH_LONG).show();
+		}
+
 		updatePowerThresholds();
 		updatePower();
+		updateControlSignal();
 
 		LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(
 				  mPacketReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.thinkgear.packet"));
@@ -376,6 +379,31 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		}
 
 	};
+
+	// ################################################################
+
+	public void updateControlSignal() {
+
+		Integer[] command =  {
+				  OrbitSingleton.getInstance().defaultControlThrottle,
+				  OrbitSingleton.getInstance().defaultControlYaw,
+				  OrbitSingleton.getInstance().defaultControlPitch,
+				  1};
+
+
+		// Transmit zero Throttle power if not about EEG power threashold
+		if ((eegPower <= 0) && (! OrbitSingleton.getInstance().demoActive)){
+//			Log.e(TAG, "(eegPower <= 0)");
+			command[0] = 0;
+		}
+
+
+		OrbitSingleton.getInstance().audioHandler.command = command;
+
+		OrbitSingleton.getInstance().audioHandler.updateControlSignal();
+
+	} // updateControlSignal
+
 
 	// ################################################################
 
@@ -741,9 +769,11 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		if (eegPower > 0) {
 
 			/** Start playback of audio control stream */
-			if (!OrbitSingleton.getInstance().flightActive) {
-				playControl();
-			}
+//			if (!OrbitSingleton.getInstance().flightActive) {
+//				playControl();
+//			}
+
+			buttonTestFlight.setText( getResources().getString(R.string.button_stop_test) );
 
 			updateScore();
 
@@ -752,15 +782,20 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		} else {
 
 			/** Land the helicopter */
-			if (! OrbitSingleton.getInstance().demoActive )
-				stopControl();
+//			if (! OrbitSingleton.getInstance().demoActive ) {
+//				stopControl();
+//			}
+
+			buttonTestFlight.setText(getResources().getString(R.string.button_test_fly));
 
 			resetCurrentScore();
 
 		}
 
-		Log.d(TAG, "flightActive: " + OrbitSingleton.getInstance().flightActive);
+		updateControlSignal();
 
+
+		Log.d(TAG, "flightActive: " + OrbitSingleton.getInstance().flightActive);
 
 
 	} // updatePower
@@ -878,9 +913,6 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		textViewScore.setText(Integer.toString(OrbitSingleton.getInstance().scoreCurrent));
 
 	} // resetCurrentScore
-
-
-	// ################################################################
 
 
 	// ################################################################
@@ -1040,7 +1072,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		Log.v(TAG, "Test Flight clicked");
 
 
-		Button buttonTestFlight = (Button) v.findViewById(R.id.buttonTestFlight);
+//		Button buttonTestFlight = (Button) v.findViewById(R.id.buttonTestFlight);
 
 
 
@@ -1062,7 +1094,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 			buttonTestFlight.setText( getResources().getString(R.string.button_stop_test) );
 //
-			playControl();
+//			playControl();
 
 //		demoFlightMode = false;
 
@@ -1071,11 +1103,14 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 			OrbitSingleton.getInstance().flightActive = false;
 			OrbitSingleton.getInstance().demoActive = false;
 
-			stopControl();
+//			stopControl();
 
 			buttonTestFlight.setText(getResources().getString(R.string.button_test_fly));
 
 		}
+
+
+		updateControlSignal();
 
 
 	} // demoMode

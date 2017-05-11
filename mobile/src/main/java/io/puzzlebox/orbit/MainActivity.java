@@ -1,6 +1,8 @@
 package io.puzzlebox.orbit;
 
 //import android.app.Fragment;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.pm.ActivityInfo;
@@ -11,10 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.puzzlebox.jigsaw.data.SessionSingleton;
 import io.puzzlebox.jigsaw.ui.DialogAudioIRFragment;
 import io.puzzlebox.jigsaw.ui.DialogJoystickFragment;
 import io.puzzlebox.jigsaw.ui.DialogNeuroSkyMindWaveFragment;
@@ -325,6 +329,43 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				  .commit();
 
 	}
+
+
+	// ################################################################
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+														String permissions[], int[] grantResults) {
+
+//		Log.e(TAG, "onRequestPermissionsResult(" + requestCode + ", " + permissions + ", " + grantResults + ")");
+
+		if (requestCode == SessionSingleton.getInstance().getRequestExternalStorage()) {
+
+//				Log.e(TAG, "requestCode: " + requestCode);
+
+			// If request is cancelled, the result arrays are empty.
+			if (grantResults.length > 0
+					  && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+//					Log.e(TAG, "permission granted");
+
+				Intent i = SessionSingleton.getInstance().getExportSessionIntent(this);
+
+				if (i != null) {
+					startActivity(i);
+				} else {
+					Toast.makeText(this.getApplicationContext(), "Error export session data for sharing", Toast.LENGTH_SHORT).show();
+				}
+
+			} else {
+
+//					Log.e(TAG, "permission denied");
+				Toast.makeText(this.getApplicationContext(), "Error export session data for sharing", Toast.LENGTH_SHORT).show();
+
+			}
+		}
+	}
+
 
 
 }

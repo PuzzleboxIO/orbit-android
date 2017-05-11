@@ -2,6 +2,7 @@ package io.puzzlebox.orbit.ui;
 
 import android.content.Context;
 import android.content.IntentFilter;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.net.Uri;
@@ -9,9 +10,13 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -51,6 +56,7 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 		View v = inflater.inflate(R.layout.dialog_profile_puzzlebox_orbit_joystick, container, false);
 
 		getDialog().getWindow().setTitle( getString(R.string.title_dialog_fragment_puzzlebox_orbit_joystick));
+//		getDialog().getWindow().setTitle( getString(R.string.label_puzzlebox_orbit_joystick_instruction));
 
 		seekBarThrottle = (SeekBar) v.findViewById(R.id.seekBarThrottle);
 //		seekBarThrottle.setProgress(seekBarThrottle.getMax() / 2);
@@ -184,6 +190,21 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 	// ################################################################
 
 	public void onResume() {
+
+		// Store access variables for window and blank point
+		Window window = getDialog().getWindow();
+
+		Point size = new Point();
+
+		// Store dimensions of the screen in `size`
+		Display display = window.getWindowManager().getDefaultDisplay();
+
+		display.getSize(size);
+
+		// Set the width of the dialog proportional to a percentage of the screen width
+		window.setLayout((int)(size.x *0.99), WindowManager.LayoutParams.WRAP_CONTENT);
+
+		window.setGravity(Gravity.CENTER);
 
 		super.onResume();
 

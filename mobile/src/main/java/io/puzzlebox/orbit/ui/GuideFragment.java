@@ -129,7 +129,6 @@ public class GuideFragment extends TilesFragment {
 	}
 
 
-
 	public void displayInputCarousel() {
 
 		ImageView imageItem;
@@ -544,7 +543,7 @@ public class GuideFragment extends TilesFragment {
 					case 1:
 						// Session Data
 						DialogSessionFragment dialogSessionFragment = new DialogSessionFragment();
-						dialogSessionFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_fragment_session));
+						dialogSessionFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_session));
 						break;
 				}
 				break;
@@ -569,7 +568,7 @@ public class GuideFragment extends TilesFragment {
 					case 0:
 						// Puzzlebox Orbit with EEG
 						DialogPuzzleboxOrbitFragment dialogPuzzleboxOrbitFragment = new DialogPuzzleboxOrbitFragment();
-						dialogPuzzleboxOrbitFragment.show(fm, getResources().getString(R.string.title_fragment_orbit));
+						dialogPuzzleboxOrbitFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit));
 						break;
 					case 1:
 						// Puzzlebox Orbit with Joystick
