@@ -96,6 +96,7 @@ public class DialogOutputAudioIRFragment extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				updateTileStatus();
+				dismissAudioIR();
 				dismiss();
 			}
 		});
@@ -103,13 +104,23 @@ public class DialogOutputAudioIRFragment extends DialogFragment {
 		audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
 		volumeMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
+		maximizeAudioVolume();
 
 		/**
 		 * AudioHandler
 		 */
-		if (!OrbitSingleton.getInstance().audioHandler.isAlive()) {
-			OrbitSingleton.getInstance().audioHandler.start();
-		}
+//		if (!OrbitSingleton.getInstance().audioHandler.isAlive()) {
+//
+//			try {
+//				OrbitSingleton.getInstance().audioHandler.start();
+//			} catch (Exception e) {
+//				Log.w(TAG, "Exception starting AudioHandler: " + e.getStackTrace());
+//
+//				OrbitSingleton.getInstance().resetAudioHandler();
+//
+//			}
+//		}
+		OrbitSingleton.getInstance().startAudioHandler();
 
 
 		return v;
@@ -149,7 +160,21 @@ public class DialogOutputAudioIRFragment extends DialogFragment {
 		}
 
 
-	} // demoMode
+	} // testFlight
+
+
+	// ################################################################
+
+	public void dismissAudioIR() {
+
+		OrbitSingleton.getInstance().flightActive = false;
+		OrbitSingleton.getInstance().demoActive = false;
+
+		stopControl();
+
+		OrbitSingleton.getInstance().audioHandler.shutdown();
+
+	}
 
 
 	// ################################################################
@@ -166,6 +191,20 @@ public class DialogOutputAudioIRFragment extends DialogFragment {
 	public void playControl() {
 
 		Log.d(TAG, "playControl()");
+
+//		Integer[] command =  {
+//				  OrbitSingleton.getInstance().defaultControlThrottle,
+//				  OrbitSingleton.getInstance().defaultControlYaw,
+//				  OrbitSingleton.getInstance().defaultControlPitch,
+//				  OrbitSingleton.getInstance().defaultChannel};
+//
+//		OrbitSingleton.getInstance().audioHandler.command = command;
+//
+//		OrbitSingleton.getInstance().audioHandler.updateControlSignal();
+
+
+		OrbitSingleton.getInstance().resetControlSignal();
+
 
 		OrbitSingleton.getInstance().flightActive = true;
 
@@ -308,6 +347,22 @@ public class DialogOutputAudioIRFragment extends DialogFragment {
 	public void onResume() {
 		super.onResume();
 
+
+
+//		audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+//		volumeMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+//
+//		maximizeAudioVolume();
+//
+//		/**
+//		 * AudioHandler
+//		 */
+//		if (!OrbitSingleton.getInstance().audioHandler.isAlive()) {
+//			OrbitSingleton.getInstance().audioHandler.start();
+//		}
+
+
+
 		if ((audioManager != null) &&
 				  ((audioManager.isWiredHeadsetOn()))) {
 			switchDetectTransmitter.setChecked(true);
@@ -322,6 +377,8 @@ public class DialogOutputAudioIRFragment extends DialogFragment {
 			}
 
 		}
+
+		OrbitSingleton.getInstance().resetControlSignal();
 
 		updateReadyButton();
 

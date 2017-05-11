@@ -1229,7 +1229,7 @@ public class OrbitFragment extends Fragment
 		}
 
 
-	} // demoMode
+	} // testFlight
 
 
 	// ################################################################

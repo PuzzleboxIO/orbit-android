@@ -25,6 +25,7 @@
     <string name="button_disconnect">Deactivate Orbit</string>
     <string name="button_test_fly">Test Flight</string>
     <string name="button_stop_test">Land</string>
+    <string name="button_reset">Reset</string>
 
     <string name="textview_label_scores">Scores</string>
     <string name="textview_label_score">Current Score: </string>

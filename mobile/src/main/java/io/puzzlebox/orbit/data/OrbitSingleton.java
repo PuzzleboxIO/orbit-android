@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.media.SoundPool;
+import android.util.Log;
 
 import io.puzzlebox.jigsaw.protocol.RBLService;
 import io.puzzlebox.orbit.R;
@@ -13,6 +14,8 @@ import io.puzzlebox.orbit.protocol.AudioHandler;
  * Created by sc on 5/3/15.
  */
 public class OrbitSingleton {
+
+	private final static String TAG = OrbitSingleton.class.getSimpleName();
 
 	private static OrbitSingleton ourInstance = new OrbitSingleton();
 
@@ -34,6 +37,9 @@ public class OrbitSingleton {
 	 * Flight Configuration
 	 */
 
+	public int defaultTargetAttention = 72;
+	public int defaultTargetMeditation = 0;
+
 	public int minimumScoreTarget = 40;
 	public int scoreCurrent = 0;
 	public int scoreLast = 0;
@@ -53,7 +59,7 @@ public class OrbitSingleton {
 	 */
 	public int defaultJoystickThrottle = 0;
 	public int minimumJoystickThrottle = 20;
-//	public int defaultJoystickYaw = 63;
+	//	public int defaultJoystickYaw = 63;
 	public int defaultJoystickYaw = 49;
 	public int defaultJoystickPitch = 31;
 
@@ -102,7 +108,7 @@ public class OrbitSingleton {
 	public int audioFile = R.raw.throttle_hover_android_common;
 	//	int audioFile = R.raw.throttle_hover_android_htc_one_x;
 
-//	public int defaultChannel = 0; // B
+	//	public int defaultChannel = 0; // B
 	public int defaultChannel = 1; // A
 
 	public boolean generateAudio = true;
@@ -113,6 +119,50 @@ public class OrbitSingleton {
 	public boolean loaded = false;
 
 	public AudioHandler audioHandler = new AudioHandler();
+
+
+	// ################################################################
+
+	public void resetControlSignal() {
+
+		audioHandler.command = new Integer[]{
+				  defaultControlThrottle,
+				  defaultControlYaw,
+				  defaultControlPitch,
+				  defaultChannel};
+
+		audioHandler.updateControlSignal();
+
+	}
+
+
+	// ################################################################
+
+	public void startAudioHandler() {
+
+		if (!OrbitSingleton.getInstance().audioHandler.isAlive()) {
+
+			try {
+				audioHandler.start();
+			} catch (Exception e) {
+//				Log.w(TAG, "Exception starting AudioHandler: " + e.getStackTrace());
+				Log.w(TAG, "Exception starting AudioHandler: " + e.getStackTrace());
+				e.printStackTrace();
+
+				OrbitSingleton.getInstance().resetAudioHandler();
+
+			}
+		}
+
+	}
+
+	// ################################################################
+
+	public void resetAudioHandler() {
+		audioHandler.shutdown();
+		audioHandler = new AudioHandler();
+		audioHandler.start();
+	}
 
 
 }

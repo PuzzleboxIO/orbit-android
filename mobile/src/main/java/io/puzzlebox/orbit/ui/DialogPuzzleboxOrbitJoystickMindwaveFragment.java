@@ -185,9 +185,10 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 		/**
 		 * AudioHandler
 		 */
-		if (!OrbitSingleton.getInstance().audioHandler.isAlive()) {
-			OrbitSingleton.getInstance().audioHandler.start();
-		}
+//		if (!OrbitSingleton.getInstance().audioHandler.isAlive()) {
+//			OrbitSingleton.getInstance().audioHandler.start();
+//		}
+		OrbitSingleton.getInstance().startAudioHandler();
 
 		updatePowerThresholds();
 
@@ -458,7 +459,7 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 				  seekBarThrottle.getProgress(),
 				  seekBarYaw.getMax() - seekBarYaw.getProgress(),
 				  seekBarPitch.getProgress(),
-				  1};
+				  OrbitSingleton.getInstance().defaultChannel};
 
 
 		// Transmit zero Throttle power if not about EEG power threashold
@@ -515,11 +516,12 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 
 		OrbitSingleton.getInstance().audioHandler.ifFlip = OrbitSingleton.getInstance().invertControlSignal; // if checked then flip
 
-		int channel = OrbitSingleton.getInstance().defaultChannel;
+//		int channel = OrbitSingleton.getInstance().defaultChannel;
 
 		updateAudioHandlerLoopNumberWhileMindControl(-1); // Loop infinite for easier user testing
 
-		updateAudioHandlerChannel(channel);
+//		updateAudioHandlerChannel(channel);
+		updateAudioHandlerChannel(OrbitSingleton.getInstance().defaultChannel);
 
 		OrbitSingleton.getInstance().audioHandler.mutexNotify();
 
@@ -936,9 +938,6 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 		textViewScore.setText(Integer.toString(OrbitSingleton.getInstance().scoreCurrent));
 
 	} // resetCurrentScore
-
-
-	// ################################################################
 
 
 }

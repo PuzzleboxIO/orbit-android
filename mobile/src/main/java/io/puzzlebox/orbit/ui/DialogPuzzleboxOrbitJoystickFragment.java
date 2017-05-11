@@ -144,7 +144,8 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 //			OrbitSingleton.getInstance().soundID = OrbitSingleton.getInstance().soundPool.load(getActivity().getApplicationContext(), OrbitSingleton.getInstance().audioFile, 1);
 
 
-			OrbitSingleton.getInstance().audioHandler.start();
+//			OrbitSingleton.getInstance().audioHandler.start();
+			OrbitSingleton.getInstance().startAudioHandler();
 
 
 		}
@@ -358,11 +359,13 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 
 		OrbitSingleton.getInstance().audioHandler.ifFlip = OrbitSingleton.getInstance().invertControlSignal; // if checked then flip
 
+//		int channel = OrbitSingleton.getInstance().defaultChannel;
 		int channel = OrbitSingleton.getInstance().defaultChannel;
 
 		updateAudioHandlerLoopNumberWhileMindControl(-1); // Loop infinite for easier user testing
 
-		updateAudioHandlerChannel(channel);
+//		updateAudioHandlerChannel(channel);
+		updateAudioHandlerChannel(OrbitSingleton.getInstance().defaultChannel);
 
 		OrbitSingleton.getInstance().audioHandler.mutexNotify();
 

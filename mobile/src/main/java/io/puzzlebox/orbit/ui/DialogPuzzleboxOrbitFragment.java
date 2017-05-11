@@ -10,7 +10,6 @@ import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.media.AudioManager;
-import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -64,6 +63,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //	ProgressBar progressBarBlink;
 
 	Button buttonTestFlight;
+	Button buttonResetFlight;
 
 	TextView textViewScore;
 	TextView textViewLastScore;
@@ -97,7 +97,15 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		buttonTestFlight.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				demoMode(v);
+				testFlight(v);
+			}
+		});
+
+		buttonResetFlight = (Button) v.findViewById(R.id.buttonResetFlight);
+		buttonResetFlight.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				resetFlight(v);
 			}
 		});
 
@@ -219,14 +227,15 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //			OrbitSingleton.getInstance().soundID = OrbitSingleton.getInstance().soundPool.load(getActivity().getApplicationContext(), OrbitSingleton.getInstance().audioFile, 1);
 
 
-			OrbitSingleton.getInstance().audioHandler.start();
+//			OrbitSingleton.getInstance().audioHandler.start();
+			OrbitSingleton.getInstance().startAudioHandler();
 
 
 		}
 
 
-		if (OrbitSingleton.getInstance().flightActive)
-			buttonTestFlight.setText(getResources().getString(R.string.button_stop_test));
+//		if (OrbitSingleton.getInstance().flightActive)
+//			buttonTestFlight.setText(getResources().getString(R.string.button_stop_test));
 
 		/**
 		 * Update settings according to default UI
@@ -235,10 +244,13 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		// TODO
 //		updateScreenLayout();
 
-		updatePowerThresholds();
-//		updatePower();
+//		updatePowerThresholds();
+////		updatePower();
+//
+//		updateControlSignal();
 
-		updateControlSignal();
+
+		resetFlight(v);
 
 
 		return v;
@@ -375,7 +387,6 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 			updatePower();
 
 
-
 		}
 
 	};
@@ -388,11 +399,13 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 				  OrbitSingleton.getInstance().defaultControlThrottle,
 				  OrbitSingleton.getInstance().defaultControlYaw,
 				  OrbitSingleton.getInstance().defaultControlPitch,
-				  1};
+				  OrbitSingleton.getInstance().defaultChannel};
 
 
-		// Transmit zero Throttle power if not about EEG power threashold
-		if ((eegPower <= 0) && (! OrbitSingleton.getInstance().demoActive)){
+		// Transmit zero Throttle power if not above EEG power threashold
+		// or demo mode (test flight) is not active
+//		if ((eegPower <= 0) || (! OrbitSingleton.getInstance().demoActive)){
+		if (eegPower <= 0) {
 //			Log.e(TAG, "(eegPower <= 0)");
 			command[0] = 0;
 		}
@@ -773,7 +786,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //				playControl();
 //			}
 
-			buttonTestFlight.setText( getResources().getString(R.string.button_stop_test) );
+//			buttonTestFlight.setText( getResources().getString(R.string.button_stop_test) );
 
 			updateScore();
 
@@ -786,7 +799,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //				stopControl();
 //			}
 
-			buttonTestFlight.setText(getResources().getString(R.string.button_test_fly));
+//			buttonTestFlight.setText(getResources().getString(R.string.button_test_fly));
 
 			resetCurrentScore();
 
@@ -795,7 +808,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		updateControlSignal();
 
 
-		Log.d(TAG, "flightActive: " + OrbitSingleton.getInstance().flightActive);
+//		Log.d(TAG, "flightActive: " + OrbitSingleton.getInstance().flightActive);
 
 
 	} // updatePower
@@ -1061,7 +1074,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	// ################################################################
 
-	public void demoMode(View v) {
+	public void testFlight(View v) {
 
 		/**
 		 * Demo mode is called when the "Test Helicopter" button is pressed.
@@ -1073,7 +1086,6 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 
 //		Button buttonTestFlight = (Button) v.findViewById(R.id.buttonTestFlight);
-
 
 
 		if (! OrbitSingleton.getInstance().flightActive) {
@@ -1092,20 +1104,26 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //		else
 //			eegPower = 100;
 
-			buttonTestFlight.setText( getResources().getString(R.string.button_stop_test) );
-//
+//			buttonTestFlight.setText( getResources().getString(R.string.button_stop_test) );
+
+			// NOTE 2017-05-10
+			// Control signal should always play to keep Orbit from timing out.
+			// Zero throttle will keep the Orbit from taking off
+			// In order to have a manual "Stop" ability, the "Test Flight" button doubles as a "Land" button
+			// Turn on sound if it was manually turned off
 //			playControl();
 
 //		demoFlightMode = false;
 
 		} else {
 
-			OrbitSingleton.getInstance().flightActive = false;
+//			OrbitSingleton.getInstance().flightActive = false;
 			OrbitSingleton.getInstance().demoActive = false;
 
+			// Manual "Stop" ability
 //			stopControl();
 
-			buttonTestFlight.setText(getResources().getString(R.string.button_test_fly));
+//			buttonTestFlight.setText(getResources().getString(R.string.button_test_fly));
 
 		}
 
@@ -1113,18 +1131,45 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		updateControlSignal();
 
 
-	} // demoMode
+	} // testFlight
 
 
 	// ################################################################
 
-	public void demoStop(View view) {
+	public void resetFlight(View view) {
 
-//		eegPower = 0;
+		Log.v(TAG, "Reset clicked");
 
-		stopControl();
+		resetCurrentScore();
 
-	} // demoStop
+		OrbitSingleton.getInstance().demoActive = false;
+
+		// Setting eegPower to zero will cause the Orbit to land if flying
+		// However if the user's data is actively being received
+		// the Orbit may take off again approximately one second later
+		eegPower = 0;
+
+		seekBarAttention.setProgress(OrbitSingleton.getInstance().defaultTargetAttention);
+		seekBarMeditation.setProgress(OrbitSingleton.getInstance().defaultTargetMeditation);
+
+		updatePowerThresholds();
+
+//		stopControl();
+
+		updateControlSignal();
+
+	} // resetFlight
+
+
+	// ################################################################
+
+//	public void demoStop(View view) {
+//
+////		eegPower = 0;
+//
+//		stopControl();
+//
+//	} // demoStop
 
 
 	// ################################################################
