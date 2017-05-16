@@ -412,7 +412,11 @@ public class GuideFragment extends TilesFragment {
 			resource = ProfileSingleton.getInstance().getId(
 					  ProfileSingleton.getInstance().profiles.get(i).get("icon"), io.puzzlebox.jigsaw.R.drawable.class);
 
-			resourcePath = Uri.parse("android.resource://io.puzzlebox.orbit/" + resource);
+//			Log.e(TAG, "\"android.resource://\" + getActivity().getPackageName() + \"/\" + resource: " + "android.resource://" + getActivity().getPackageName() + "/" + resource);
+
+//			resourcePath = Uri.parse("android.resource://io.puzzlebox.orbit/" + resource);
+//			resourcePath = Uri.parse("android.resource://info.puzzlebox.orbit/" + resource);
+			resourcePath = Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + resource);
 
 			try {
 				InputStream inputStream = getContext().getContentResolver().openInputStream(resourcePath);
