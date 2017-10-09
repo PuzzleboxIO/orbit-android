@@ -1,14 +1,10 @@
 package io.puzzlebox.orbit.ui;
 
 import android.content.Context;
-import android.content.IntentFilter;
 import android.graphics.Point;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -24,14 +20,14 @@ import android.widget.Toast;
 
 import io.puzzlebox.jigsaw.data.ConfigurationSingleton;
 import io.puzzlebox.jigsaw.data.ProfileSingleton;
-import io.puzzlebox.jigsaw.ui.DialogAudioIRFragment;
+import io.puzzlebox.jigsaw.ui.DialogOutputAudioIRFragment;
 import io.puzzlebox.jigsaw.ui.JoystickView;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
 
-public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
+public class DialogProfilePuzzleboxOrbitJoystickFragment extends DialogFragment {
 
-	private final static String TAG = DialogPuzzleboxOrbitJoystickFragment.class.getSimpleName();
+	private final static String TAG = DialogProfilePuzzleboxOrbitJoystickFragment.class.getSimpleName();
 
 	public final static String profileID = "profile_puzzlebox_orbit_joystick";
 
@@ -45,7 +41,7 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 
 	private OnFragmentInteractionListener mListener;
 
-	public DialogPuzzleboxOrbitJoystickFragment() {
+	public DialogProfilePuzzleboxOrbitJoystickFragment() {
 		// Required empty public constructor
 	}
 
@@ -210,7 +206,7 @@ public class DialogPuzzleboxOrbitJoystickFragment extends DialogFragment {
 		super.onResume();
 
 //		if (ProfileSingleton.getInstance().getStatus(profileID).equals("available"))
-		if (ProfileSingleton.getInstance().getValue(DialogAudioIRFragment.profileID, "active").equals("true"))
+		if (ProfileSingleton.getInstance().getValue(DialogOutputAudioIRFragment.profileID, "active").equals("true"))
 			playControl();
 		else
 			Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_puzzlebox_orbit_joystick_audio_ir_warning), Toast.LENGTH_LONG).show();

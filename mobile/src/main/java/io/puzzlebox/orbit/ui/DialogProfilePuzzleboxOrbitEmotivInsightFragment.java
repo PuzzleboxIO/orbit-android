@@ -12,6 +12,7 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -29,41 +30,48 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.emotiv.insight.IEmoStateDLL;
+import com.emotiv.insight.MentalCommandDetection;
+
+import io.puzzlebox.jigsaw.data.DeviceEmotivInsightSingleton;
 import io.puzzlebox.jigsaw.data.ProfileSingleton;
-import io.puzzlebox.jigsaw.protocol.ThinkGearService;
-import io.puzzlebox.jigsaw.ui.DialogAudioIRFragment;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
 
-import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegConnected;
-import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegConnecting;
-import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegSignal;
-
-public class DialogPuzzleboxOrbitFragment extends DialogFragment
+public class DialogProfilePuzzleboxOrbitEmotivInsightFragment extends DialogFragment
 		  implements SeekBar.OnSeekBarChangeListener {
 
-	private final static String TAG = DialogPuzzleboxOrbitFragment.class.getSimpleName();
+	private final static String TAG = DialogProfilePuzzleboxOrbitEmotivInsightFragment.class.getSimpleName();
 
-	public final static String profileID = "profile_puzzlebox_orbit_mobile_edition";
+//	public final static String profileID = "profile_puzzlebox_orbit_emotiv_insight";
 
 	/**
 	 * Configuration
 	 */
 	public int eegPower = 0;
+	public int previousEEGSignal = 0;
 
 	// UI
 	Button buttonDeviceEnable;
 
-	ProgressBar progressBarAttention;
-	SeekBar seekBarAttention;
-	ProgressBar progressBarMeditation;
-	SeekBar seekBarMeditation;
-	ProgressBar progressBarSignal;
+	ProgressBar progressBarActivityMentalCommand;
+	SeekBar seekBarActivityMentalCommand;
+	ProgressBar progressBarContactQuality;
 	ProgressBar progressBarPower;
 //	ProgressBar progressBarBlink;
 
+	ProgressBar progressBarTrainNeutral;
+	ProgressBar progressBarTrainMentalCommand;
+
+	public SeekBar seekBarThrottle;
+
+	final float[] roundedCorners = new float[] { 5, 5, 5, 5, 5, 5, 5, 5 };
+
 	Button buttonTestFlight;
 	Button buttonResetFlight;
+
+	Button buttonTrainNeutral;
+	Button buttonTrainMentalCommand;
 
 	TextView textViewScore;
 	TextView textViewLastScore;
@@ -71,16 +79,35 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	ImageView imageViewStatus;
 
-	int[] thresholdValuesAttention = new int[101];
-	int[] thresholdValuesMeditation = new int[101];
-	int minimumPower = 0; // minimum power for the bloom
-	int maximumPower = 100; // maximum power for the bloom
+	ImageView imageViewAF3;
+	ImageView imageViewAF4;
+	ImageView imageViewT7;
+	ImageView imageViewT8;
+	ImageView imageViewPz;
+	ImageView imageViewCMS;
+
+	private int currentAF3 = 0;
+	private int currentAF4 = 0;
+	private int currentT7 = 0;
+	private int currentT8 = 0;
+	private int currentPz = 0;
+	private int currentCMS = 0;
+
+	int[] thresholdValuesMentalCommand = new int[101];
+	//	int[] thresholdValuesMeditation = new int[101];
+	int minimumPower = 0; // minimum power for the Orbit
+	int maximumPower = 100; // maximum power for the Orbit
+
+	private Handler handlerAnimation;
+
+//	int userID = -1;
 
 //	private static Intent intentThinkGear;
 
 	private OnFragmentInteractionListener mListener;
 
-	public DialogPuzzleboxOrbitFragment() {
+
+	public DialogProfilePuzzleboxOrbitEmotivInsightFragment() {
 		// Required empty public constructor
 	}
 
@@ -89,11 +116,12 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 									 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View v = inflater.inflate(R.layout.dialog_profile_puzzlebox_orbit, container, false);
+		View v = inflater.inflate(R.layout.dialog_profile_puzzlebox_orbit_emotiv_insight, container, false);
 
-		getDialog().getWindow().setTitle( getString(R.string.title_dialog_fragment_puzzlebox_orbit));
+		getDialog().getWindow().setTitle( getString(R.string.title_dialog_fragment_puzzlebox_orbit_emotiv_insight));
 
-		buttonTestFlight = (Button) v.findViewById(R.id.buttonTestFlight);
+
+		buttonTestFlight = v.findViewById(R.id.buttonTestFlight);
 		buttonTestFlight.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -101,7 +129,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 			}
 		});
 
-		buttonResetFlight = (Button) v.findViewById(R.id.buttonResetFlight);
+		buttonResetFlight = v.findViewById(R.id.buttonResetFlight);
 		buttonResetFlight.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -109,30 +137,68 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 			}
 		});
 
-		progressBarAttention = (ProgressBar) v.findViewById(R.id.progressBarAttention);
-		final float[] roundedCorners = new float[] { 5, 5, 5, 5, 5, 5, 5, 5 };
-		ShapeDrawable progressBarAttentionDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
-		String progressBarAttentionColor = "#FF0000";
-		progressBarAttentionDrawable.getPaint().setColor(Color.parseColor(progressBarAttentionColor));
-		ClipDrawable progressAttention = new ClipDrawable(progressBarAttentionDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
-		progressBarAttention.setProgressDrawable(progressAttention);
-		progressBarAttention.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
 
-		progressBarMeditation = (ProgressBar) v.findViewById(R.id.progressBarMeditation);
-		ShapeDrawable progressBarMeditationDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
-		String progressBarMeditationColor = "#0000FF";
-		progressBarMeditationDrawable.getPaint().setColor(Color.parseColor(progressBarMeditationColor));
-		ClipDrawable progressMeditation = new ClipDrawable(progressBarMeditationDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
-		progressBarMeditation.setProgressDrawable(progressMeditation);
-		progressBarMeditation.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
+		imageViewAF3 = v.findViewById(R.id.imageViewEmotivInsightSensorAF3);
+		imageViewAF4 = v.findViewById(R.id.imageViewEmotivInsightSensorAF4);
+		imageViewT7 = v.findViewById(R.id.imageViewEmotivInsightSensorT7);
+		imageViewT8 = v.findViewById(R.id.imageViewEmotivInsightSensorT8);
+		imageViewPz = v.findViewById(R.id.imageViewEmotivInsightSensorPz);
+		imageViewCMS = v.findViewById(R.id.imageViewEmotivInsightSensorCMS);
 
-		progressBarSignal = (ProgressBar) v.findViewById(R.id.progressBarSignal);
-		ShapeDrawable progressBarSignalDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
-		String progressBarSignalColor = "#00FF00";
-		progressBarSignalDrawable.getPaint().setColor(Color.parseColor(progressBarSignalColor));
-		ClipDrawable progressSignal = new ClipDrawable(progressBarSignalDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
-		progressBarSignal.setProgressDrawable(progressSignal);
-		progressBarSignal.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
+
+		buttonTrainNeutral = v.findViewById(R.id.buttonTrainNeutral);
+		buttonTrainNeutral.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.d(TAG, "Training Neutral");
+				DeviceEmotivInsightSingleton.getInstance().currentInsightTraining = "neutral";
+				MentalCommandDetection.IEE_MentalCommandSetTrainingControl(DeviceEmotivInsightSingleton.getInstance().userID, MentalCommandDetection.IEE_MentalCommandTrainingControl_t.MC_REJECT.getType());
+				MentalCommandDetection.IEE_MentalCommandSetTrainingControl(DeviceEmotivInsightSingleton.getInstance().userID, MentalCommandDetection.IEE_MentalCommandTrainingControl_t.MC_RESET.getType());
+				progressBarTrainMentalCommand.setProgress(0);
+				buttonTrainMentalCommand.setText(getString(R.string.button_puzzlebox_orbit_emotiv_insight_training_neutral_untrained));
+				MentalCommandDetection.IEE_MentalCommandSetTrainingAction(DeviceEmotivInsightSingleton.getInstance().userID, IEmoStateDLL.IEE_MentalCommandAction_t.MC_NEUTRAL.ToInt());
+				MentalCommandDetection.IEE_MentalCommandSetTrainingControl(DeviceEmotivInsightSingleton.getInstance().userID, MentalCommandDetection.IEE_MentalCommandTrainingControl_t.MC_START.getType());
+				animateProgressBar();
+			}
+		});
+
+		progressBarTrainNeutral = v.findViewById(R.id.progressBarTrainNeutral);
+
+
+		buttonTrainMentalCommand = v.findViewById(R.id.buttonTrainMentalCommand);
+		buttonTrainMentalCommand.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.d(TAG, "Training Mental Command (Push)");
+				DeviceEmotivInsightSingleton.getInstance().currentInsightTraining = "mental command";
+				MentalCommandDetection.IEE_MentalCommandSetTrainingControl(DeviceEmotivInsightSingleton.getInstance().userID, MentalCommandDetection.IEE_MentalCommandTrainingControl_t.MC_REJECT.getType());
+				MentalCommandDetection.IEE_MentalCommandSetTrainingAction(DeviceEmotivInsightSingleton.getInstance().userID, IEmoStateDLL.IEE_MentalCommandAction_t.MC_PUSH.ToInt());
+				MentalCommandDetection.IEE_MentalCommandSetTrainingControl(DeviceEmotivInsightSingleton.getInstance().userID, MentalCommandDetection.IEE_MentalCommandTrainingControl_t.MC_START.getType());
+				animateProgressBar();
+			}
+		});
+
+		progressBarTrainMentalCommand = v.findViewById(R.id.progressBarTrainMentalCommand);
+
+
+		progressBarActivityMentalCommand = v.findViewById(R.id.progressBarActivityMentalCommand);
+//		final float[] roundedCorners = new float[] { 5, 5, 5, 5, 5, 5, 5, 5 };
+		ShapeDrawable progressBarMentalCommandDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
+//		String progressBarMentalCommandColor = "#FF0000";
+//		String progressBarMentalCommandColor = "#FF00FF";
+		String progressBarMentalCommandColor = "#AA00FF";
+		progressBarMentalCommandDrawable.getPaint().setColor(Color.parseColor(progressBarMentalCommandColor));
+		ClipDrawable progressMentalCommand = new ClipDrawable(progressBarMentalCommandDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
+		progressBarActivityMentalCommand.setProgressDrawable(progressMentalCommand);
+		progressBarActivityMentalCommand.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
+
+		progressBarContactQuality = v.findViewById(R.id.progressBarContactQuality);
+		ShapeDrawable progressBarContactQualityDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
+		String progressBarContactQualityColor = "#00FF00";
+		progressBarContactQualityDrawable.getPaint().setColor(Color.parseColor(progressBarContactQualityColor));
+		ClipDrawable progressSignal = new ClipDrawable(progressBarContactQualityDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
+		progressBarContactQuality.setProgressDrawable(progressSignal);
+		progressBarContactQuality.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
 
 		progressBarPower = (ProgressBar) v.findViewById(R.id.progressBarPower);
 		ShapeDrawable progressBarPowerDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null,null));
@@ -155,30 +221,33 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //		progressBarBlink.setMax(ThinkGearService.blinkRangeMax);
 
 
-		seekBarAttention = (SeekBar) v.findViewById(R.id.seekBarAttention);
-		seekBarAttention.setOnSeekBarChangeListener(this);
-		seekBarMeditation = (SeekBar) v.findViewById(R.id.seekBarMeditation);
-		seekBarMeditation.setOnSeekBarChangeListener(this);
+		seekBarActivityMentalCommand = v.findViewById(R.id.seekBarActivityMentalCommand);
+		seekBarActivityMentalCommand.setProgress(DeviceEmotivInsightSingleton.getInstance().defaultMentalCommandPower);
+		seekBarActivityMentalCommand.setOnSeekBarChangeListener(this);
 
 
-		imageViewStatus = (ImageView) v.findViewById(R.id.imageViewStatus);
+		imageViewStatus = v.findViewById(R.id.imageViewStatus);
 
 //		textViewLabelScore = (TextView) v.findViewById(R.id.textViewLabelScore);
 //		textViewLabelLastScore = (TextView) v.findViewById(R.id.textViewLabelLastScore);
 //		textViewLabelHighScore = (TextView) v.findViewById(R.id.textViewLabelHighScore);
 
 
-		textViewScore = (TextView) v.findViewById(R.id.textViewScore);
-		textViewLastScore = (TextView) v.findViewById(R.id.textViewLastScore);
-		textViewHighScore = (TextView) v.findViewById(R.id.textViewHighScore);
+		textViewScore = v.findViewById(R.id.textViewScore);
+		textViewLastScore = v.findViewById(R.id.textViewLastScore);
+		textViewHighScore = v.findViewById(R.id.textViewHighScore);
 
 
 		// Hide the "Scores" label by default
 //		textViewLabelScores.setVisibility(View.GONE);
 //		viewSpaceScore.setVisibility(View.GONE);
 
+		seekBarThrottle = (SeekBar) v.findViewById(R.id.seekBarThrottle);
+		seekBarThrottle.setProgress(OrbitSingleton.getInstance().defaultControlThrottle);
+		seekBarThrottle.setOnSeekBarChangeListener(this);
 
-		Button buttonDeviceCancel = (Button) v.findViewById(io.puzzlebox.jigsaw.R.id.buttonDeviceCancel);
+
+		Button buttonDeviceCancel = v.findViewById(io.puzzlebox.jigsaw.R.id.buttonDeviceCancel);
 		buttonDeviceCancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -186,7 +255,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 			}
 		});
 
-		buttonDeviceEnable = (Button) v.findViewById(io.puzzlebox.jigsaw.R.id.buttonDeviceEnable);
+		buttonDeviceEnable = v.findViewById(io.puzzlebox.jigsaw.R.id.buttonDeviceEnable);
 		buttonDeviceEnable.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -198,24 +267,24 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //		intentThinkGear = new Intent(getActivity(), ThinkGearService.class);
 
 
-		/**
+		/*
 		 * AudioHandler
 		 */
 
 		if (!OrbitSingleton.getInstance().audioHandler.isAlive()) {
 
 
-			/**
+			/*
 			 * Prepare audio stream
 			 */
 
 			// TODO
 //			maximizeAudioVolume(); // Automatically set media volume to maximum
 
-			/** Set the hardware buttons to control the audio output */
+			/* Set the hardware buttons to control the audio output */
 //			getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-			/** Preload the flight control WAV file into memory */
+			/* Preload the flight control WAV file into memory */
 //			OrbitSingleton.getInstance().soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
 //			OrbitSingleton.getInstance().soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
 //				public void onLoadComplete(SoundPool soundPool,
@@ -237,7 +306,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //		if (OrbitSingleton.getInstance().flightActive)
 //			buttonTestFlight.setText(getResources().getString(R.string.button_stop_test));
 
-		/**
+		/*
 		 * Update settings according to default UI
 		 */
 
@@ -254,7 +323,6 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 
 		return v;
-
 	}
 
 	@Override
@@ -284,13 +352,25 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 		super.onPause();
 
-		LocalBroadcastManager.getInstance(
-				  getActivity().getApplicationContext()).unregisterReceiver(
-				  mPacketReceiver);
+//		LocalBroadcastManager.getInstance(
+//				  getActivity().getApplicationContext()).unregisterReceiver(
+//				  mPacketReceiver);
+//
+//		LocalBroadcastManager.getInstance(
+//				  getActivity().getApplicationContext()).unregisterReceiver(
+//				  mEventReceiver);
 
 		LocalBroadcastManager.getInstance(
 				  getActivity().getApplicationContext()).unregisterReceiver(
-				  mEventReceiver);
+				  mActionReceiver);
+
+		LocalBroadcastManager.getInstance(
+				  getActivity()).unregisterReceiver(
+				  mSignalQualityReceiver);
+
+		LocalBroadcastManager.getInstance(
+				  getActivity().getApplicationContext()).unregisterReceiver(
+				  mTrainingReceiver);
 
 		stopControl();
 
@@ -325,7 +405,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		// Call super onResume after sizing
 		super.onResume();
 
-		if (ProfileSingleton.getInstance().getValue(DialogAudioIRFragment.profileID, "active").equals("true")) {
+		if (ProfileSingleton.getInstance().getValue(io.puzzlebox.jigsaw.ui.DialogOutputAudioIRFragment.profileID, "active").equals("true")) {
 			playControl();
 		} else {
 			Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_puzzlebox_orbit_joystick_audio_ir_warning), Toast.LENGTH_LONG).show();
@@ -335,68 +415,316 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		updatePower();
 		updateControlSignal();
 
-		LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(
-				  mPacketReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.thinkgear.packet"));
+//		LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(
+//				  mPacketReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.thinkgear.packet"));
+//
+//		LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(
+//				  mEventReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.thinkgear.event"));
 
 		LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(
-				  mEventReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.thinkgear.event"));
+				  mSignalQualityReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.emotiv.insight.signal_quality"));
+
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
+				  mActionReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.emotiv.insight.action"));
+
+		LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(
+				  mTrainingReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.emotiv.insight.training"));
 
 	}
 
-
 	// ################################################################
 
-	private BroadcastReceiver mPacketReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver mSignalQualityReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 
-			int eegAttention = Integer.valueOf(intent.getStringExtra("Attention"));
-			int eegMeditation = Integer.valueOf(intent.getStringExtra("Meditation"));
-			int eegSignal = Integer.valueOf(intent.getStringExtra("Signal Level"));
+			int eegSignal = 0;
 
-//			Log.e(TAG, "eegAttention: " + eegAttention);
+			int AF3 = Integer.valueOf(intent.getStringExtra("AF3"));
+			int AF4 = Integer.valueOf(intent.getStringExtra("AF4"));
+			int T7 = Integer.valueOf(intent.getStringExtra("T7"));
+			int T8 = Integer.valueOf(intent.getStringExtra("T8"));
+			int Pz = Integer.valueOf(intent.getStringExtra("Pz"));
+			int CMS = Integer.valueOf(intent.getStringExtra("CMS"));
 
-			progressBarAttention.setProgress(eegAttention);
-			progressBarMeditation.setProgress(eegMeditation);
-			progressBarSignal.setProgress(eegSignal);
+			// If there is no change to values no need to recaculate eegSignal and redraw all ImageViews
+			if ((AF3 != currentAF3) &&
+					  (AF4 != currentAF4) &&
+					  (T7 != currentT7) &&
+					  (T8 != currentT8) &&
+					  (Pz != currentPz) &&
+					  (CMS != currentCMS)) {
+				return;
+			}
 
-//			if ((! buttonDeviceEnable.isEnabled()) && (eegSignal == ThinkGearService.signalSignalMax)) {
-//				// This setting requires the quality of the EEG sensor's
-//				// contact with skin hit to 100% at least once since the
-//				// headset was last connected.
-//				buttonDeviceEnable.setEnabled(true);
-//				buttonDeviceEnable.setVisibility(View.VISIBLE);
-//			}
+			currentAF3 = AF3;
+			currentAF4 = AF4;
+			currentT7 = T7;
+			currentT8 = T8;
+			currentPz = Pz;
+			currentCMS = CMS;
 
-//			progressBarBlink.setProgress(0);
+			switch (AF3) {
+				case 0:
+					imageViewAF3.setImageResource(R.drawable.device_eeg_sensor_white);
+					break;
+				case 1:
+					imageViewAF3.setImageResource(R.drawable.device_eeg_sensor_red);
+					eegSignal += 5;
+					break;
+				case 2:
+					imageViewAF3.setImageResource(R.drawable.device_eeg_sensor_yellow);
+					eegSignal += 10;
+					break;
+				case 4:
+					imageViewAF3.setImageResource(R.drawable.device_eeg_sensor_green);
+					eegSignal += 20;
+					break;
+				default:
+					imageViewAF3.setImageResource(R.drawable.device_eeg_sensor_white);
+					break;
+			}
 
-//			updateEEGRawHistory(SessionSingleton.getInstance().getCurrentRawEEG());
+			switch (T7) {
+				case 0:
+					imageViewT7.setImageResource(R.drawable.device_eeg_sensor_white);
+					break;
+				case 1:
+					imageViewT7.setImageResource(R.drawable.device_eeg_sensor_red);
+					eegSignal += 5;
+					break;
+				case 2:
+					imageViewT7.setImageResource(R.drawable.device_eeg_sensor_yellow);
+					eegSignal += 10;
+					break;
+				case 4:
+					imageViewT7.setImageResource(R.drawable.device_eeg_sensor_green);
+					eegSignal += 20;
+					break;
+				default:
+					imageViewT7.setImageResource(R.drawable.device_eeg_sensor_white);
+					break;
+			}
 
-//			updateSessionTime();
+			switch (Pz) {
+				case 0:
+					imageViewPz.setImageResource(R.drawable.device_eeg_sensor_white);
+					break;
+				case 1:
+					imageViewPz.setImageResource(R.drawable.device_eeg_sensor_red);
+					eegSignal += 5;
+					break;
+				case 2:
+					imageViewPz.setImageResource(R.drawable.device_eeg_sensor_yellow);
+					eegSignal += 10;
+					break;
+				case 4:
+					imageViewPz.setImageResource(R.drawable.device_eeg_sensor_green);
+					eegSignal += 20;
+					break;
+				default:
+					imageViewPz.setImageResource(R.drawable.device_eeg_sensor_white);
+					break;
+			}
 
-			updateStatusImage();
+			switch (T8) {
+				case 0:
+					imageViewT8.setImageResource(R.drawable.device_eeg_sensor_white);
+					break;
+				case 1:
+					imageViewT8.setImageResource(R.drawable.device_eeg_sensor_red);
+					eegSignal += 5;
+					break;
+				case 2:
+					imageViewT8.setImageResource(R.drawable.device_eeg_sensor_yellow);
+					eegSignal += 10;
+					break;
+				case 4:
+					imageViewT8.setImageResource(R.drawable.device_eeg_sensor_green);
+					eegSignal += 20;
+					break;
+				default:
+					imageViewT8.setImageResource(R.drawable.device_eeg_sensor_white);
+					break;
+			}
 
-//			Log.e(TAG, "mPacketReceiver: eegConnected: " + eegConnected);
-//			if (eegConnected.equals("true"))
-//				setButtonText(R.id.buttonConnectEEG, "Disconnect EEG");
-//			else
-//				setButtonText(R.id.buttonConnectEEG, "Connect EEG");
+			switch (AF4) {
+				case 0:
+					imageViewAF4.setImageResource(R.drawable.device_eeg_sensor_white);
+					break;
+				case 1:
+					imageViewAF4.setImageResource(R.drawable.device_eeg_sensor_red);
+					eegSignal += 5;
+					break;
+				case 2:
+					imageViewAF4.setImageResource(R.drawable.device_eeg_sensor_yellow);
+					eegSignal += 10;
+					break;
+				case 4:
+					imageViewAF4.setImageResource(R.drawable.device_eeg_sensor_green);
+					eegSignal += 20;
+					break;
+				default:
+					imageViewAF4.setImageResource(R.drawable.device_eeg_sensor_white);
+					break;
+			}
+
+			switch (CMS) {
+				case 0:
+					imageViewCMS.setImageResource(R.drawable.device_eeg_sensor_cms_white);
+					break;
+				case 1:
+					imageViewCMS.setImageResource(R.drawable.device_eeg_sensor_cms_red);
+					eegSignal += 5;
+					break;
+				case 2:
+					imageViewCMS.setImageResource(R.drawable.device_eeg_sensor_cms_yellow);
+					eegSignal += 10;
+					break;
+				case 4:
+					imageViewCMS.setImageResource(R.drawable.device_eeg_sensor_cms_green);
+					eegSignal += 20;
+					break;
+				default:
+					imageViewCMS.setImageResource(R.drawable.device_eeg_sensor_cms_white);
+					break;
+			}
 
 
-			updatePower();
+			if (eegSignal != previousEEGSignal) {
 
+
+				if (eegSignal <= 20) {
+//				progressBarContactQuality.setIndeterminateTintList(ColorStateList.valueOf(Color.parseColor("#FF0000")));
+
+					ShapeDrawable progressBarContactQualityDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null, null));
+					String progressBarContactQualityColor = "#FFAA00";
+					progressBarContactQualityDrawable.getPaint().setColor(Color.parseColor(progressBarContactQualityColor));
+					ClipDrawable progressSignal = new ClipDrawable(progressBarContactQualityDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
+					progressBarContactQuality.setProgressDrawable(progressSignal);
+					progressBarContactQuality.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
+
+
+				} else {
+//				progressBarContactQuality.setIndeterminateTintList(ColorStateList.valueOf(Color.parseColor("#00FF00")));
+
+					ShapeDrawable progressBarContactQualityDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null, null));
+					String progressBarContactQualityColor = "#00FF00";
+					progressBarContactQualityDrawable.getPaint().setColor(Color.parseColor(progressBarContactQualityColor));
+					ClipDrawable progressSignal = new ClipDrawable(progressBarContactQualityDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
+					progressBarContactQuality.setProgressDrawable(progressSignal);
+					progressBarContactQuality.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
+
+
+				}
+
+				progressBarContactQuality.setProgress(eegSignal);
+
+			}
+
+			previousEEGSignal = eegSignal;
 
 		}
 
 	};
+
+
+	// ################################################################
+
+	private BroadcastReceiver mTrainingReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String status = intent.getStringExtra("status");
+
+			switch (DeviceEmotivInsightSingleton.getInstance().currentInsightTraining) {
+
+				case "neutral":
+					Log.d(TAG, "Neutral " + status);
+					switch (status) {
+						case "Training Started":
+							buttonTrainNeutral.setText(getString(R.string.button_puzzlebox_orbit_emotiv_insight_training_neutral_training));
+							break;
+						case "Training Completed":
+							buttonTrainNeutral.setText(getString(R.string.button_puzzlebox_orbit_emotiv_insight_training_neutral_trained));
+							break;
+						case "Training Failed":
+							buttonTrainNeutral.setText(getString(R.string.button_puzzlebox_orbit_emotiv_insight_training_neutral_untrained));
+							progressBarTrainNeutral.setProgress(0);
+							break;
+					}
+					break;
+
+				case "mental command":
+					Log.d(TAG, "Mental Command " + status);
+					switch (status) {
+						case "Training Started":
+							buttonTrainMentalCommand.setText(getString(R.string.button_puzzlebox_orbit_emotiv_insight_training_neutral_training));
+							break;
+						case "Training Completed":
+							buttonTrainMentalCommand.setText(getString(R.string.button_puzzlebox_orbit_emotiv_insight_training_neutral_trained));
+							break;
+						case "Training Failed":
+							buttonTrainMentalCommand.setText(getString(R.string.button_puzzlebox_orbit_emotiv_insight_training_neutral_untrained));
+							progressBarTrainMentalCommand.setProgress(0);
+							break;
+					}
+					break;
+
+			}
+		}
+	};
+
+	// ################################################################
+
+//	private BroadcastReceiver mPacketReceiver = new BroadcastReceiver() {
+//
+//		@Override
+//		public void onReceive(Context context, Intent intent) {
+//
+//			int eegMentalCommand = Integer.valueOf(intent.getStringExtra("Attention"));
+//			int eegSignal = Integer.valueOf(intent.getStringExtra("Signal Level"));
+//
+//			progressBarActivityMentalCommand.setProgress(eegMentalCommand);
+//			progressBarContactQuality.setProgress(eegSignal);
+//
+////			if ((! buttonDeviceEnable.isEnabled()) && (eegSignal == ThinkGearService.signalSignalMax)) {
+////				// This setting requires the quality of the EEG sensor's
+////				// contact with skin hit to 100% at least once since the
+////				// headset was last connected.
+////				buttonDeviceEnable.setEnabled(true);
+////				buttonDeviceEnable.setVisibility(View.VISIBLE);
+////			}
+//
+////			progressBarBlink.setProgress(0);
+//
+////			updateEEGRawHistory(SessionSingleton.getInstance().getCurrentRawEEG());
+//
+////			updateSessionTime();
+//
+//			updateStatusImage();
+//
+////			Log.e(TAG, "mPacketReceiver: eegConnected: " + eegConnected);
+////			if (eegConnected.equals("true"))
+////				setButtonText(R.id.buttonConnectEEG, "Disconnect EEG");
+////			else
+////				setButtonText(R.id.buttonConnectEEG, "Connect EEG");
+//
+//
+//			updatePower();
+//
+//
+//		}
+//
+//	};
 
 	// ################################################################
 
 	public void updateControlSignal() {
 
 		Integer[] command =  {
-				  OrbitSingleton.getInstance().defaultControlThrottle,
+				  seekBarThrottle.getProgress(),
 				  OrbitSingleton.getInstance().defaultControlYaw,
 				  OrbitSingleton.getInstance().defaultControlPitch,
 				  OrbitSingleton.getInstance().defaultChannel};
@@ -420,83 +748,6 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	// ################################################################
 
-	private BroadcastReceiver mEventReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-
-//			String action = intent.getAction();
-
-			String name = intent.getStringExtra("name");
-			String value = intent.getStringExtra("value");
-
-			switch(name) {
-
-				case "eegStatus":
-
-					switch(value) {
-						case "STATE_CONNECTING":
-							updateStatusImage();
-//							setButtonText(io.puzzlebox.jigsaw.R.id.buttonConnectEEG, getResources().getString(io.puzzlebox.jigsaw.R.string.buttonStatusNeuroSkyMindWaveConnecting));
-							break;
-						case "STATE_CONNECTED":
-//							Toast.makeText(context, "EEG Connected", Toast.LENGTH_SHORT).show();
-							updateStatusImage();
-//							setButtonText(io.puzzlebox.jigsaw.R.id.buttonConnectEEG, getResources().getString(io.puzzlebox.jigsaw.R.string.buttonStatusNeuroSkyMindWaveDisconnect));
-//							buttonDeviceEnable.setEnabled(true);
-//							buttonDeviceEnable.setVisibility(View.VISIBLE);
-							break;
-						case "STATE_NOT_FOUND":
-							Toast.makeText(context, "EEG Not Found", Toast.LENGTH_SHORT).show();
-							updateStatusImage();
-//							setButtonText(io.puzzlebox.jigsaw.R.id.buttonConnectEEG, getResources().getString(io.puzzlebox.jigsaw.R.string.buttonStatusNeuroSkyMindWaveConnect));
-							buttonDeviceEnable.setEnabled(false);
-							buttonDeviceEnable.setVisibility(View.INVISIBLE);
-							break;
-						case "STATE_NOT_PAIRED":
-							Toast.makeText(context, "EEG Not Paired", Toast.LENGTH_SHORT).show();
-							updateStatusImage();
-//							setButtonText(io.puzzlebox.jigsaw.R.id.buttonConnectEEG, getResources().getString(io.puzzlebox.jigsaw.R.string.buttonStatusNeuroSkyMindWaveConnect));
-							buttonDeviceEnable.setEnabled(false);
-							buttonDeviceEnable.setVisibility(View.INVISIBLE);
-							break;
-						case "STATE_DISCONNECTED":
-//							Toast.makeText(context, "EEG Disconnected", Toast.LENGTH_SHORT).show();
-							updateStatusImage();
-//							setButtonText(io.puzzlebox.jigsaw.R.id.buttonConnectEEG, getResources().getString(io.puzzlebox.jigsaw.R.string.buttonStatusNeuroSkyMindWaveConnect));
-							buttonDeviceEnable.setEnabled(false);
-							buttonDeviceEnable.setVisibility(View.INVISIBLE);
-							break;
-						case "MSG_LOW_BATTERY":
-//							Toast.makeText(context, "EEG Battery Low", Toast.LENGTH_SHORT).show();
-							Toast.makeText(context, io.puzzlebox.jigsaw.R.string.buttonStatusNeuroSkyMindWaveBatteryLow, Toast.LENGTH_SHORT).show();
-							updateStatusImage();
-							break;
-					}
-
-					break;
-
-				case "eegBlink":
-					Log.d(TAG, "Blink: " + value + "\n");
-//					if (Integer.parseInt(value) > ThinkGearService.blinkRangeMax) {
-//						value = "" + ThinkGearService.blinkRangeMax;
-//					}
-//					try {
-//						progressBarBlink.setProgress(Integer.parseInt(value));
-//					} catch (NumberFormatException e) {
-//						e.printStackTrace();
-//					}
-					break;
-
-			}
-
-		}
-
-	};
-
-	// ################################################################
-
-
 	public void updateStatusImage() {
 
 //		if(DEBUG) {
@@ -513,116 +764,34 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 			return;
 		}
 
-		if(eegSignal > 90) {
+		// TODO
+//		if(eegSignal > 90) {
+//			imageViewStatus.setImageResource(R.drawable.status_3_processing);
+//			return;
+//		}
+
+		if (progressBarContactQuality.getProgress() > 20) {
 			imageViewStatus.setImageResource(R.drawable.status_3_processing);
 			return;
 		}
 
-		if(eegConnected) {
+		if(DeviceEmotivInsightSingleton.getInstance().lock) {
 			imageViewStatus.setImageResource(R.drawable.status_2_connected);
 			return;
 		}
+//
+//		if(eegConnecting) {
+//			imageViewStatus.setImageResource(R.drawable.status_1_connecting);
+//			return;
+//		} else {
+//			imageViewStatus.setImageResource(R.drawable.status_default);
+//			return;
+//		}
 
-		if(eegConnecting) {
-			imageViewStatus.setImageResource(R.drawable.status_1_connecting);
-			return;
-		} else {
-			imageViewStatus.setImageResource(R.drawable.status_default);
-			return;
-		}
+		imageViewStatus.setImageResource(R.drawable.status_default);
 
 	} // updateStatusImage
 
-
-	// ################################################################
-
-	// TODO
-//	@Override
-//	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//
-//		menu.add("Share")
-//				  .setOnMenuItemClickListener(this.mShareButtonClickListener)
-//				  .setIcon(android.R.drawable.ic_menu_share)
-//				  .setShowAsAction(SHOW_AS_ACTION_ALWAYS);
-//
-//		super.onCreateOptionsMenu(menu, inflater);
-//
-//	}
-
-
-	// ################################################################
-
-	// TODO
-//	MenuItem.OnMenuItemClickListener mShareButtonClickListener = new MenuItem.OnMenuItemClickListener() {
-//
-//		@Override
-//		public boolean onMenuItemClick(MenuItem item) {
-//
-//			Intent i = SessionSingleton.getInstance().getExportSessionIntent(getActivity().getApplicationContext(), item);
-//
-//			if (i != null) {
-//				startActivity(i);
-//			} else {
-//				Toast.makeText(getActivity().getApplicationContext(), "Error export session data for sharing", Toast.LENGTH_SHORT).show();
-//			}
-//
-//			return false;
-//		}
-//	};
-
-
-	// ################################################################
-
-
-	// ################################################################
-
-	// TODO
-//	private void setOrbitActivate() {
-//
-//		Log.d(TAG, "setOrbitActivate");
-//
-//		if (! OrbitSingleton.getInstance().orbitActive) {
-////			getActivity().startService(intentThinkGear);
-//			OrbitSingleton.getInstance().orbitActive = true;
-//		} else {
-//			setOrbitDeactivate();
-//		}
-//
-////		OrbitSingleton.getInstance().flag = true;
-////		OrbitSingleton.getInstance().connState = true;
-////
-////		servoSeekBar.setEnabled(OrbitSingleton.getInstance().flag);
-////		connectBloom.setText("Disconnect Bloom");
-////
-////		buttonDemo.setEnabled(true);
-//		buttonConnectOrbit.setEnabled(true);
-//	}
-
-
-	// ################################################################
-
-	// TODO
-//	private void setOrbitDeactivate() {
-//
-//		Log.d(TAG, "setOrbitDeactivate");
-//
-//		OrbitSingleton.getInstance().orbitActive = false;
-//
-////		OrbitSingleton.getInstance().flag = false;
-////		OrbitSingleton.getInstance().connState = false;
-////
-////		servoSeekBar.setEnabled(OrbitSingleton.getInstance().flag);
-////		connectBloom.setText("Connect Bloom");
-////
-////		buttonDemo.setEnabled(false);
-//
-//		buttonConnectOrbit.setEnabled(false);
-////
-////		progressBarRange.setProgress(0);
-//	}
-
-
-	// ################################################################
 
 
 	// ################################################################
@@ -630,7 +799,8 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
 
 		updatePowerThresholds();
-		//		updatePower();
+
+		updateControlSignal();
 
 	} // onProgressChanged
 
@@ -639,8 +809,8 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	public void onStartTrackingTouch(SeekBar seekBar) {
 
-		/**
-		 * Method required by SeekBar.OnSeekBarChangeListener
+		/*
+		  Method required by SeekBar.OnSeekBarChangeListener
 		 */
 
 
@@ -661,7 +831,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	public void updatePowerThresholds() {
 
-		/**
+		/*
 		 * The "Power" level refers to the Puzzlebox Orbit helicopter's
 		 * throttle setting. Typically this is an "off" or "on" state,
 		 * meaning the helicopter is either flying or not flying at all.
@@ -672,21 +842,19 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		 */
 
 		int power;
-		int attentionSeekValue;
-		int meditationSeekValue;
+		int mentalCommandSeekValue;
 		float percentOfMaxPower;
 
 		// Reset all values to zero
-		for (int i = 0; i < thresholdValuesAttention.length; i++) {
-			thresholdValuesAttention[i] = 0;
-			thresholdValuesMeditation[i] = 0;
+		for (int i = 0; i < thresholdValuesMentalCommand.length; i++) {
+			thresholdValuesMentalCommand[i] = 0;
 		}
 
-		attentionSeekValue = seekBarAttention.getProgress();
-		if (attentionSeekValue > 0) {
-			for (int i = attentionSeekValue; i < thresholdValuesAttention.length; i++) {
+		mentalCommandSeekValue = seekBarActivityMentalCommand.getProgress();
+		if (mentalCommandSeekValue > 0) {
+			for (int i = mentalCommandSeekValue; i < thresholdValuesMentalCommand.length; i++) {
 
-				/**
+				/*
 				 *  Slider @ 70
 				 *
 				 * Attention @ 70
@@ -709,19 +877,10 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 				 * Power = 100
 				 */
 
-				percentOfMaxPower = ( ((100 - attentionSeekValue) - (100 - i)) / (float)(100 - attentionSeekValue) );
-				power = thresholdValuesAttention[i] + (int)( minimumPower + ((maximumPower - minimumPower) * percentOfMaxPower) );
-				thresholdValuesAttention[i] = power;
+				percentOfMaxPower = ( ((100 - mentalCommandSeekValue) - (100 - i)) / (float)(100 - mentalCommandSeekValue) );
+				power = thresholdValuesMentalCommand[i] + (int)( minimumPower + ((maximumPower - minimumPower) * percentOfMaxPower) );
+				thresholdValuesMentalCommand[i] = power;
 
-			}
-		}
-
-		meditationSeekValue = seekBarMeditation.getProgress();
-		if (meditationSeekValue > 0) {
-			for (int i = meditationSeekValue; i < thresholdValuesMeditation.length; i++) {
-				percentOfMaxPower = ( ((100 - meditationSeekValue) - (100 - i)) / (float)(100 - meditationSeekValue) );
-				power = thresholdValuesMeditation[i] + (int)( minimumPower + ((maximumPower - minimumPower) * percentOfMaxPower) );
-				thresholdValuesMeditation[i] = power;
 			}
 		}
 
@@ -732,56 +891,25 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	public void updatePower() {
 
-		/**
+		/*
 		 * This method updates the power level of the
 		 * "Throttle" and triggers the audio stream
 		 * which is used to fly the helicopter
 		 */
 
-		if (eegConnected) {
 
-			if (eegSignal < 100) {
-				ThinkGearService.eegAttention = 0;
-				ThinkGearService.eegMeditation = 0;
-				progressBarAttention.setProgress(ThinkGearService.eegAttention);
-				progressBarMeditation.setProgress(ThinkGearService.eegMeditation);
-			}
+		eegPower = calculateSpeed();
 
-			ThinkGearService.eegPower = calculateSpeed();
-			eegPower = ThinkGearService.eegPower;
+		Log.d(TAG, "eegPower: " + eegPower);
 
-			progressBarPower.setProgress(ThinkGearService.eegPower);
-
-
-		}
-
-
-		// TODO
-//		if (MuseService.eegConnected) {
-//
-////			Log.d(TAG, "MuseService.eegConnected: eegSignal: " + MuseService.eegSignal);
-////			if (MuseService.eegSignal < 100) {
-////				MuseService.eegConcentration = 0;
-////				MuseService.eegMellow = 0;
-////				progressBarAttention.setProgress(MuseService.eegConcentration);
-////				progressBarMeditation.setProgress(MuseService.eegMellow);
-////			}
-//
-//			MuseService.eegPower = calculateSpeed();
-//
-//			progressBarPower.setProgress(MuseService.eegPower);
-//			eegPower = MuseService.eegPower;
-//
-//
-//		}
-
+		progressBarPower.setProgress(eegPower);
 
 		OrbitSingleton.getInstance().eegPower = eegPower;
 
 
 		if (eegPower > 0) {
 
-			/** Start playback of audio control stream */
+			/* Start playback of audio control stream */
 //			if (!OrbitSingleton.getInstance().flightActive) {
 //				playControl();
 //			}
@@ -794,7 +922,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 		} else {
 
-			/** Land the helicopter */
+			/* Land the helicopter */
 //			if (! OrbitSingleton.getInstance().demoActive ) {
 //				stopControl();
 //			}
@@ -818,23 +946,19 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	public int calculateSpeed() {
 
-		/**
+		/*
 		 * This method is used for calculating whether
 		 * or not the "Attention" or "Meditation" levels
 		 * are sufficient to trigger the helicopter throttle
 		 */
 
-		int attention = progressBarAttention.getProgress();
-		int meditation = progressBarMeditation.getProgress();
-		int attentionSeekValue = seekBarAttention.getProgress();
-		int meditationSeekValue = seekBarMeditation.getProgress();
+		int mentalCommandPower = progressBarActivityMentalCommand.getProgress();
+		int mentalCommandSeekValue = seekBarActivityMentalCommand.getProgress();
 
 		int speed = 0;
 
-		if (attention > attentionSeekValue)
-			speed = thresholdValuesAttention[attention];
-		if (meditation > meditationSeekValue)
-			speed = speed + thresholdValuesMeditation[meditation];
+		if (mentalCommandPower > mentalCommandSeekValue)
+			speed = thresholdValuesMentalCommand[mentalCommandPower];
 
 		if (speed > maximumPower)
 			speed = maximumPower;
@@ -852,7 +976,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	public void updateScore() {
 
-		/**
+		/*
 		 * Score points based on target slider levels
 		 * If you pass your goal with either Attention or Meditation
 		 * the higher target of the two will counts as points per second.
@@ -872,26 +996,26 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		 *
 		 */
 
-		int eegAttentionScore = 0;
-		int eegAttention = progressBarAttention.getProgress();
-		int eegAttentionTarget = seekBarAttention.getProgress();
+		int mentalCommandScore = 0;
+		int mentalCommandPower = progressBarActivityMentalCommand.getProgress();
+		int mentalCommandTarget = seekBarActivityMentalCommand.getProgress();
 
-		int eegMeditationScore = 0;
-		int eegMeditation = progressBarMeditation.getProgress();
-		int eegMeditationTarget = seekBarMeditation.getProgress();
 
-		if ((eegAttention >= eegAttentionTarget) &&
-				  (eegAttentionTarget > OrbitSingleton.getInstance().minimumScoreTarget))
-			eegAttentionScore = eegAttentionTarget - OrbitSingleton.getInstance().minimumScoreTarget;
+		if ((mentalCommandPower >= mentalCommandTarget) &&
+				  (mentalCommandTarget > OrbitSingleton.getInstance().minimumScoreTarget))
+			mentalCommandScore = mentalCommandTarget - OrbitSingleton.getInstance().minimumScoreTarget;
 
-		if ((eegMeditation >= eegMeditationTarget) &&
-				  (eegMeditationTarget > OrbitSingleton.getInstance().minimumScoreTarget))
-			eegMeditationScore = eegMeditationTarget - OrbitSingleton.getInstance().minimumScoreTarget;
+//		if ((eegMeditation >= eegMeditationTarget) &&
+//				  (eegMeditationTarget > OrbitSingleton.getInstance().minimumScoreTarget))
+//			eegMeditationScore = eegMeditationTarget - OrbitSingleton.getInstance().minimumScoreTarget;
 
-		if (eegAttentionScore > eegMeditationScore)
-			OrbitSingleton.getInstance().scoreCurrent = OrbitSingleton.getInstance().scoreCurrent + eegAttentionScore;
-		else
-			OrbitSingleton.getInstance().scoreCurrent = OrbitSingleton.getInstance().scoreCurrent + eegMeditationScore;
+//		if (mentalCommandScore > eegMeditationScore)
+//			OrbitSingleton.getInstance().scoreCurrent = OrbitSingleton.getInstance().scoreCurrent + mentalCommandScore;
+//		else
+//			OrbitSingleton.getInstance().scoreCurrent = OrbitSingleton.getInstance().scoreCurrent + eegMeditationScore;
+
+		OrbitSingleton.getInstance().scoreCurrent = OrbitSingleton.getInstance().scoreCurrent + mentalCommandScore;
+
 
 		textViewScore.setText(Integer.toString(OrbitSingleton.getInstance().scoreCurrent));
 
@@ -901,16 +1025,16 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		}
 
 
-		// Catch anyone gaming the system with one slider
-		// below the minimum threshold and the other over.
-		// For example, setting Meditation to 1% will keep helicopter
-		// activated even if Attention is below target
-		if ((eegAttention < eegAttentionTarget) && (eegMeditation < OrbitSingleton.getInstance().minimumScoreTarget))
-			resetCurrentScore();
-		if ((eegMeditation < eegMeditationTarget) && (eegAttention < OrbitSingleton.getInstance().minimumScoreTarget))
-			resetCurrentScore();
-		if ((eegAttention < OrbitSingleton.getInstance().minimumScoreTarget) && (eegMeditation < OrbitSingleton.getInstance().minimumScoreTarget))
-			resetCurrentScore();
+//		// Catch anyone gaming the system with one slider
+//		// below the minimum threshold and the other over.
+//		// For example, setting Meditation to 1% will keep helicopter
+//		// activated even if Attention is below target
+//		if ((mentalCommandPower < mentalCommandTarget) && (eegMeditation < OrbitSingleton.getInstance().minimumScoreTarget))
+//			resetCurrentScore();
+//		if ((eegMeditation < eegMeditationTarget) && (mentalCommandPower < OrbitSingleton.getInstance().minimumScoreTarget))
+//			resetCurrentScore();
+//		if ((mentalCommandPower < OrbitSingleton.getInstance().minimumScoreTarget) && (eegMeditation < OrbitSingleton.getInstance().minimumScoreTarget))
+//			resetCurrentScore();
 
 
 	} // updateScore
@@ -942,7 +1066,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //
 		if (OrbitSingleton.getInstance().generateAudio) {
 
-			/**
+			/*
 			 * Generate signal on the fly
 			 */
 
@@ -983,18 +1107,18 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 //
 		} else {
 
-			/**
+			/*
 			 * Play audio control file
 			 */
 
-			/** Getting the user sound settings */
+			/* Getting the user sound settings */
 			AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
 			//			float actualVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 			float maxVolume = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 			//			float volume = actualVolume / maxVolume;
 
 			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) maxVolume, 0);
-			/** Is the sound loaded already? */
+			/* Is the sound loaded already? */
 			if (OrbitSingleton.getInstance().loaded) {
 				//				soundPool.play(soundID, volume, volume, 1, 0, 1f);
 				//				soundPool.setVolume(soundID, 1f, 1f);
@@ -1050,13 +1174,13 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	public void stopAudio() {
 
-		/**
+		/*
 		 * stop AudioTrack as well as destroy service.
 		 */
 
 		OrbitSingleton.getInstance().audioHandler.keepPlaying = false;
 
-		/**
+		/*
 		 * Stop playing audio control file
 		 */
 
@@ -1076,7 +1200,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 	public void testFlight(View v) {
 
-		/**
+		/*
 		 * Demo mode is called when the "Test Helicopter" button is pressed.
 		 * This method can be easily adjusted for testing new features
 		 * during development.
@@ -1149,8 +1273,7 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 		// the Orbit may take off again approximately one second later
 		eegPower = 0;
 
-		seekBarAttention.setProgress(OrbitSingleton.getInstance().defaultTargetAttention);
-		seekBarMeditation.setProgress(OrbitSingleton.getInstance().defaultTargetMeditation);
+//		seekBarActivityMentalCommand.setProgress(OrbitSingleton.getInstance().defaultTargetAttention);
 
 		updatePowerThresholds();
 
@@ -1332,6 +1455,125 @@ public class DialogPuzzleboxOrbitFragment extends DialogFragment
 
 
 	} // setControlSignalRight
+
+
+
+	// ################################################################
+
+	private BroadcastReceiver mActionReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+//			String action = intent.getAction();
+
+			String name = intent.getStringExtra("name");
+			String value = intent.getStringExtra("value");
+
+//			Log.d(TAG, "Action [" + name + "]: " + value);
+
+
+			if (name.equals("2")) {
+//				Log.d(TAG, "Action [Mental Command]: " + value);
+
+				double actionPower = Double.valueOf(value);
+
+//				Log.d(TAG, "actionPower:" + actionPower);
+
+				int eegMentalCommand = (int) (actionPower * 100);
+
+				Log.d(TAG, "eegMentalCommand:" + eegMentalCommand);
+
+				progressBarActivityMentalCommand.setProgress(eegMentalCommand);
+
+				updateStatusImage();
+
+				updatePower();
+
+
+			}
+
+
+//			switch(name) {
+//
+//				case "status":
+//
+//					switch(value) {
+//
+//						case "connected":
+//							connectEEG.setText(getString(R.string.buttonStatusEmotivInsightDisconnect));
+//
+//							buttonDeviceEnable.setEnabled(true);
+//							buttonDeviceEnable.setVisibility(View.VISIBLE);
+//
+//							break;
+//
+//						case "disconnected":
+//							connectEEG.setText(getString(R.string.buttonStatusEmotivInsightConnect));
+//
+//							buttonDeviceEnable.setEnabled(false);
+//							buttonDeviceEnable.setVisibility(View.INVISIBLE);
+//
+//							break;
+//
+//					}
+//
+//					break;
+//
+//			}
+
+		}
+
+	};
+
+
+	// ################################################################
+
+	//	public void animateLightSaber(int animateTime, int animateSteps) {
+	public void animateProgressBar() {
+
+		handlerAnimation = new Handler();
+		new Thread(new TaskAnimateProgressBar()).start();
+
+	}
+
+
+	// ################################################################
+
+	private class TaskAnimateProgressBar implements Runnable {
+		@Override
+		public void run() {
+//			for (int i = 0; i <= 20; i++) {
+			for (int i = 0; i <= 100; i += 5) {
+				final int value = i;
+				try {
+//					Thread.sleep(1000);
+					Thread.sleep(400);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				handlerAnimation.post(new Runnable() {
+					@Override
+					public void run() {
+//						drawLightSaber(value);
+
+						switch (DeviceEmotivInsightSingleton.getInstance().currentInsightTraining) {
+
+							case "neutral":
+								progressBarTrainNeutral.setProgress(value);
+								break;
+							case "mental command":
+								progressBarTrainMentalCommand.setProgress(value);
+
+						}
+
+					}
+				});
+			}
+		}
+	}
+
+
 
 
 }

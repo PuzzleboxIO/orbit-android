@@ -12,7 +12,6 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Display;
@@ -24,19 +23,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.vision.text.Line;
-
-import io.puzzlebox.jigsaw.data.ConfigurationSingleton;
 import io.puzzlebox.jigsaw.data.ProfileSingleton;
 import io.puzzlebox.jigsaw.protocol.ThinkGearService;
-import io.puzzlebox.jigsaw.ui.DialogAudioIRFragment;
+import io.puzzlebox.jigsaw.ui.DialogOutputAudioIRFragment;
 import io.puzzlebox.jigsaw.ui.JoystickView;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
@@ -45,10 +40,10 @@ import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegConnected;
 import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegConnecting;
 import static io.puzzlebox.jigsaw.protocol.ThinkGearService.eegSignal;
 
-public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
+public class DialogProfilePuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 		  implements SeekBar.OnSeekBarChangeListener {
 
-	private final static String TAG = DialogPuzzleboxOrbitJoystickMindwaveFragment.class.getSimpleName();
+	private final static String TAG = DialogProfilePuzzleboxOrbitJoystickMindwaveFragment.class.getSimpleName();
 
 	public final static String profileID = "profile_puzzlebox_orbit_joystick_mindwave";
 
@@ -85,7 +80,7 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 
 	private OnFragmentInteractionListener mListener;
 
-	public DialogPuzzleboxOrbitJoystickMindwaveFragment() {
+	public DialogProfilePuzzleboxOrbitJoystickMindwaveFragment() {
 		// Required empty public constructor
 	}
 
@@ -260,7 +255,7 @@ public class DialogPuzzleboxOrbitJoystickMindwaveFragment extends DialogFragment
 
 		super.onResume();
 
-		if (ProfileSingleton.getInstance().getValue(DialogAudioIRFragment.profileID, "active").equals("true")) {
+		if (ProfileSingleton.getInstance().getValue(DialogOutputAudioIRFragment.profileID, "active").equals("true")) {
 			playControl();
 		} else {
 			Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_puzzlebox_orbit_joystick_audio_ir_warning), Toast.LENGTH_LONG).show();

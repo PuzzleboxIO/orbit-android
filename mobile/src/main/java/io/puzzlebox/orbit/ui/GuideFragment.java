@@ -8,7 +8,6 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -19,7 +18,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +30,11 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import io.puzzlebox.jigsaw.data.ProfileSingleton;
-//import io.puzzlebox.jigsaw.ui.DialogAudioIRFragment;
-import io.puzzlebox.jigsaw.ui.DialogJoystickFragment;
-import io.puzzlebox.jigsaw.ui.DialogNeuroSkyMindWaveFragment;
-import io.puzzlebox.jigsaw.ui.DialogSessionFragment;
+//import io.puzzlebox.jigsaw.ui.DialogOutputAudioIRFragment;
+import io.puzzlebox.jigsaw.ui.DialogInputEmotivInsightFragment;
+import io.puzzlebox.jigsaw.ui.DialogInputJoystickFragment;
+import io.puzzlebox.jigsaw.ui.DialogInputNeuroSkyMindWaveFragment;
+import io.puzzlebox.jigsaw.ui.DialogOutputSessionFragment;
 import io.puzzlebox.jigsaw.ui.TileViewAnimator;
 import io.puzzlebox.jigsaw.ui.TilesFragment;
 import io.puzzlebox.orbit.R;
@@ -522,14 +521,19 @@ public class GuideFragment extends TilesFragment {
 
 				switch (index) {
 					case 0:
-						// NeuroSky MindWave Mobile
-						DialogNeuroSkyMindWaveFragment dialogNeuroSkyMindWaveFragment = new DialogNeuroSkyMindWaveFragment();
-						dialogNeuroSkyMindWaveFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_neurosky_mindwave));
+						// Joystick
+						DialogInputJoystickFragment dialogInputJoystickFragment = new DialogInputJoystickFragment();
+						dialogInputJoystickFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_joystick));
 						break;
 					case 1:
-						// Joystick
-						DialogJoystickFragment dialogJoystickFragment = new DialogJoystickFragment();
-						dialogJoystickFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_joystick));
+						// NeuroSky MindWave Mobile
+						DialogInputNeuroSkyMindWaveFragment dialogInputNeuroSkyMindWaveFragment = new DialogInputNeuroSkyMindWaveFragment();
+						dialogInputNeuroSkyMindWaveFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_neurosky_mindwave));
+						break;
+					case 2:
+						// Emotiv Insight
+						DialogInputEmotivInsightFragment dialogInputEmotivInsightFragment = new DialogInputEmotivInsightFragment();
+						dialogInputEmotivInsightFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_emotiv_insight));
 						break;
 				}
 				break;
@@ -539,15 +543,15 @@ public class GuideFragment extends TilesFragment {
 				switch (index) {
 					case 0:
 						// Audio IR Transmitter
-//						DialogAudioIRFragment dialogAudioIRFragment = new DialogAudioIRFragment();
+//						DialogOutputAudioIRFragment dialogAudioIRFragment = new DialogOutputAudioIRFragment();
 //						dialogAudioIRFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_audio_ir));
 						DialogOutputAudioIRFragment dialogOutputAudioIRFragment = new DialogOutputAudioIRFragment();
 						dialogOutputAudioIRFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_audio_ir));
 						break;
 					case 1:
 						// Session Data
-						DialogSessionFragment dialogSessionFragment = new DialogSessionFragment();
-						dialogSessionFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_session));
+						DialogOutputSessionFragment dialogOutputSessionFragment = new DialogOutputSessionFragment();
+						dialogOutputSessionFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_session));
 						break;
 				}
 				break;
@@ -570,19 +574,24 @@ public class GuideFragment extends TilesFragment {
 
 				switch (index) {
 					case 0:
-						// Puzzlebox Orbit with EEG
-						DialogPuzzleboxOrbitFragment dialogPuzzleboxOrbitFragment = new DialogPuzzleboxOrbitFragment();
-						dialogPuzzleboxOrbitFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit));
+						// Puzzlebox Orbit with Joystick
+						DialogProfilePuzzleboxOrbitJoystickFragment dialogProfilePuzzleboxOrbitJoystickFragment = new DialogProfilePuzzleboxOrbitJoystickFragment();
+						dialogProfilePuzzleboxOrbitJoystickFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_joystick));
 						break;
 					case 1:
-						// Puzzlebox Orbit with Joystick
-						DialogPuzzleboxOrbitJoystickFragment dialogPuzzleboxOrbitJoystickFragment = new DialogPuzzleboxOrbitJoystickFragment();
-						dialogPuzzleboxOrbitJoystickFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_joystick));
+						// Puzzlebox Orbit with NeuroSky MindWave Mobile EEG
+						DialogProfilePuzzleboxOrbitFragment dialogProfilePuzzleboxOrbitFragment = new DialogProfilePuzzleboxOrbitFragment();
+						dialogProfilePuzzleboxOrbitFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit));
 						break;
 					case 2:
-						// Puzzlebox Orbit with EEG and Joystick
-						DialogPuzzleboxOrbitJoystickMindwaveFragment dialogPuzzleboxOrbitJoystickMindwaveFragment = new DialogPuzzleboxOrbitJoystickMindwaveFragment();
+						// Puzzlebox Orbit with NeuroSky MindWave Mobile EEG and Joystick
+						DialogProfilePuzzleboxOrbitJoystickMindwaveFragment dialogPuzzleboxOrbitJoystickMindwaveFragment = new DialogProfilePuzzleboxOrbitJoystickMindwaveFragment();
 						dialogPuzzleboxOrbitJoystickMindwaveFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_joystick_mindwave));
+						break;
+					case 3:
+						// Puzzlebox Orbit with Emotiv Insight EEG and Joystick
+						DialogProfilePuzzleboxOrbitEmotivInsightFragment dialogPuzzleboxOrbitEmotivInsightFragment = new DialogProfilePuzzleboxOrbitEmotivInsightFragment();
+						dialogPuzzleboxOrbitEmotivInsightFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_emotiv_insight));
 						break;
 				}
 				break;

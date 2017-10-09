@@ -20,6 +20,10 @@
     <string name="welcome_message_help">Please touch screen to begin</string>
     <string name="contentDescription_imageViewLogo">Puzzlebox Logo</string>
 
+    <!-- Main -->
+    <string name="main_dialog_title">This app needs your permission</string>
+    <string name="main_dialog_message">Please grant location access so this app can scan for Bluetooth devices.</string>
+
     <!--<string name="button_connect">Connect</string>-->
     <string name="button_connect">Activate Orbit</string>
     <string name="button_disconnect">Deactivate Orbit</string>

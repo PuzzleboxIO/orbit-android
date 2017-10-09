@@ -18,11 +18,7 @@ import android.widget.Toast;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.orbit.data.OrbitSingleton;
 
-/**
- * Created by sc on 5/8/17.
- */
-
-//public class DialogOutputAudioIRFragment extends io.puzzlebox.jigsaw.ui.DialogAudioIRFragment {
+//public class DialogOutputAudioIRFragment extends io.puzzlebox.jigsaw.ui.DialogOutputAudioIRFragment {
 public class DialogOutputAudioIRFragment extends DialogFragment {
 
 	private final static String TAG = DialogOutputAudioIRFragment.class.getSimpleName();
