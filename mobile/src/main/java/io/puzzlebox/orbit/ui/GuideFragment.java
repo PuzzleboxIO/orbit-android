@@ -535,6 +535,21 @@ public class GuideFragment extends TilesFragment {
 						DialogInputEmotivInsightFragment dialogInputEmotivInsightFragment = new DialogInputEmotivInsightFragment();
 						dialogInputEmotivInsightFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_emotiv_insight));
 						break;
+
+
+					// Emotiv Insight
+
+//					case 0:
+//						// Emotiv Insight
+//						DialogInputEmotivInsightFragment dialogInputEmotivInsightFragment = new DialogInputEmotivInsightFragment();
+//						dialogInputEmotivInsightFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_emotiv_insight));
+//						break;
+//					case 1:
+//						// Joystick
+//						DialogInputJoystickFragment dialogInputJoystickFragment = new DialogInputJoystickFragment();
+//						dialogInputJoystickFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_joystick));
+//						break;
+
 				}
 				break;
 
@@ -593,6 +608,20 @@ public class GuideFragment extends TilesFragment {
 						DialogProfilePuzzleboxOrbitEmotivInsightFragment dialogPuzzleboxOrbitEmotivInsightFragment = new DialogProfilePuzzleboxOrbitEmotivInsightFragment();
 						dialogPuzzleboxOrbitEmotivInsightFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_emotiv_insight));
 						break;
+
+
+					// Emotiv Insight
+
+//					case 0:
+//						// Puzzlebox Orbit with Emotiv Insight EEG and Joystick
+//						DialogProfilePuzzleboxOrbitEmotivInsightFragment dialogPuzzleboxOrbitEmotivInsightFragment = new DialogProfilePuzzleboxOrbitEmotivInsightFragment();
+//						dialogPuzzleboxOrbitEmotivInsightFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_emotiv_insight));
+//						break;
+//					case 1:
+//						// Puzzlebox Orbit with Joystick
+//						DialogProfilePuzzleboxOrbitJoystickFragment dialogProfilePuzzleboxOrbitJoystickFragment = new DialogProfilePuzzleboxOrbitJoystickFragment();
+//						dialogProfilePuzzleboxOrbitJoystickFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_joystick));
+//						break;
 				}
 				break;
 		}

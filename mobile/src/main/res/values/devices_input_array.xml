@@ -3,38 +3,69 @@
 
     <!-- Array of input devices resource IDs -->
     <string-array name="devices_input_array">
-        <item>joystick</item>
-        <item>neurosky_mindwave_mobile</item>
-        <item>emotiv_insight</item>
-        <!--<item>watch_android</item>-->
-        <!--<item>openbci_cyton_8_channel</item>-->
+    <item>joystick</item>
+    <item>neurosky_mindwave_mobile</item>
+    <item>emotiv_insight</item>
+    <!--<item>watch_android</item>-->
+    <!--<item>openbci_cyton_8_channel</item>-->
     </string-array>
 
     <!-- Array of input devices icons -->
     <string-array name="devices_input_icon_array">
-        <item>carousel_joystick</item>
-        <item>carousel_neurosky_mindwave_mobile</item>
-        <item>carousel_emotiv_insight</item>
-        <!--<item>carousel_watch_android</item>-->
-        <!--<item>carousel_openbci_cyton_8_channel</item>-->
+    <item>carousel_joystick</item>
+    <item>carousel_neurosky_mindwave_mobile</item>
+    <item>carousel_emotiv_insight</item>
+    <!--<item>carousel_watch_android</item>-->
+    <!--<item>carousel_openbci_cyton_8_channel</item>-->
     </string-array>
 
     <!-- Array of input devices Company/Manufacturer names -->
     <string-array name="devices_input_company_array">
-        <item>Joystick</item>
-        <item>NeuroSky</item>
-        <item>Emotiv</item>
-        <!--<item>Android</item>-->
-        <!--<item>OpenBCI</item>-->
+    <item>Joystick</item>
+    <item>NeuroSky</item>
+    <item>Emotiv</item>
+    <!--<item>Android</item>-->
+    <!--<item>OpenBCI</item>-->
     </string-array>
 
     <!-- Array of input devices Product names -->
     <string-array name="devices_input_product_array">
-        <item>Steering</item>
-        <item>Mindwave Mobile</item>
-        <item>Insight</item>
-        <!--<item>Wear</item>-->
-        <!--<item>Cyton 8 Channel</item>-->
+    <item>Steering</item>
+    <item>Mindwave Mobile</item>
+    <item>Insight</item>
+    <!--<item>Wear</item>-->
+    <!--<item>Cyton 8 Channel</item>-->
     </string-array>
+
+
+
+    <!-- Emotiv Insight -->
+
+
+    <!--&lt;!&ndash; Array of input devices resource IDs &ndash;&gt;-->
+    <!--<string-array name="devices_input_array">-->
+        <!--<item>emotiv_insight</item>-->
+        <!--<item>joystick</item>-->
+    <!--</string-array>-->
+
+    <!--&lt;!&ndash; Array of input devices icons &ndash;&gt;-->
+    <!--<string-array name="devices_input_icon_array">-->
+        <!--<item>carousel_emotiv_insight</item>-->
+        <!--<item>carousel_joystick</item>-->
+    <!--</string-array>-->
+
+    <!--&lt;!&ndash; Array of input devices Company/Manufacturer names &ndash;&gt;-->
+    <!--<string-array name="devices_input_company_array">-->
+        <!--<item>Emotiv</item>-->
+        <!--<item>Joystick</item>-->
+    <!--</string-array>-->
+
+    <!--&lt;!&ndash; Array of input devices Product names &ndash;&gt;-->
+    <!--<string-array name="devices_input_product_array">-->
+        <!--<item>Insight</item>-->
+        <!--<item>Steering</item>-->
+    <!--</string-array>-->
+
+
 
 </resources>

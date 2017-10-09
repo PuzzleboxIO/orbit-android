@@ -29,12 +29,12 @@
 
 
             <!--<ImageView-->
-                <!--android:id="@+id/imageViewLogoEmotiv"-->
+                <!--android:id="@+id/imageViewLogoBrand"-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="78dp"-->
-                <!--android:contentDescription="@string/image_description_status"-->
+                <!--android:contentDescription="@string/image_description_brand"-->
                 <!--android:maxHeight="20dp"-->
-                <!--android:src="@drawable/logo_emotiv"-->
+                <!--android:src="@drawable/logo_brand"-->
                 <!--/>-->
 
             <ImageView
