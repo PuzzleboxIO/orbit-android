@@ -5,8 +5,8 @@ android {
     buildToolsVersion "27.0.1"
 
     defaultConfig {
-//        applicationId "info.puzzlebox.orbit"
-        applicationId "io.puzzlebox.orbit"
+        applicationId "info.puzzlebox.orbit"
+//        applicationId "io.puzzlebox.orbit"
 //        minSdkVersion 15 // API 4.0.3
 //        minSdkVersion 16 // API 4.1 [Manifest.permission.READ_EXTERNAL_STORAGE]
         minSdkVersion 18 // API 4.3 [Emotiv Community SDK]
@@ -17,8 +17,8 @@ android {
     }
     buildTypes {
         release {
-            debuggable true
-//            debuggable false
+//            debuggable true
+            debuggable false
             minifyEnabled false
 //            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
