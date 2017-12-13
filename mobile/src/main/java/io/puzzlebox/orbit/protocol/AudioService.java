@@ -8,6 +8,8 @@ import android.media.AudioTrack;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+
+import io.puzzlebox.orbit.data.OrbitSingleton;
 //import android.widget.Toast;
 
 public class AudioService extends Service {
@@ -21,7 +23,8 @@ public class AudioService extends Service {
 	public int sampleRate = 48000;
 
 	short[] audioData = new short[6144];
-	public boolean ifFlip = false;
+//	public boolean ifFlip = false; TODO
+	public boolean ifFlip = OrbitSingleton.getInstance().invertControlSignal;
 	int throttle=80;
 	int yaw=78;
 	int pitch=31;
@@ -48,7 +51,7 @@ public class AudioService extends Service {
 	/**
 	 * Object constructor.
 	 * @param sps sampleRate of the specific Android device. (only 44100 is tested so far)
-	 * @param ifFlip 
+	 * @param ifFlip (OrbitSingleton.getInstance().invertControlSignal)
 	 */
 
 	public AudioService()
@@ -64,7 +67,8 @@ public class AudioService extends Service {
 	public AudioService(int sps, boolean flip)
 	{
 		//		AudioTrack track;
-		ifFlip = flip;
+//		ifFlip = flip; TODO
+//		OrbitSingleton.getInstance().invertControlSignal = flip;
 		sampleRate = sps;
 		int minSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT);
 		track = new AudioTrack(AudioManager.STREAM_MUSIC,sampleRate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT,minSize, AudioTrack.MODE_STREAM);
@@ -234,7 +238,8 @@ public class AudioService extends Service {
 
 		wave=concatFloat(wave,waveLongHIGH);
 
-		if (ifFlip)
+//		if (ifFlip) TODO
+		if (OrbitSingleton.getInstance().invertControlSignal)
 			for (int i=0; i<wave.length; i++)
 				wave[i]=-wave[i];
 
@@ -288,7 +293,8 @@ public class AudioService extends Service {
 		initWave456 = concatFloat(initWave456,waveInitShortHIGH);
 		initWave456 = concatFloat(initWave456,waveMediumLShortH);
 
-		if (ifFlip){
+//		if (ifFlip){ TODO
+		if (OrbitSingleton.getInstance().invertControlSignal){
 			for (int i=0; i<initWave123.length; i++)
 				initWave123[i]=-initWave123[i];
 

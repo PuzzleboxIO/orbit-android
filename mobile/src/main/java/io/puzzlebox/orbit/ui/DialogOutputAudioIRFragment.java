@@ -28,6 +28,7 @@ public class DialogOutputAudioIRFragment extends DialogFragment {
 	// UI
 	public Switch switchDetectTransmitter;
 	public Switch switchDetectVolume;
+	public Switch switchInvertControlSignal;
 	Button buttonDeviceEnable;
 	Button buttonTestAudioIR;
 
@@ -65,6 +66,14 @@ public class DialogOutputAudioIRFragment extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				switchDetectVolumeClicked(v);
+			}
+		});
+
+		switchInvertControlSignal = (Switch) v.findViewById(io.puzzlebox.jigsaw.R.id.switchInvertControlSignal);
+		switchInvertControlSignal.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				switchInvertControlSignalClicked(v);
 			}
 		});
 
@@ -421,6 +430,17 @@ public class DialogOutputAudioIRFragment extends DialogFragment {
 		}
 
 		updateReadyButton();
+
+	}
+
+	public void switchInvertControlSignalClicked(View v) {
+		Log.v(TAG, "switchInvertControlSignalClicked: " + switchInvertControlSignal.isChecked());
+
+		// Invert the audio wave comprising the control signal before it is sent to the IR transmitter.
+		// This is necessary for some audio hardware.
+		// For details and an example see: https://puzzlebox.io/orbit/development/wiki/AddingSupportIR
+
+		OrbitSingleton.getInstance().invertControlSignal = switchInvertControlSignal.isChecked();
 
 	}
 
