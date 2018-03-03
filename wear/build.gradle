@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.1"
+    compileSdkVersion 26 // TODO API 27 doesn't build correctly as of 2018-03-03
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "io.puzzlebox.orbit"
         minSdkVersion 20
-        targetSdkVersion 27
+        targetSdkVersion 26
         versionCode 4
         versionName "1.0.3"
     }
@@ -22,6 +22,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.google.android.support:wearable:2.1.0'
+    provided 'com.google.android.wearable:wearable:2.2.0'
+    compile 'com.google.android.support:wearable:2.2.0'
     compile 'com.google.android.gms:play-services-wearable:11.6.0'
 }

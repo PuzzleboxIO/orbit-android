@@ -23,8 +23,6 @@ public class AudioService extends Service {
 	public int sampleRate = 48000;
 
 	short[] audioData = new short[6144];
-//	public boolean ifFlip = false; TODO
-	public boolean ifFlip = OrbitSingleton.getInstance().invertControlSignal;
 	int throttle=80;
 	int yaw=78;
 	int pitch=31;
@@ -67,8 +65,6 @@ public class AudioService extends Service {
 	public AudioService(int sps, boolean flip)
 	{
 		//		AudioTrack track;
-//		ifFlip = flip; TODO
-//		OrbitSingleton.getInstance().invertControlSignal = flip;
 		sampleRate = sps;
 		int minSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT);
 		track = new AudioTrack(AudioManager.STREAM_MUSIC,sampleRate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT,minSize, AudioTrack.MODE_STREAM);
@@ -215,7 +211,7 @@ public class AudioService extends Service {
 
 	/** 
 	 * Generate one complete fly command in wave form on the fly.
-	 * @param code: the control code array need to be turned into 
+	 * @param code: the control code array need to be turned into
 	 * @param sampleRate: sample rate supported on certain Android device, normally 44100, but on some device it is 48000.
 	 * @param flip: on certain Android device, the signal need to be flipped. true means flip, false means not.
 	 * @return fully assembled fly command in a float array, to be written in buffer and sent out.
@@ -238,7 +234,6 @@ public class AudioService extends Service {
 
 		wave=concatFloat(wave,waveLongHIGH);
 
-//		if (ifFlip) TODO
 		if (OrbitSingleton.getInstance().invertControlSignal)
 			for (int i=0; i<wave.length; i++)
 				wave[i]=-wave[i];
@@ -293,7 +288,6 @@ public class AudioService extends Service {
 		initWave456 = concatFloat(initWave456,waveInitShortHIGH);
 		initWave456 = concatFloat(initWave456,waveMediumLShortH);
 
-//		if (ifFlip){ TODO
 		if (OrbitSingleton.getInstance().invertControlSignal){
 			for (int i=0; i<initWave123.length; i++)
 				initWave123[i]=-initWave123[i];
