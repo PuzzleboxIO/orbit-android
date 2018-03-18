@@ -29,9 +29,9 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import io.puzzlebox.jigsaw.data.DevicePuzzleboxOrbitSingleton;
 import io.puzzlebox.orbit.R;
 import io.puzzlebox.jigsaw.ui.JoystickView;
-import io.puzzlebox.orbit.data.OrbitSingleton;
 
 public class SteeringFragment extends Fragment
 		  implements View.OnClickListener,
@@ -285,7 +285,6 @@ public class SteeringFragment extends Fragment
 //				checkBoxControlledDescentClicked(v);
 //				break;
 
-
 		}
 
 	} // onClick
@@ -324,16 +323,16 @@ public class SteeringFragment extends Fragment
 
 			if ((angle >= 60) && (angle <= 120)) {
 				// Up
-				int newThrottle = seekBarThrottle.getMax() - OrbitSingleton.getInstance().defaultControlThrottle;
+				int newThrottle = seekBarThrottle.getMax() - DevicePuzzleboxOrbitSingleton.getInstance().defaultControlThrottle;
 				newThrottle = (int) (newThrottle * (strength / 100.0));
-				newThrottle = OrbitSingleton.getInstance().defaultControlThrottle + newThrottle;
+				newThrottle = DevicePuzzleboxOrbitSingleton.getInstance().defaultControlThrottle + newThrottle;
 				seekBarThrottle.setProgress(newThrottle);
 			}
 			else if ((angle >= 240) && (angle <= 300)) {
 				// Down
-				int newThrottle = OrbitSingleton.getInstance().defaultControlThrottle;
+				int newThrottle = DevicePuzzleboxOrbitSingleton.getInstance().defaultControlThrottle;
 				newThrottle = (int) (newThrottle * (strength / 100.0));
-				newThrottle = OrbitSingleton.getInstance().defaultControlThrottle - newThrottle;
+				newThrottle = DevicePuzzleboxOrbitSingleton.getInstance().defaultControlThrottle - newThrottle;
 				seekBarThrottle.setProgress(newThrottle);
 			}
 
@@ -359,7 +358,7 @@ public class SteeringFragment extends Fragment
 			progressBarMeditation.setProgress(eegMeditation);
 			progressBarSignal.setProgress(eegSignal);
 //			progressBarPower.setProgress(eegPower);
-			progressBarPower.setProgress(OrbitSingleton.getInstance().eegPower);
+			progressBarPower.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().eegPower);
 
 //			updatePower();
 
@@ -421,8 +420,8 @@ public class SteeringFragment extends Fragment
 
 //		((OrbitTabActivity)getActivity()).updateAudioHandlerCommand(command);
 
-		OrbitSingleton.getInstance().audioHandler.command = command;
-		OrbitSingleton.getInstance().audioHandler.updateControlSignal();
+		DevicePuzzleboxOrbitSingleton.getInstance().puzzleboxOrbitAudioIRHandler.command = command;
+		DevicePuzzleboxOrbitSingleton.getInstance().puzzleboxOrbitAudioIRHandler.updateControlSignal();
 
 
 	} // updateControlSignal
@@ -432,9 +431,9 @@ public class SteeringFragment extends Fragment
 
 	public void resetControlSignal(View v) {
 
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().defaultControlThrottle);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().defaultControlYaw);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().defaultControlPitch);
+		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlThrottle);
+		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlYaw);
+		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlPitch);
 
 		updateControlSignal();
 
@@ -446,9 +445,9 @@ public class SteeringFragment extends Fragment
 
 	public void setControlSignalHover(View v) {
 
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().hoverControlThrottle);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().hoverControlYaw);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().hoverControlPitch);
+		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().hoverControlThrottle);
+		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().hoverControlYaw);
+		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().hoverControlPitch);
 
 		updateControlSignal();
 
@@ -460,9 +459,9 @@ public class SteeringFragment extends Fragment
 
 	public void setControlSignalForward(View v) {
 
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().forwardControlThrottle);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().forwardControlYaw);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().forwardControlPitch);
+		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().forwardControlThrottle);
+		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().forwardControlYaw);
+		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().forwardControlPitch);
 
 		updateControlSignal();
 
@@ -474,9 +473,9 @@ public class SteeringFragment extends Fragment
 
 	public void setControlSignalLeft(View v) {
 
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().leftControlThrottle);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().leftControlYaw);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().leftControlPitch);
+		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().leftControlThrottle);
+		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().leftControlYaw);
+		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().leftControlPitch);
 
 		updateControlSignal();
 
@@ -488,9 +487,9 @@ public class SteeringFragment extends Fragment
 
 	public void setControlSignalRight(View v) {
 
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().rightControlThrottle);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().rightControlYaw);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().rightControlPitch);
+		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().rightControlThrottle);
+		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().rightControlYaw);
+		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().rightControlPitch);
 
 		updateControlSignal();
 
@@ -516,14 +515,14 @@ public class SteeringFragment extends Fragment
 		//		tiltY = -sensorEvent.values[2]; // invert the Y axis so that negative values equal left
 
 		// Sensor.TYPE_GRAVITY or TYPE_ACCELEROMETER methods
-		OrbitSingleton.getInstance().tiltX = sensorEvent.values[1] * -4;
-		OrbitSingleton.getInstance().tiltY = sensorEvent.values[0] * -8;
+		DevicePuzzleboxOrbitSingleton.getInstance().tiltX = sensorEvent.values[1] * -4;
+		DevicePuzzleboxOrbitSingleton.getInstance().tiltY = sensorEvent.values[0] * -8;
 
 		//		appendDebugConsole("X: " + tiltX + ", Y: " + tiltY + "\n");
 
-		if (OrbitSingleton.getInstance().referenceTiltX == 0) {
-			OrbitSingleton.getInstance().referenceTiltX = OrbitSingleton.getInstance().tiltX;
-			OrbitSingleton.getInstance().referenceTiltY = OrbitSingleton.getInstance().tiltY;
+		if (DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX == 0) {
+			DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX = DevicePuzzleboxOrbitSingleton.getInstance().tiltX;
+			DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY = DevicePuzzleboxOrbitSingleton.getInstance().tiltY;
 		}
 
 		// Sensor.TYPE_OPERATION method
@@ -532,10 +531,10 @@ public class SteeringFragment extends Fragment
 
 		// Sensor.TYPE_GRAVITY
 		if (checkBoxTiltSensorControlThrottle.isChecked()) {
-			seekBarThrottle.setProgress(OrbitSingleton.getInstance().defaultControlThrottle - (int) ((OrbitSingleton.getInstance().tiltX * 2) - (OrbitSingleton.getInstance().referenceTiltX * 2)));
+			seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlThrottle - (int) ((DevicePuzzleboxOrbitSingleton.getInstance().tiltX * 2) - (DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX * 2)));
 		} else {
-			seekBarYaw.setProgress(OrbitSingleton.getInstance().defaultControlYaw + (int) (OrbitSingleton.getInstance().tiltY - OrbitSingleton.getInstance().referenceTiltY));
-			seekBarPitch.setProgress(OrbitSingleton.getInstance().defaultControlPitch + (int) (OrbitSingleton.getInstance().tiltX - OrbitSingleton.getInstance().referenceTiltX));
+			seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlYaw + (int) (DevicePuzzleboxOrbitSingleton.getInstance().tiltY - DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY));
+			seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlPitch + (int) (DevicePuzzleboxOrbitSingleton.getInstance().tiltX - DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX));
 		}
 
 	} // onSensorChanged
@@ -630,8 +629,8 @@ public class SteeringFragment extends Fragment
 		} else {
 			if (orientationSensor != null) {
 				sensorManager.unregisterListener(this);
-				OrbitSingleton.getInstance().referenceTiltX = 0;
-				OrbitSingleton.getInstance().referenceTiltY = 0;
+				DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX = 0;
+				DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY = 0;
 			}
 		}
 
@@ -643,8 +642,8 @@ public class SteeringFragment extends Fragment
 
 	public void checkBoxTiltSensorControlThrottleClicked(View v) {
 
-		OrbitSingleton.getInstance().referenceTiltX = 0;
-		OrbitSingleton.getInstance().referenceTiltY = 0;
+		DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX = 0;
+		DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY = 0;
 
 		Log.v(TAG, "onCheckBoxTiltSensorControlThrottleClicked");
 

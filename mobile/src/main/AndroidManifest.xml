@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="io.puzzlebox.orbit.protocol.AudioService"/>
+        <service android:name="io.puzzlebox.jigsaw.service.PuzzleboxOrbitAudioIRService"/>
 
     </application>
 

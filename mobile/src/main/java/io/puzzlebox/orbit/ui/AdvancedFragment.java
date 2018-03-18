@@ -45,8 +45,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import io.puzzlebox.jigsaw.data.DevicePuzzleboxOrbitSingleton;
 import io.puzzlebox.orbit.R;
-import io.puzzlebox.orbit.data.OrbitSingleton;
 
 //import android.app.Fragment;
 //import io.puzzlebox.orbit.OrbitTabActivity;
@@ -413,7 +413,6 @@ public class AdvancedFragment extends Fragment
 	 * >Communicating with Other Fragments</a> for more information.
 	 */
 	public interface OnFragmentInteractionListener {
-		// TODO: Update argument type and name
 		public void onFragmentInteraction(Uri uri);
 	}
 
@@ -433,19 +432,19 @@ public class AdvancedFragment extends Fragment
 //		updatePower();
 
 
-//		if (!OrbitSingleton.getInstance().mBluetoothAdapter.isEnabled()) {
+//		if (!DevicePuzzleboxOrbitSingleton.getInstance().mBluetoothAdapter.isEnabled()) {
 //			Intent enableBtIntent = new Intent(
 //					BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//			startActivityForResult(enableBtIntent, OrbitSingleton.getInstance().REQUEST_ENABLE_BT);
+//			startActivityForResult(enableBtIntent, DevicePuzzleboxOrbitSingleton.getInstance().REQUEST_ENABLE_BT);
 //		}
 
 //		getActivity().registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
 //
 //		Intent gattServiceIntent = new Intent(getActivity(),
-//				RBLService.class);
+//				RedBearLabsService.class);
 //		getActivity().bindService(gattServiceIntent, mServiceConnection, getActivity().BIND_AUTO_CREATE);
 
-//		if (OrbitSingleton.getInstance().connState)
+//		if (DevicePuzzleboxOrbitSingleton.getInstance().connState)
 //			setButtonText(R.id.connectBloom, "Disconnect Bloom");
 
 //		updateSessionTime();
@@ -596,7 +595,6 @@ public class AdvancedFragment extends Fragment
 				checkBoxControlledDescentClicked(v);
 				break;
 
-
 		}
 
 	} // onClick
@@ -615,10 +613,10 @@ public class AdvancedFragment extends Fragment
 
 
 //		((OrbitTabActivity)getActivity()).generateAudio = checkBoxGenerateAudio.isChecked();
-		OrbitSingleton.getInstance().generateAudio = checkBoxGenerateAudio.isChecked();
+		DevicePuzzleboxOrbitSingleton.getInstance().generateAudio = checkBoxGenerateAudio.isChecked();
 
 //		if ( ((OrbitTabActivity)getActivity()).generateAudio ) {
-		if ( OrbitSingleton.getInstance().generateAudio ) {
+		if ( DevicePuzzleboxOrbitSingleton.getInstance().generateAudio ) {
 			checkBoxInvertControlSignal.setVisibility(View.VISIBLE);
 			checkBoxTiltSensorControl.setVisibility(View.VISIBLE);
 			if (checkBoxTiltSensorControl.isChecked())
@@ -644,7 +642,7 @@ public class AdvancedFragment extends Fragment
 
 
 //		((OrbitTabActivity)getActivity()).invertControlSignal = checkBoxInvertControlSignal.isChecked();
-		OrbitSingleton.getInstance().invertControlSignal = checkBoxInvertControlSignal.isChecked();
+		DevicePuzzleboxOrbitSingleton.getInstance().invertControlSignal = checkBoxInvertControlSignal.isChecked();
 
 
 	} // onCheckBoxInvertControlSignalClicked
@@ -739,8 +737,8 @@ public class AdvancedFragment extends Fragment
 		} else {
 			if (orientationSensor != null) {
 				sensorManager.unregisterListener(this);
-				OrbitSingleton.getInstance().referenceTiltX = 0;
-				OrbitSingleton.getInstance().referenceTiltY = 0;
+				DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX = 0;
+				DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY = 0;
 			}
 		}
 
@@ -752,8 +750,8 @@ public class AdvancedFragment extends Fragment
 
 	public void checkBoxTiltSensorControlThrottleClicked(View v) {
 
-		OrbitSingleton.getInstance().referenceTiltX = 0;
-		OrbitSingleton.getInstance().referenceTiltY = 0;
+		DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX = 0;
+		DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY = 0;
 
 		Log.v(TAG, "onCheckBoxTiltSensorControlThrottleClicked");
 
@@ -866,8 +864,8 @@ public class AdvancedFragment extends Fragment
 
 //		((OrbitTabActivity)getActivity()).updateAudioHandlerCommand(command);
 
-		OrbitSingleton.getInstance().audioHandler.command = command;
-		OrbitSingleton.getInstance().audioHandler.updateControlSignal();
+		DevicePuzzleboxOrbitSingleton.getInstance().puzzleboxOrbitAudioIRHandler.command = command;
+		DevicePuzzleboxOrbitSingleton.getInstance().puzzleboxOrbitAudioIRHandler.updateControlSignal();
 
 
 	} // updateControlSignal
@@ -877,9 +875,9 @@ public class AdvancedFragment extends Fragment
 
 	public void resetControlSignal(View v) {
 
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().defaultControlThrottle);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().defaultControlYaw);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().defaultControlPitch);
+		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlThrottle);
+		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlYaw);
+		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlPitch);
 
 		updateControlSignal();
 
@@ -891,9 +889,9 @@ public class AdvancedFragment extends Fragment
 
 	public void setControlSignalHover(View v) {
 
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().hoverControlThrottle);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().hoverControlYaw);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().hoverControlPitch);
+		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().hoverControlThrottle);
+		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().hoverControlYaw);
+		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().hoverControlPitch);
 
 		updateControlSignal();
 
@@ -905,9 +903,9 @@ public class AdvancedFragment extends Fragment
 
 	public void setControlSignalForward(View v) {
 
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().forwardControlThrottle);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().forwardControlYaw);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().forwardControlPitch);
+		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().forwardControlThrottle);
+		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().forwardControlYaw);
+		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().forwardControlPitch);
 
 		updateControlSignal();
 
@@ -919,9 +917,9 @@ public class AdvancedFragment extends Fragment
 
 	public void setControlSignalLeft(View v) {
 
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().leftControlThrottle);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().leftControlYaw);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().leftControlPitch);
+		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().leftControlThrottle);
+		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().leftControlYaw);
+		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().leftControlPitch);
 
 		updateControlSignal();
 
@@ -933,9 +931,9 @@ public class AdvancedFragment extends Fragment
 
 	public void setControlSignalRight(View v) {
 
-		seekBarThrottle.setProgress(OrbitSingleton.getInstance().rightControlThrottle);
-		seekBarYaw.setProgress(OrbitSingleton.getInstance().rightControlYaw);
-		seekBarPitch.setProgress(OrbitSingleton.getInstance().rightControlPitch);
+		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().rightControlThrottle);
+		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().rightControlYaw);
+		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().rightControlPitch);
 
 		updateControlSignal();
 
@@ -961,14 +959,14 @@ public class AdvancedFragment extends Fragment
 		//		tiltY = -sensorEvent.values[2]; // invert the Y axis so that negative values equal left
 
 		// Sensor.TYPE_GRAVITY or TYPE_ACCELEROMETER methods
-		OrbitSingleton.getInstance().tiltX = sensorEvent.values[1] * -4;
-		OrbitSingleton.getInstance().tiltY = sensorEvent.values[0] * -8;
+		DevicePuzzleboxOrbitSingleton.getInstance().tiltX = sensorEvent.values[1] * -4;
+		DevicePuzzleboxOrbitSingleton.getInstance().tiltY = sensorEvent.values[0] * -8;
 
 		//		appendDebugConsole("X: " + tiltX + ", Y: " + tiltY + "\n");
 
-		if (OrbitSingleton.getInstance().referenceTiltX == 0) {
-			OrbitSingleton.getInstance().referenceTiltX = OrbitSingleton.getInstance().tiltX;
-			OrbitSingleton.getInstance().referenceTiltY = OrbitSingleton.getInstance().tiltY;
+		if (DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX == 0) {
+			DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX = DevicePuzzleboxOrbitSingleton.getInstance().tiltX;
+			DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY = DevicePuzzleboxOrbitSingleton.getInstance().tiltY;
 		}
 
 		// Sensor.TYPE_OPERATION method
@@ -977,10 +975,10 @@ public class AdvancedFragment extends Fragment
 
 		// Sensor.TYPE_GRAVITY
 		if (checkBoxTiltSensorControlThrottle.isChecked()) {
-			seekBarThrottle.setProgress(OrbitSingleton.getInstance().defaultControlThrottle - (int) ((OrbitSingleton.getInstance().tiltX * 2) - (OrbitSingleton.getInstance().referenceTiltX * 2)));
+			seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlThrottle - (int) ((DevicePuzzleboxOrbitSingleton.getInstance().tiltX * 2) - (DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX * 2)));
 		} else {
-			seekBarYaw.setProgress(OrbitSingleton.getInstance().defaultControlYaw + (int) (OrbitSingleton.getInstance().tiltY - OrbitSingleton.getInstance().referenceTiltY));
-			seekBarPitch.setProgress(OrbitSingleton.getInstance().defaultControlPitch + (int) (OrbitSingleton.getInstance().tiltX - OrbitSingleton.getInstance().referenceTiltX));
+			seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlYaw + (int) (DevicePuzzleboxOrbitSingleton.getInstance().tiltY - DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY));
+			seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlPitch + (int) (DevicePuzzleboxOrbitSingleton.getInstance().tiltX - DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX));
 		}
 
 	} // onSensorChanged
@@ -1073,14 +1071,14 @@ public class AdvancedFragment extends Fragment
 
 			// Display a warning pop-up about this device, but not more than twice
 //			if (((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed < 2) {
-			if (OrbitSingleton.getInstance().deviceWarningMessagesDisplayed < 2) {
+			if (DevicePuzzleboxOrbitSingleton.getInstance().deviceWarningMessagesDisplayed < 2) {
 //				Toast.makeText(((OrbitTabActivity) getActivity()),
 				Toast.makeText(getActivity().getApplicationContext(),
 						  "Warning: HTC Droid DNA detected, which has known compatibility issues with infrared transmitter. Contact Support for more information.", Toast.LENGTH_LONG).show();
 //				((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed =
-				OrbitSingleton.getInstance().deviceWarningMessagesDisplayed =
+				DevicePuzzleboxOrbitSingleton.getInstance().deviceWarningMessagesDisplayed =
 //						  ((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed + 1;
-						  OrbitSingleton.getInstance().deviceWarningMessagesDisplayed + 1;
+						  DevicePuzzleboxOrbitSingleton.getInstance().deviceWarningMessagesDisplayed + 1;
 			}
 		}
 
@@ -1093,13 +1091,13 @@ public class AdvancedFragment extends Fragment
 
 			// Display a warning pop-up about this device, but not more than twice
 //			if (((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed < 2) {
-			if (OrbitSingleton.getInstance().deviceWarningMessagesDisplayed < 2) {
+			if (DevicePuzzleboxOrbitSingleton.getInstance().deviceWarningMessagesDisplayed < 2) {
 				Toast.makeText(getActivity().getApplicationContext(),
 						  "Warning: HTC One detected, which has known compatibility issues with infrared transmitter. Contact Support for more information.", Toast.LENGTH_LONG).show();
 //				((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed =
-				OrbitSingleton.getInstance().deviceWarningMessagesDisplayed =
+				DevicePuzzleboxOrbitSingleton.getInstance().deviceWarningMessagesDisplayed =
 //						  ((OrbitTabActivity)getActivity()).deviceWarningMessagesDisplayed + 1;
-						  OrbitSingleton.getInstance().deviceWarningMessagesDisplayed + 1;
+						  DevicePuzzleboxOrbitSingleton.getInstance().deviceWarningMessagesDisplayed + 1;
 			}
 		}
 
@@ -1129,7 +1127,7 @@ public class AdvancedFragment extends Fragment
 			progressBarMeditation.setProgress(eegMeditation);
 			progressBarSignal.setProgress(eegSignal);
 //			progressBarPower.setProgress(eegPower);
-			progressBarPower.setProgress(OrbitSingleton.getInstance().eegPower);
+			progressBarPower.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().eegPower);
 
 //			updatePower();
 
