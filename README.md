@@ -5,7 +5,7 @@ orbit-android
 Puzzlebox Orbit for Android
 
 
-Copyright (2012-2016)
+Copyright (2012-2018)
 
 by Puzzlebox Productions, LLC
 http://puzzlebox.io/orbit
