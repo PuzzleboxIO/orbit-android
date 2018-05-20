@@ -19,7 +19,7 @@ android {
     }
     buildTypes {
         release {
-            debuggable true
+//            debuggable true
 //            debuggable false
             minifyEnabled false
 //            minifyEnabled true
@@ -42,12 +42,32 @@ android {
     dexOptions {
         javaMaxHeapSize "2g"
     }
+
+    // Disable SerialDevice because not currently used to talk to Puzzlebox Pyramid but we want to keep the source code
+    sourceSets {
+        main {
+            java {
+                exclude '**/SerialDevice.java'
+            }
+        }
+        androidTest {
+            java {
+                exclude '**/SerialDevice.java'
+            }
+        }
+    }
+
     useLibrary 'org.apache.http.legacy' // deprecated in Android 6.0
 
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':jigsaw')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':jigsaw')
 //    wearApp project(':wear')
+
+    // Android Support Libraries
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+
 }
