@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26 // TODO API 27 doesn't build correctly as of 2018-03-03
+    compileSdkVersion 27
     buildToolsVersion "27.0.3"
 
     defaultConfig {
@@ -12,17 +11,14 @@ android {
 //        minSdkVersion 16 // API 4.1 [Manifest.permission.READ_EXTERNAL_STORAGE]
 //        minSdkVersion 18 // API 4.3 [Emotiv Community SDK]
         minSdkVersion 21 // 5.x - required for ScanResult.getDevice()
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 22
         versionName "2.3.0"
         multiDexEnabled true
     }
     buildTypes {
         release {
-//            debuggable true
-//            debuggable false
             minifyEnabled false
-//            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 //        debug {
@@ -67,7 +63,17 @@ dependencies {
 //    wearApp project(':wear')
 
     // Android Support Libraries
-    implementation 'com.android.support:support-v4:26.1.0'
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+//    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+}
 
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '27.1.1'
+            }
+        }
+    }
 }

@@ -1,14 +1,13 @@
 apply plugin: 'com.android.application'
 
-
 android {
-    compileSdkVersion 26 // TODO API 27 doesn't build correctly as of 2018-03-03
+    compileSdkVersion 27
     buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "io.puzzlebox.orbit"
         minSdkVersion 20
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 4
         versionName "1.0.3"
     }
@@ -21,12 +20,19 @@ android {
 }
 
 dependencies {
-//    compile fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-//    provided 'com.google.android.wearable:wearable:2.2.0'
-    implementation 'com.google.android.wearable:wearable:2.2.0'
-//    compile 'com.google.android.support:wearable:2.2.0'
-    implementation 'com.google.android.support:wearable:2.2.0'
-//    compile 'com.google.android.gms:play-services-wearable:11.8.0'
-    implementation 'com.google.android.gms:play-services-wearable:11.8.0'
+    compileOnly 'com.google.android.wearable:wearable:2.3.0'
+    implementation 'com.google.android.support:wearable:2.3.0'
+    implementation 'com.google.android.gms:play-services-wearable:15.0.1'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '27.1.1'
+            }
+        }
+    }
 }
