@@ -1,6 +1,9 @@
 # Custom
 jigsaw
+.idea
+.idea/dictionaries
 .idea/libraries
+mobile/release/
 projectFilesBackup/
 .DS_Store
 
