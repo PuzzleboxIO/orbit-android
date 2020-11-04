@@ -1,6 +1,5 @@
 package io.puzzlebox.orbit;
 
-//import android.app.Fragment;
 import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,37 +35,31 @@ import io.puzzlebox.jigsaw.ui.DialogInputJoystickFragment;
 import io.puzzlebox.jigsaw.ui.DialogInputNeuroSkyMindWaveFragment;
 import io.puzzlebox.jigsaw.ui.DialogOutputSessionFragment;
 import io.puzzlebox.jigsaw.ui.DrawerItem;
-//import io.puzzlebox.jigsaw.ui.EEGFragment;
-//import io.puzzlebox.jigsaw.ui.SessionFragment;
 import io.puzzlebox.jigsaw.ui.SupportFragment;
 import io.puzzlebox.jigsaw.ui.DialogOutputAudioIRFragment;
 import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitEmotivInsightFragment;
 import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitFragment;
 import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitJoystickFragment;
-//import io.puzzlebox.orbit.ui.SteeringFragment;
-//import io.puzzlebox.orbit.ui.AdvancedFragment;
 import io.puzzlebox.orbit.ui.CreditsFragment;
-//import io.puzzlebox.orbit.ui.OrbitFragment;
 import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitJoystickMindwaveFragment;
 import io.puzzlebox.orbit.ui.GuideFragment;
 import io.puzzlebox.orbit.ui.TutorialFragment;
 import io.puzzlebox.orbit.ui.WelcomeFragment;
 
 public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
-		  WelcomeFragment.OnFragmentInteractionListener,
-		  WelcomeFragment.OnDevicesListener,
-		  GuideFragment.OnFragmentInteractionListener,
-		  SupportFragment.OnFragmentInteractionListener,
-		  DialogInputJoystickFragment.OnFragmentInteractionListener,
-		  DialogInputNeuroSkyMindWaveFragment.OnFragmentInteractionListener,
-		  DialogInputEmotivInsightFragment.OnFragmentInteractionListener,
-		  DialogOutputAudioIRFragment.OnFragmentInteractionListener,
-		  DialogOutputSessionFragment.OnFragmentInteractionListener,
-		  DialogProfilePuzzleboxOrbitJoystickFragment.OnFragmentInteractionListener,
-		  DialogProfilePuzzleboxOrbitFragment.OnFragmentInteractionListener,
-		  DialogProfilePuzzleboxOrbitJoystickMindwaveFragment.OnFragmentInteractionListener,
-		  DialogProfilePuzzleboxOrbitEmotivInsightFragment.OnFragmentInteractionListener
-{
+		WelcomeFragment.OnFragmentInteractionListener,
+		WelcomeFragment.OnDevicesListener,
+		GuideFragment.OnFragmentInteractionListener,
+		SupportFragment.OnFragmentInteractionListener,
+		DialogInputJoystickFragment.OnFragmentInteractionListener,
+		DialogInputNeuroSkyMindWaveFragment.OnFragmentInteractionListener,
+		DialogInputEmotivInsightFragment.OnFragmentInteractionListener,
+		DialogOutputAudioIRFragment.OnFragmentInteractionListener,
+		DialogOutputSessionFragment.OnFragmentInteractionListener,
+		DialogProfilePuzzleboxOrbitJoystickFragment.OnFragmentInteractionListener,
+		DialogProfilePuzzleboxOrbitFragment.OnFragmentInteractionListener,
+		DialogProfilePuzzleboxOrbitJoystickMindwaveFragment.OnFragmentInteractionListener,
+		DialogProfilePuzzleboxOrbitEmotivInsightFragment.OnFragmentInteractionListener {
 
 	private final static String TAG = MainActivity.class.getSimpleName();
 
@@ -79,18 +72,14 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 
 	private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
-	// ################################################################
-
 	@Override
 	protected void onCreateCustom() {
 
 		// For use with custom applications
-
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		// Hide default keyboard popup
 		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
 
 		// Hide default keyboard popup
 		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -100,9 +89,6 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 			// Android M permission check
 			if (this.checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 				final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//				builder.setTitle("This app needs your permission");
-//				builder.setTitle(getResources().getString(android.R.string.main_dialog_title));
-//				builder.setMessage(getResources().getString(android.R.string.main_dialog_message));
 				builder.setTitle(getResources().getString(R.string.main_dialog_title));
 				builder.setMessage(getResources().getString(R.string.main_dialog_message));
 				builder.setPositiveButton(android.R.string.ok, null);
@@ -123,31 +109,22 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.navigation_drawer);
 
-
 		Toolbar mToolbar = new Toolbar(this);
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-				  mToolbar, io.puzzlebox.jigsaw.R.string.drawer_open,
-				  io.puzzlebox.jigsaw.R.string.drawer_close) {
+				mToolbar, io.puzzlebox.jigsaw.R.string.drawer_open,
+				io.puzzlebox.jigsaw.R.string.drawer_close) {
 			public void onDrawerClosed(View view) {
-//                                getSupportActionBar().setTitle(mTitle);
-				invalidateOptionsMenu(); // creates call to
-				// onPrepareOptionsMenu()
+				invalidateOptionsMenu();
 			}
 
 			public void onDrawerOpened(View drawerView) {
 				getSupportActionBar().setTitle(mDrawerTitle);
-				invalidateOptionsMenu(); // creates call to
-				// onPrepareOptionsMenu()
+				invalidateOptionsMenu();
 			}
 		};
-
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-
 	}
-
-
-	// ################################################################
 
 	protected List<DrawerItem> getDrawerDataList() {
 		List<DrawerItem> dataList = new ArrayList<>();
@@ -158,12 +135,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		dataList.add(new DrawerItem(getString(R.string.title_fragment_support), io.puzzlebox.jigsaw.R.mipmap.ic_brain));
 		dataList.add(new DrawerItem(getString(R.string.title_fragment_credits), io.puzzlebox.jigsaw.R.mipmap.ic_puzzlebox));
 
-
 		return dataList;
 	}
-
-
-	// ################################################################
 
 	@Override
 	public void SelectItem(int position) {
@@ -211,7 +184,6 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				}
 				if (fragment == null)
 					fragment = new SupportFragment();
-
 				break;
 			case 4:
 				backStackName = getResources().getString(R.string.title_fragment_credits);
@@ -222,33 +194,25 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				}
 				if (fragment == null)
 					fragment = new CreditsFragment();
-
 				break;
-
 			default:
 				break;
 		}
-
 		if (fragment != null)
 			fragment.setArguments(args);
 		FragmentManager frgManager = getSupportFragmentManager();
 		frgManager.beginTransaction().replace(io.puzzlebox.jigsaw.R.id.container, fragment)
-				  .addToBackStack(backStackName)
-				  .commit();
-
+				.addToBackStack(backStackName)
+				.commit();
 
 		if (mDrawerList != null) {
 			mDrawerList.setItemChecked(position, true);
 			setTitle(dataList.get(position).getItemName());
 			mDrawerLayout.closeDrawer(mDrawerList);
 		} else {
-			Log.w(TAG, "mDrawerList == null");
+			Log.d(TAG, "mDrawerList == null");
 		}
-
 	}
-
-
-	// ################################################################
 
 	public void loadTutorial() {
 
@@ -267,13 +231,9 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		fragment.setArguments(args);
 		FragmentManager frgManager = getSupportFragmentManager();
 		frgManager.beginTransaction().replace(io.puzzlebox.jigsaw.R.id.container, fragment)
-				  .addToBackStack(backStackName)
-				  .commit();
-
+				.addToBackStack(backStackName)
+				.commit();
 	}
-
-
-	// ################################################################
 
 	public void loadDevices() {
 
@@ -292,23 +252,18 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		fragment.setArguments(args);
 		FragmentManager frgManager = getSupportFragmentManager();
 		frgManager.beginTransaction().replace(io.puzzlebox.jigsaw.R.id.container, fragment)
-				  .addToBackStack(backStackName)
-				  .commit();
-
+				.addToBackStack(backStackName)
+				.commit();
 	}
 
-
-	// ################################################################
-
 	@Override
-	public void onRequestPermissionsResult(int requestCode,
-														String permissions[], int[] grantResults) {
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
 		if (requestCode == SessionSingleton.getInstance().getRequestExternalStorage()) {
 
 			// If request is cancelled, the result arrays are empty.
 			if (grantResults.length > 0
-					  && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
 				Intent i = SessionSingleton.getInstance().getExportSessionIntent(this);
 
@@ -317,22 +272,16 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				} else {
 					Toast.makeText(this.getApplicationContext(), "Error export session data for sharing", Toast.LENGTH_SHORT).show();
 				}
-
 			} else {
-
 				Toast.makeText(this.getApplicationContext(), "Error export session data for sharing", Toast.LENGTH_SHORT).show();
-
 			}
 		}
 	}
 
-
-	// ################################################################
-
 	/**
 	 * Class for interacting with the main interface of the service.
 	 */
-	private ServiceConnection mConnection = new ServiceConnection() {
+	private final ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			// This is called when the connection with the service has been
 			// established, giving us the object we can use to
@@ -356,7 +305,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		super.onStart();
 		// Bind to the service
 		bindService(new Intent(this, EmotivInsightService.class), mConnection,
-				  Context.BIND_AUTO_CREATE);
+				Context.BIND_AUTO_CREATE);
 	}
 
 	@Override
@@ -368,6 +317,4 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 			DeviceEmotivInsightSingleton.getInstance().mBound = false;
 		}
 	}
-
-
 }

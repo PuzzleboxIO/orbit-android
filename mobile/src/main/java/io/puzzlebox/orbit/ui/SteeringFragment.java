@@ -34,9 +34,9 @@ import io.puzzlebox.orbit.R;
 import io.puzzlebox.jigsaw.ui.JoystickView;
 
 public class SteeringFragment extends Fragment
-		  implements View.OnClickListener,
-		  SeekBar.OnSeekBarChangeListener,
-		  SensorEventListener
+		implements View.OnClickListener,
+		SeekBar.OnSeekBarChangeListener,
+		SensorEventListener
 {
 
 	private final static String TAG = SteeringFragment.class.getSimpleName();
@@ -58,8 +58,6 @@ public class SteeringFragment extends Fragment
 	CheckBox checkBoxTiltSensorControl;
 	CheckBox checkBoxTiltSensorControlThrottle;
 
-//	private JoystickView joystickView;
-
 	private SensorManager sensorManager;
 	private Sensor orientationSensor = null;
 
@@ -69,7 +67,7 @@ public class SteeringFragment extends Fragment
 		// Required empty public constructor
 	}
 
-	public static SteeringFragment newInstance(String param1, String param2) {
+	public static SteeringFragment newInstance() {
 		SteeringFragment fragment = new SteeringFragment();
 		Bundle args = new Bundle();
 		fragment.setArguments(args);
@@ -81,24 +79,12 @@ public class SteeringFragment extends Fragment
 		super.onCreate(savedInstanceState);
 	}
 
-//	@Override
-//	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//									 Bundle savedInstanceState) {
-//		// Inflate the layout for this fragment
-//		return inflater.inflate(R.layout.fragment_steering, container, false);
-//	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-									 Bundle savedInstanceState) {
-
-
-//		getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
+							 Bundle savedInstanceState) {
 
 		// Inflate the layout for this fragment
 		View v = inflater.inflate(io.puzzlebox.orbit.R.layout.fragment_steering, container, false);
-
 
 		progressBarAttention = (ProgressBar) v.findViewById(R.id.progressBarAttention);
 		final float[] roundedCorners = new float[] { 5, 5, 5, 5, 5, 5, 5, 5 };
@@ -133,7 +119,6 @@ public class SteeringFragment extends Fragment
 		progressBarPower.setProgressDrawable(progressPower);
 		progressBarPower.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.progress_horizontal));
 
-
 		seekBarThrottle = (SeekBar) v.findViewById(R.id.seekBarThrottle);
 		seekBarThrottle.setOnSeekBarChangeListener(this);
 
@@ -143,54 +128,31 @@ public class SteeringFragment extends Fragment
 		seekBarPitch = (SeekBar) v.findViewById(R.id.seekBarPitch);
 		seekBarPitch.setOnSeekBarChangeListener(this);
 
-
-//		Button buttonHover = (Button) v.findViewById(R.id.buttonHover);
 		buttonHover = (Button) v.findViewById(R.id.buttonHover);
 		buttonHover.setOnClickListener(this);
 
-//		Button buttonForward = (Button) v.findViewById(R.id.buttonForward);
 		buttonForward = (Button) v.findViewById(R.id.buttonForward);
 		buttonForward.setOnClickListener(this);
 
-//		Button buttonLeft = (Button) v.findViewById(R.id.buttonLeft);
 		buttonLeft = (Button) v.findViewById(R.id.buttonLeft);
 		buttonLeft.setOnClickListener(this);
 
-//		Button buttonRight = (Button) v.findViewById(R.id.buttonRight);
 		buttonRight = (Button) v.findViewById(R.id.buttonRight);
 		buttonRight.setOnClickListener(this);
 
-
 		checkBoxTiltSensorControl = (CheckBox) v.findViewById(R.id.checkBoxTiltSensorControl);
 		checkBoxTiltSensorControl.setOnClickListener(this);
-//		checkBoxTiltSensorControl.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				onCheckBoxTiltSensorControlClicked(v);
-//			}
-//		});
 
 		checkBoxTiltSensorControlThrottle = (CheckBox) v.findViewById(R.id.checkBoxTiltSensorControlThrottle);
 		checkBoxTiltSensorControlThrottle.setOnClickListener(this);
-//		checkBoxTiltSensorControlThrottle.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				checkBoxTiltSensorControlThrottleClicked(v);
-//			}
-//		});
 
 		checkBoxTiltSensorControlThrottle.setVisibility(View.GONE); // Default should be hidden until Tilt Control is activated
-
 
 		JoystickView joystick = (JoystickView) v.findViewById(io.puzzlebox.orbit.R.id.joystickViewSteering);
 		joystick.setOnMoveListener(onMoveJoystick);
 
-
 		return v;
 	}
-
-
-// ################################################################
 
 	@Override
 	public void onAttach(Context context) {
@@ -199,7 +161,7 @@ public class SteeringFragment extends Fragment
 			mListener = (OnFragmentInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
-					  + " must implement OnFragmentInteractionListener");
+					+ " must implement OnFragmentInteractionListener");
 		}
 	}
 
@@ -213,50 +175,29 @@ public class SteeringFragment extends Fragment
 		void onFragmentInteraction(Uri uri);
 	}
 
-	// ################################################################
-
 	@Override
 	public void onResume() {
-
-//		updateAdvancedOptions();
 		onCheckBoxTiltSensorControlClicked();
 
 		super.onResume();
 
-
 		LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(
-				  mPacketReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.thinkgear.packet"));
-
-
+				mPacketReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.thinkgear.packet"));
 	}
 
-
-	// ################################################################
-
 	public void onPause() {
-
-		Log.v(TAG, "onPause()");
-
 		if (sensorManager != null)
 			sensorManager.unregisterListener(this);
 
 		super.onPause();
 
-
 		LocalBroadcastManager.getInstance(
-				  getActivity().getApplicationContext()).unregisterReceiver(
-				  mPacketReceiver);
-
-
-	} // onPause
-
-
-// ################################################################
+				getActivity().getApplicationContext()).unregisterReceiver(
+				mPacketReceiver);
+	}
 
 	public void onClick(View v) {
-
 		switch (v.getId()) {
-
 			case R.id.buttonHover:
 				setControlSignalHover(v);
 				break;
@@ -269,57 +210,22 @@ public class SteeringFragment extends Fragment
 			case R.id.buttonRight:
 				setControlSignalRight(v);
 				break;
-//			case R.id.checkBoxGenerateAudio:
-//				onCheckBoxGenerateAudioClicked(v);
-//				break;
-//			case R.id.checkBoxInvertControlSignal:
-//				onCheckBoxInvertControlSignalClicked(v);
-//				break;
 			case R.id.checkBoxTiltSensorControl:
 				onCheckBoxTiltSensorControlClicked(v);
 				break;
 			case R.id.checkBoxTiltSensorControlThrottle:
 				checkBoxTiltSensorControlThrottleClicked(v);
 				break;
-//			case R.id.checkBoxControlledDescent:
-//				checkBoxControlledDescentClicked(v);
-//				break;
-
 		}
-
-	} // onClick
-
-
-	// ################################################################
+	}
 
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-
-		// Abort controlled descent thread if activated and slide adjusted by human touch
-//		if ((fromTouch) &&
-//				  (orbitControlledDescentTask != null) &&
-//				  (orbitControlledDescentTask.keepDescending)) {
-//			//			orbitControlledDescentTask.callStopAudio = false;
-//			orbitControlledDescentTask.resetThrottleToPrevious = false;
-//			orbitControlledDescentTask.keepDescending = false;
-//		}
-
 		updateControlSignal();
+	}
 
-
-	} // onProgressChanged
-
-
-	// ################################################################
-
-	private JoystickView.OnMoveListener onMoveJoystick = new JoystickView.OnMoveListener(){
+	private final JoystickView.OnMoveListener onMoveJoystick = new JoystickView.OnMoveListener(){
 		public void onMove(int angle, int strength) {
 			Log.v(TAG, "onMoveJoystick(int angle, int strength): " + angle + ", " + strength);
-
-//			String command = moveDualShock4(angle, strength);
-//			Log.v(TAG, "moveDualShock4(): command: \"" + command + "\"");
-////			broadcastCommandBluetooth("joystick", "ls: " + angle + "," + strength);
-//			broadcastCommandBluetooth("joystick", command);
-
 
 			if ((angle >= 60) && (angle <= 120)) {
 				// Up
@@ -335,199 +241,101 @@ public class SteeringFragment extends Fragment
 				newThrottle = DevicePuzzleboxOrbitSingleton.getInstance().defaultControlThrottle - newThrottle;
 				seekBarThrottle.setProgress(newThrottle);
 			}
-
 		}
 	};
 
-
-	// ################################################################
-
-	private BroadcastReceiver mPacketReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mPacketReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-
 			int eegAttention = Integer.valueOf(intent.getStringExtra("Attention"));
 			int eegMeditation = Integer.valueOf(intent.getStringExtra("Meditation"));
 			int eegSignal = Integer.valueOf(intent.getStringExtra("Signal Level"));
-//			int eegPower = Integer.valueOf(intent.getStringExtra("Power"));
-
-//			Log.e(TAG, "eegAttention: " + eegAttention);
 
 			progressBarAttention.setProgress(eegAttention);
 			progressBarMeditation.setProgress(eegMeditation);
 			progressBarSignal.setProgress(eegSignal);
-//			progressBarPower.setProgress(eegPower);
 			progressBarPower.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().eegPower);
-
-//			updatePower();
-
-
-//			updateSessionTime();
-
-
-
-
 		}
 
 	};
 
-
-	// ################################################################
-
 	public void onStartTrackingTouch(SeekBar seekBar) {
-
 		/**
 		 * Method required by SeekBar.OnSeekBarChangeListener
 		 */
-
-	} // onStartTrackingTouch
-
-
-	// ################################################################
+	}
 
 	public void onStopTrackingTouch(SeekBar seekBar) {
-
 		/*
 		  Update control signal after moving a seekBar.
 		 */
-
-		Log.v(TAG, "onStopTrackingTouch()");
-
 		updateControlSignal();
-
-
-	} // onStopTrackingTouch
-
-
-
-
-	// ################################################################
+	}
 
 	public void updateControlSignal() {
-//	public void updateControlSignal(View v) {
-
 		// We subtract the current Yaw position from the maximum slider value
 		// because smaller values instruct the helicopter to spin to the right
 		// (clockwise if looking down from above) whereas intuitively moving
 		// the slider to the left should cause it to spin left
 		Integer[] command =  {
-				  seekBarThrottle.getProgress(),
-				  seekBarYaw.getMax() - seekBarYaw.getProgress(),
-				  seekBarPitch.getProgress(),
-				  1};
-
-
-//		((OrbitTabActivity)getActivity()).updateAudioHandlerCommand(command);
+				seekBarThrottle.getProgress(),
+				seekBarYaw.getMax() - seekBarYaw.getProgress(),
+				seekBarPitch.getProgress(),
+				1};
 
 		DevicePuzzleboxOrbitSingleton.getInstance().puzzleboxOrbitAudioIRHandler.command = command;
 		DevicePuzzleboxOrbitSingleton.getInstance().puzzleboxOrbitAudioIRHandler.updateControlSignal();
-
-
-	} // updateControlSignal
-
-
-	// ################################################################
+	}
 
 	public void resetControlSignal(View v) {
-
 		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlThrottle);
 		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlYaw);
 		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlPitch);
-
 		updateControlSignal();
-
-
-	} // resetControlSignal
-
-
-	// ################################################################
+	}
 
 	public void setControlSignalHover(View v) {
-
 		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().hoverControlThrottle);
 		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().hoverControlYaw);
 		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().hoverControlPitch);
-
 		updateControlSignal();
-
-
-	} // setControlSignalHover
-
-
-	// ################################################################
+	}
 
 	public void setControlSignalForward(View v) {
-
 		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().forwardControlThrottle);
 		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().forwardControlYaw);
 		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().forwardControlPitch);
-
 		updateControlSignal();
-
-
-	} // setControlSignalForward
-
-
-	// ################################################################
+	}
 
 	public void setControlSignalLeft(View v) {
-
 		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().leftControlThrottle);
 		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().leftControlYaw);
 		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().leftControlPitch);
-
 		updateControlSignal();
-
-
-	} // setControlSignalLeft
-
-
-	// ################################################################
+	}
 
 	public void setControlSignalRight(View v) {
-
 		seekBarThrottle.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().rightControlThrottle);
 		seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().rightControlYaw);
 		seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().rightControlPitch);
-
 		updateControlSignal();
-
-
-	} // setControlSignalRight
-
-
-	// ################################################################
+	}
 
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
 		// No operation
-
-	} // onAccuracyChanged
-
-
-	// ################################################################
+	}
 
 	public void onSensorChanged(SensorEvent sensorEvent) {
-
-		// Sensor.TYPE_ORIENTATION method
-		//		tiltX = sensorEvent.values[1];
-		//		tiltY = -sensorEvent.values[2]; // invert the Y axis so that negative values equal left
-
 		// Sensor.TYPE_GRAVITY or TYPE_ACCELEROMETER methods
 		DevicePuzzleboxOrbitSingleton.getInstance().tiltX = sensorEvent.values[1] * -4;
 		DevicePuzzleboxOrbitSingleton.getInstance().tiltY = sensorEvent.values[0] * -8;
-
-		//		appendDebugConsole("X: " + tiltX + ", Y: " + tiltY + "\n");
 
 		if (DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX == 0) {
 			DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX = DevicePuzzleboxOrbitSingleton.getInstance().tiltX;
 			DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY = DevicePuzzleboxOrbitSingleton.getInstance().tiltY;
 		}
-
-		// Sensor.TYPE_OPERATION method
-		//		seekBarYaw.setProgress(defaultControlYaw + (int) (tiltY - referenceTiltY));
-		//		seekBarPitch.setProgress(defaultControlPitch + (int) ((tiltX / 2) - (referenceTiltX / 2)));
 
 		// Sensor.TYPE_GRAVITY
 		if (checkBoxTiltSensorControlThrottle.isChecked()) {
@@ -536,18 +344,11 @@ public class SteeringFragment extends Fragment
 			seekBarYaw.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlYaw + (int) (DevicePuzzleboxOrbitSingleton.getInstance().tiltY - DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY));
 			seekBarPitch.setProgress(DevicePuzzleboxOrbitSingleton.getInstance().defaultControlPitch + (int) (DevicePuzzleboxOrbitSingleton.getInstance().tiltX - DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX));
 		}
-
-	} // onSensorChanged
-
-
-	// ################################################################
+	}
 
 	public void onCheckBoxTiltSensorControlClicked(View view) {
 		// Drop the View as we don't use it
 		// This is necessary for the onPause/onResume functions which don't receive a View
-
-		Log.v(TAG, "onCheckBoxTiltSensorControlClicked");
-
 		onCheckBoxTiltSensorControlClicked(); // call the full method (this version is the View method called by GUI)
 
 		if (checkBoxTiltSensorControl.isChecked()) {
@@ -557,22 +358,14 @@ public class SteeringFragment extends Fragment
 			checkBoxTiltSensorControlThrottle.setVisibility(View.GONE);
 			Log.v(TAG, "checkBoxTiltSensorControlThrottle.setVisibility(View.GONE)");
 		}
+	}
 
-	} // onCheckBoxTiltSensorControlClicked(View view)
-
-
-	// ################################################################
-
-	//	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-//	@SuppressWarnings("unused")
 	public void onCheckBoxTiltSensorControlClicked() {
 
 		if (checkBoxTiltSensorControl.isChecked()) {
 
 			// register for tilt sensor events:
-//			sensorManager = (SensorManager) ((OrbitTabActivity)getActivity()).getSystemService(Context.SENSOR_SERVICE);
 			sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-
 
 			if (sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY) != null) {
 				List<Sensor> gravSensors = sensorManager.getSensorList(Sensor.TYPE_GRAVITY);
@@ -580,8 +373,7 @@ public class SteeringFragment extends Fragment
 					if (gravSensors.get(i).getVersion() >= 3) {
 						// Use the version 3 gravity sensor.
 						orientationSensor = gravSensors.get(i);
-						Log.v(TAG, "Tilt Control: Using Gravity Sensor (version 3+)");
-//						appendDebugConsole("Tilt Control: Using Gravity Sensor\n");
+						Log.d(TAG, "Tilt Control: Using Gravity Sensor (version 3+)");
 						break;
 					}
 				}
@@ -590,35 +382,26 @@ public class SteeringFragment extends Fragment
 					// Fall back to using an earlier version gravity sensor.
 					for (int i=0; i < gravSensors.size(); i++) {
 						orientationSensor = gravSensors.get(i);
-						Log.v(TAG, "Tilt Control: Using Gravity Sensor");
-//						appendDebugConsole("Tilt Control: Using Gravity Sensor\n");
+						Log.d(TAG, "Tilt Control: Using Gravity Sensor");
 						break;
 					}
 				}
 			}
-
 			else if (sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null) {
 				orientationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-				Log.v(TAG, "Tilt Control: Using Accelerometer Sensor");
-//				appendDebugConsole("Tilt Control: Using Linear Accelerometer Sensor\n");
+				Log.d(TAG, "Tilt Control: Using Accelerometer Sensor");
 			}
-
 			else {
-
 				// Use the accelerometer.
 				if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null){
 					orientationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-					Log.v(TAG, "Tilt Control: Using Accelerometer Sensor");
-//					appendDebugConsole("Tilt Control: Using Accelerometer Sensor\n");
+					Log.d(TAG, "Tilt Control: Using Accelerometer Sensor");
 				}
-
 			}
 
 			// if we can't access the orientation sensor then exit:
 			if (orientationSensor == null) {
-//				Toast.makeText(((OrbitTabActivity) getActivity()), "No Tilt Sensor Found", Toast.LENGTH_SHORT).show();
 				Toast.makeText(getActivity().getApplicationContext(), "No Tilt Sensor Found", Toast.LENGTH_SHORT).show();
-//				appendDebugConsole("Tilt Control: Not Found\n");
 				Log.d(TAG, "Tilt Control: Not Found\n");
 				checkBoxTiltSensorControl.setChecked(false);
 				sensorManager.unregisterListener(this);
@@ -633,27 +416,12 @@ public class SteeringFragment extends Fragment
 				DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY = 0;
 			}
 		}
-
-
-	} // onCheckBoxTiltSensorControlClicked
-
-
-	// ################################################################
+	}
 
 	public void checkBoxTiltSensorControlThrottleClicked(View v) {
 
 		DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltX = 0;
 		DevicePuzzleboxOrbitSingleton.getInstance().referenceTiltY = 0;
-
-		Log.v(TAG, "onCheckBoxTiltSensorControlThrottleClicked");
-
-
-		// Disabled due to problems with "Tilt Sensor Control" becoming stuck checked
-		//		if ((checkBoxTiltSensorControlThrottle.isChecked()) &&
-		//				(! checkBoxTiltSensorControl.isChecked())) {
-		//			checkBoxTiltSensorControl.setChecked(true);
-		//		}
-
 
 		if (checkBoxTiltSensorControl.isChecked()) {
 			checkBoxTiltSensorControlThrottle.setVisibility(View.VISIBLE);
@@ -662,9 +430,5 @@ public class SteeringFragment extends Fragment
 			checkBoxTiltSensorControlThrottle.setVisibility(View.GONE);
 			Log.v(TAG, "checkBoxTiltSensorControlThrottle.setVisibility(View.GONE)");
 		}
-
-
-	} // checkBoxTiltSensorControlThrottleClicked
-
-
+	}
 }

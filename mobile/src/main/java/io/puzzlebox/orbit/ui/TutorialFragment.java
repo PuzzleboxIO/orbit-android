@@ -13,10 +13,6 @@ import android.widget.LinearLayout;
 
 import io.puzzlebox.orbit.R;
 
-/**
- * Created by sc on 5/8/15.
- */
-
 public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 
 	private final static String TAG = TutorialFragment.class.getSimpleName();
@@ -24,7 +20,6 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	/**
 	 * Configuration
 	 */
-//	static String URL = "file:///android_asset/tutorial/index.html";
 	static String URL = "file:///android_asset/tutorial/contents.html";
 
 	WebView webView;
@@ -33,12 +28,7 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-//		View v = inflater.inflate(io.puzzlebox.jigsaw.R.layout.fragment_welcome, container, false);
 		View v = inflater.inflate(R.layout.fragment_tutorial, container, false);
-
-//		WebView webview = (WebView) v.findViewById(R.id.webViewTutorial);
-
-
 
 		LinearLayout dynamicLayout = (LinearLayout) v.findViewById(R.id.dynamicLayout);
 
@@ -48,10 +38,7 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 		LinearLayout ll = new LinearLayout(getActivity().getBaseContext());
 		ll.setOrientation(LinearLayout.VERTICAL);
 
-
-
 		ll.setLayoutParams(params);
-
 
 		webView = new WebView(getActivity()){
 
@@ -63,22 +50,11 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 					webView.goBack();
 					return true;
 				}
-
-//				if (keyCode == KeyEvent.KEYCODE_BACK) {
-//					Log.d(TAG, "webView.destroy()");
-////					webView.stopLoading();
-//					webView.destroy();
-////					return true;
-//				}
-
 				return super.onKeyDown(keyCode, event);
 			}
-
 		};
 
-
 		webView.setLayoutParams(params);
-
 
 		webView.getSettings().setJavaScriptEnabled(true);
 
@@ -88,32 +64,23 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 
 		webView.loadUrl(URL);
 
-
-
-
 		ll.addView(webView);
 
 		dynamicLayout.addView(ll);
 
-
-
 		return v;
-
 	}
 
 	private class compatibilityWebViewClient extends WebViewClient {
-
 		/***
 		 * This class prevents Android from launching URLs in external browsers
 		 *
 		 * credit: http://stackoverflow.com/questions/2378800/clicking-urls-opens-default-browser
 		 */
-
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			view.loadUrl(url);
 			return true;
 		}
 	}
-
 }
