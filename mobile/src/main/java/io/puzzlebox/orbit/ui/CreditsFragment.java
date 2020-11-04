@@ -5,46 +5,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import io.puzzlebox.orbit.R;
 
 public class CreditsFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 
-	/**
-	 * Configuration
-	 */
 	static String URL = "file:///android_asset/tutorial/credits.html";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
+
 		View v = inflater.inflate(R.layout.fragment_credits, container, false);
 
 		WebView webview = (WebView) v.findViewById(R.id.webViewCredits);
 
-		webview.getSettings().setJavaScriptEnabled(true); // TODO
-
-		webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
-
-		webview.setWebViewClient(new compatibilityWebViewClient());
-
 		webview.loadUrl(URL);
 
 		return v;
-	}
-
-	private class compatibilityWebViewClient extends WebViewClient {
-		/***
-		 * This class prevents Android from launching URLs in external browsers
-		 *
-		 * credit: http://stackoverflow.com/questions/2378800/clicking-urls-opens-default-browser
-		 */
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			view.loadUrl(url);
-			return true;
-		}
 	}
 }

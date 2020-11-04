@@ -56,8 +56,6 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 
 		webView.setLayoutParams(params);
 
-		webView.getSettings().setJavaScriptEnabled(true);
-
 		webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
 
 		webView.setWebViewClient(new compatibilityWebViewClient());
@@ -71,7 +69,7 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 		return v;
 	}
 
-	private class compatibilityWebViewClient extends WebViewClient {
+	private static class compatibilityWebViewClient extends WebViewClient {
 		/***
 		 * This class prevents Android from launching URLs in external browsers
 		 *

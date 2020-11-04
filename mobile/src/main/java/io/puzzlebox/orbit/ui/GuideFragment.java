@@ -4,16 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
@@ -28,6 +26,7 @@ import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import io.puzzlebox.jigsaw.data.ProfileSingleton;
 import io.puzzlebox.jigsaw.ui.DialogInputEmotivInsightFragment;
@@ -53,14 +52,10 @@ public class GuideFragment extends TilesFragment {
 
 	private int counterToastMessages = 3;
 
-	/**
-	 * Number of items visible in carousels.
-	 */
+	// Number of items visible in carousels.
 	private static final float INITIAL_ITEMS_COUNT = 2.5F;
 
-	/**
-	 * Input carousel container layout
-	 */
+	// Input carousel container layout
 	private LinearLayout mInputCarouselContainer;
 	private LinearLayout mOutputCarouselContainer;
 	private LinearLayout mProfileCarouselContainer;
@@ -75,8 +70,6 @@ public class GuideFragment extends TilesFragment {
 
 	int tileDimension;
 
-	private OnFragmentInteractionListener mListener;
-
 	public GuideFragment() {
 		// Required empty public constructor
 	}
@@ -84,7 +77,7 @@ public class GuideFragment extends TilesFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
+
 		View v = inflater.inflate(io.puzzlebox.jigsaw.R.layout.fragment_tiles, container, false);
 
 		// Get reference to carousel container
@@ -116,7 +109,7 @@ public class GuideFragment extends TilesFragment {
 	}
 
 	@Override
-	public void onViewCreated(View v, Bundle savedInstanceState) {
+	public void onViewCreated(@NonNull View v, Bundle savedInstanceState) {
 		super.onViewCreated(v, savedInstanceState);
 
 		// Change to high-speed animation after first display
@@ -231,7 +224,6 @@ public class GuideFragment extends TilesFragment {
 
 	public void displayProfileCarousel() {
 		ImageView imageItem;
-		Resources r = getResources();
 		Drawable[] layersTile;
 		Drawable[] layersInput;
 		Drawable[] layersOutput;
@@ -244,7 +236,7 @@ public class GuideFragment extends TilesFragment {
 		String[] outputArray;
 		int resource;
 		Uri resourcePath;
-		int maxSubtiles = 1;
+		int maxSubtiles;
 		int maxDimension;
 
 		mProfileCarouselContainer.removeAllViewsInLayout();
@@ -256,25 +248,12 @@ public class GuideFragment extends TilesFragment {
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
 
 			layersTile = new Drawable[5];
+			// Reference
 			// layersTile[0]: Background/Highlight Color
 			// layersTile[1]: Inputs
 			// layersTile[2]: Outputs
 			// layersTile[3]: Profile Icon
 			// layersTile[4]: Resize Image
-
-			// Background/Highlight Color
-//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.white));
-//			layersTile[0] = new ColorDrawable(Color.TRANSPARENT);
-//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
-//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileRequired));
-//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileAvailable));
-//			layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileDisabled));
-
-//			if (ProfileSingleton.getInstance().isActive("profiles", i)) {
-//				layersTile[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
-//			} else {
-//				layersTile[0] = new ColorDrawable( getResources().getColor(R.color.white));
-//			}
 
 			layersTile[0] = ProfileSingleton.getInstance().getProfileTileColor(getContext(), i);
 
@@ -363,7 +342,7 @@ public class GuideFragment extends TilesFragment {
 				InputStream inputStream = getContext().getContentResolver().openInputStream(resourcePath);
 				layersTile[3] = Drawable.createFromStream(inputStream, resourcePath.toString() );
 			} catch (FileNotFoundException e) {
-				Log.e(TAG, "Error parsing Drawable: " + e.getStackTrace());
+				Log.e(TAG, "Error parsing Drawable: " + Arrays.toString(e.getStackTrace()));
 			}
 
 			layersTile[4] = new ColorDrawable(Color.TRANSPARENT);
@@ -542,22 +521,4 @@ public class GuideFragment extends TilesFragment {
 		}
 
 	};
-
-	public Drawable scaleImage (Drawable image, float scaleFactor) {
-
-		if ((image == null) || !(image instanceof BitmapDrawable)) {
-			return image;
-		}
-
-		Bitmap b = ((BitmapDrawable)image).getBitmap();
-
-		int sizeX = Math.round(image.getIntrinsicWidth() * scaleFactor);
-		int sizeY = Math.round(image.getIntrinsicHeight() * scaleFactor);
-
-		Bitmap bitmapResized = Bitmap.createScaledBitmap(b, sizeX, sizeY, false);
-
-		image = new BitmapDrawable(getResources(), bitmapResized);
-
-		return image;
-	}
 }

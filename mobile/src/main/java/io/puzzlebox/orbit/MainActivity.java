@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Messenger;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.pm.ActivityInfo;
@@ -18,7 +19,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ListView;
@@ -61,13 +61,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		DialogProfilePuzzleboxOrbitJoystickMindwaveFragment.OnFragmentInteractionListener,
 		DialogProfilePuzzleboxOrbitEmotivInsightFragment.OnFragmentInteractionListener {
 
-	private final static String TAG = MainActivity.class.getSimpleName();
-
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
-	private ActionBarDrawerToggle mDrawerToggle;
-	private CharSequence mTitle;
-	private CharSequence mDrawerTitle;
 	List<DrawerItem> dataList;
 
 	private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
@@ -105,13 +100,13 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 
 		dataList = getDrawerDataList();
 
-		mTitle = mDrawerTitle = getTitle();
+		final CharSequence mDrawerTitle = getTitle();
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.navigation_drawer);
 
 		Toolbar mToolbar = new Toolbar(this);
 
-		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+		ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				mToolbar, io.puzzlebox.jigsaw.R.string.drawer_open,
 				io.puzzlebox.jigsaw.R.string.drawer_close) {
 			public void onDrawerClosed(View view) {
@@ -123,7 +118,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				invalidateOptionsMenu();
 			}
 		};
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mDrawerLayout.addDrawerListener(mDrawerToggle);
 	}
 
 	protected List<DrawerItem> getDrawerDataList() {
@@ -209,30 +204,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 			mDrawerList.setItemChecked(position, true);
 			setTitle(dataList.get(position).getItemName());
 			mDrawerLayout.closeDrawer(mDrawerList);
-		} else {
-			Log.d(TAG, "mDrawerList == null");
 		}
-	}
-
-	public void loadTutorial() {
-
-		Fragment fragment = null;
-		Bundle args = new Bundle();
-		String backStackName = getResources().getString(R.string.title_fragment_tutorial);
-
-		try{
-			fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (fragment == null)
-			fragment = new TutorialFragment();
-
-		fragment.setArguments(args);
-		FragmentManager frgManager = getSupportFragmentManager();
-		frgManager.beginTransaction().replace(io.puzzlebox.jigsaw.R.id.container, fragment)
-				.addToBackStack(backStackName)
-				.commit();
 	}
 
 	public void loadDevices() {
@@ -257,7 +229,9 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 	}
 
 	@Override
-	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+	public void onRequestPermissionsResult(int requestCode,
+										   @NonNull String[] permissions,
+										   @NonNull int[] grantResults) {
 
 		if (requestCode == SessionSingleton.getInstance().getRequestExternalStorage()) {
 

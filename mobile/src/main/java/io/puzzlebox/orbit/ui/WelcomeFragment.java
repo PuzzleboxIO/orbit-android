@@ -146,7 +146,7 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 		mListenerTutorial = null;
 	}
 
-	private class compatibilityWebViewClient extends WebViewClient {
+	private static class compatibilityWebViewClient extends WebViewClient {
 		/***
 		 * This class prevents Android from launching URLs in external browsers
 		 *
