@@ -10,15 +10,15 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Messenger;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ListView;
@@ -232,6 +232,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 	public void onRequestPermissionsResult(int requestCode,
 										   @NonNull String[] permissions,
 										   @NonNull int[] grantResults) {
+
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
 		if (requestCode == SessionSingleton.getInstance().getRequestExternalStorage()) {
 
