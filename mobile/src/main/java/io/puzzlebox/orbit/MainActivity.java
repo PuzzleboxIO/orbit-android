@@ -102,7 +102,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 					@Override
 					@TargetApi(Build.VERSION_CODES.M)
 					public void onDismiss(DialogInterface dialog) {
-						requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+						requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
 					}
 				});
 				builder.show();
@@ -261,6 +261,21 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				}
 			} else {
 				Toast.makeText(this.getApplicationContext(), "Error export session data for sharing", Toast.LENGTH_SHORT).show();
+			}
+
+		} else if (requestCode == PERMISSION_REQUEST_BLUETOOTH) {
+
+			for (int result : grantResults) {
+				if (result != PackageManager.PERMISSION_GRANTED) {
+					Toast.makeText(this, "Bluetooth permissions are required to scan for and connect to devices.", Toast.LENGTH_LONG).show();
+					return;
+				}
+			}
+
+		} else if (requestCode == PERMISSION_REQUEST_COARSE_LOCATION) {
+
+			if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+				Toast.makeText(this, "Location permission is required for Bluetooth device scanning.", Toast.LENGTH_LONG).show();
 			}
 		}
 	}
