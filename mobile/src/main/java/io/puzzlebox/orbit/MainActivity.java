@@ -65,9 +65,6 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 	private ListView mDrawerList;
 	List<DrawerItem> dataList;
 
-	private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
-	private static final int PERMISSION_REQUEST_BLUETOOTH = 2;
-
 	@Override
 	protected void onCreateCustom() {
 
@@ -263,21 +260,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				Toast.makeText(this.getApplicationContext(), "Error export session data for sharing", Toast.LENGTH_SHORT).show();
 			}
 
-		} else if (requestCode == PERMISSION_REQUEST_BLUETOOTH) {
-
-			for (int result : grantResults) {
-				if (result != PackageManager.PERMISSION_GRANTED) {
-					Toast.makeText(this, "Bluetooth permissions are required to scan for and connect to devices.", Toast.LENGTH_LONG).show();
-					return;
-				}
-			}
-
-		} else if (requestCode == PERMISSION_REQUEST_COARSE_LOCATION) {
-
-			if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-				Toast.makeText(this, "Location permission is required for Bluetooth device scanning.", Toast.LENGTH_LONG).show();
-			}
 		}
+		// BLUETOOTH and LOCATION results are handled by super.onRequestPermissionsResult()
 	}
 
 	/**
