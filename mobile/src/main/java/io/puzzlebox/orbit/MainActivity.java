@@ -66,6 +66,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 	List<DrawerItem> dataList;
 
 	private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+	private static final int PERMISSION_REQUEST_BLUETOOTH = 2;
 
 	@Override
 	protected void onCreateCustom() {
@@ -79,9 +80,19 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		// Hide default keyboard popup
 		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-		// Permission must be requested to scan Bluetooth in Android 6.0 and later
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			// Android M permission check
+		// Permission must be requested to use Bluetooth.
+		// Android 12+ (API 31+) requires BLUETOOTH_SCAN and BLUETOOTH_CONNECT at runtime.
+		// Earlier versions required ACCESS_COARSE_LOCATION for BLE scanning.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			java.util.ArrayList<String> needed = new java.util.ArrayList<>();
+			if (checkSelfPermission(android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED)
+				needed.add(android.Manifest.permission.BLUETOOTH_SCAN);
+			if (checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED)
+				needed.add(android.Manifest.permission.BLUETOOTH_CONNECT);
+			if (!needed.isEmpty())
+				requestPermissions(needed.toArray(new String[0]), PERMISSION_REQUEST_BLUETOOTH);
+		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			// Android 6.0–11: location permission required for BLE scanning
 			if (this.checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 				final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle(getResources().getString(R.string.main_dialog_title));
