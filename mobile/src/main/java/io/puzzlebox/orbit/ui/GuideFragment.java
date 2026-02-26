@@ -38,6 +38,7 @@ import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitJoystickFragment;
 import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitJoystickMindwaveFragment;
 import io.puzzlebox.jigsaw.ui.TileViewAnimator;
 import io.puzzlebox.jigsaw.ui.TilesFragment;
+import io.puzzlebox.orbit.BuildConfig;
 import io.puzzlebox.orbit.R;
 
 public class GuideFragment extends TilesFragment {
@@ -123,7 +124,10 @@ public class GuideFragment extends TilesFragment {
 		mInputCarouselContainer.removeAllViewsInLayout();
 
 		// Populate the input devices carousel with items
-		for (int i = 0 ; i < devicesInputResourcesTypedArray.length() ; ++i) {
+		int inputTileCount = BuildConfig.EMOTIV_TILES_ENABLED
+				? devicesInputResourcesTypedArray.length()
+				: devicesInputResourcesTypedArray.length() - 1;
+		for (int i = 0 ; i < inputTileCount ; ++i) {
 
 			final int index = i;
 
@@ -240,7 +244,10 @@ public class GuideFragment extends TilesFragment {
 		mProfileCarouselContainer.removeAllViewsInLayout();
 
 		// Populate the profile input device row with items
-		for (int i = 0 ; i < devicesProfileResourcesTypedArray.length() ; ++i) {
+		int profileTileCount = BuildConfig.EMOTIV_TILES_ENABLED
+				? devicesProfileResourcesTypedArray.length()
+				: devicesProfileResourcesTypedArray.length() - 1;
+		for (int i = 0 ; i < profileTileCount ; ++i) {
 			imageItem = new ImageView(getActivity());
 
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
