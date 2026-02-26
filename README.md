@@ -13,7 +13,7 @@ http://puzzlebox.io/orbit
 License: GNU Affero General Public License v3.0
 https://www.gnu.org/licenses/agpl-3.0.html
 
-<img width="717" alt="Screenshot" src="https://github.com/user-attachments/assets/babfe5b5-6f36-4238-8956-6239534d82c3">
+<img width="800" alt="Screenshot" src="https://github.com/user-attachments/assets/babfe5b5-6f36-4238-8956-6239534d82c3">
 
 ![puzzlebox-orbit-mobile_edition](https://github.com/user-attachments/assets/9bb56004-326f-4650-8551-f9f6e0ff8ab0)
 
