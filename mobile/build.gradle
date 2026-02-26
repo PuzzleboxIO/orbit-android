@@ -88,7 +88,7 @@ dependencies {
     // The Wear OS module is now built and distributed as a separate standalone app.
 
     // AndroidX (replaces com.android.support:appcompat-v7)
-    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
     // Emotiv Insight full AAR — provides native libs (libbedk.so) and AAR resources
