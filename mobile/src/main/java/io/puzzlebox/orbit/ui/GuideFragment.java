@@ -124,10 +124,9 @@ public class GuideFragment extends TilesFragment {
 		mInputCarouselContainer.removeAllViewsInLayout();
 
 		// Populate the input devices carousel with items
-		int inputTileCount = BuildConfig.EMOTIV_TILES_ENABLED
-				? devicesInputResourcesTypedArray.length()
-				: devicesInputResourcesTypedArray.length() - 1;
-		for (int i = 0 ; i < inputTileCount ; ++i) {
+		for (int i = 0 ; i < devicesInputResourcesTypedArray.length() ; ++i) {
+			if (!BuildConfig.EMOTIV_TILES_ENABLED
+					&& devicesInputResourcesTypedArray.getString(i).contains("emotiv")) continue;
 
 			final int index = i;
 
@@ -244,10 +243,9 @@ public class GuideFragment extends TilesFragment {
 		mProfileCarouselContainer.removeAllViewsInLayout();
 
 		// Populate the profile input device row with items
-		int profileTileCount = BuildConfig.EMOTIV_TILES_ENABLED
-				? devicesProfileResourcesTypedArray.length()
-				: devicesProfileResourcesTypedArray.length() - 1;
-		for (int i = 0 ; i < profileTileCount ; ++i) {
+		for (int i = 0 ; i < devicesProfileResourcesTypedArray.length() ; ++i) {
+			if (!BuildConfig.EMOTIV_TILES_ENABLED
+					&& devicesProfileResourcesTypedArray.getString(i).contains("emotiv")) continue;
 			imageItem = new ImageView(getActivity());
 
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
