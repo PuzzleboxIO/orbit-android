@@ -27,17 +27,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.puzzlebox.jigsaw.data.DeviceEmotivInsightSingleton;
 import io.puzzlebox.jigsaw.data.SessionSingleton;
-import io.puzzlebox.jigsaw.service.EmotivInsightService;
-import io.puzzlebox.jigsaw.ui.DialogInputEmotivInsightFragment;
+import io.puzzlebox.jigsaw.ui.EmotivInsightFragmentListener;
 import io.puzzlebox.jigsaw.ui.DialogInputJoystickFragment;
 import io.puzzlebox.jigsaw.ui.DialogInputNeuroSkyMindWaveFragment;
 import io.puzzlebox.jigsaw.ui.DialogOutputSessionFragment;
 import io.puzzlebox.jigsaw.ui.DrawerItem;
 import io.puzzlebox.jigsaw.ui.SupportFragment;
 import io.puzzlebox.jigsaw.ui.DialogOutputAudioIRFragment;
-import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitEmotivInsightFragment;
 import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitFragment;
 import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitJoystickFragment;
 import io.puzzlebox.orbit.ui.CreditsFragment;
@@ -53,13 +50,12 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		SupportFragment.OnFragmentInteractionListener,
 		DialogInputJoystickFragment.OnFragmentInteractionListener,
 		DialogInputNeuroSkyMindWaveFragment.OnFragmentInteractionListener,
-		DialogInputEmotivInsightFragment.OnFragmentInteractionListener,
+		EmotivInsightFragmentListener,
 		DialogOutputAudioIRFragment.OnFragmentInteractionListener,
 		DialogOutputSessionFragment.OnFragmentInteractionListener,
 		DialogProfilePuzzleboxOrbitJoystickFragment.OnFragmentInteractionListener,
 		DialogProfilePuzzleboxOrbitFragment.OnFragmentInteractionListener,
-		DialogProfilePuzzleboxOrbitJoystickMindwaveFragment.OnFragmentInteractionListener,
-		DialogProfilePuzzleboxOrbitEmotivInsightFragment.OnFragmentInteractionListener {
+		DialogProfilePuzzleboxOrbitJoystickMindwaveFragment.OnFragmentInteractionListener {
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
@@ -265,42 +261,52 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 	}
 
 	/**
-	 * Class for interacting with the main interface of the service.
+	 * Class for interacting with the Emotiv Insight service.
+	 * Uses reflection so this file compiles even when the Emotiv SDK JARs are
+	 * absent from the build (the service class is excluded in that case).
 	 */
 	private final ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			// This is called when the connection with the service has been
-			// established, giving us the object we can use to
-			// interact with the service.  We are communicating with the
-			// service using a Messenger, so here we get a client-side
-			// representation of that from the raw IBinder object.
-			DeviceEmotivInsightSingleton.getInstance().mService = new Messenger(service);
-			DeviceEmotivInsightSingleton.getInstance().mBound = true;
+			try {
+				Class<?> cls = Class.forName("io.puzzlebox.jigsaw.data.DeviceEmotivInsightSingleton");
+				Object instance = cls.getMethod("getInstance").invoke(null);
+				cls.getField("mService").set(instance, new Messenger(service));
+				cls.getField("mBound").set(instance, true);
+			} catch (ReflectiveOperationException e) { /* SDK absent */ }
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
-			// This is called when the connection with the service has been
-			// unexpectedly disconnected -- that is, its process crashed.
-			DeviceEmotivInsightSingleton.getInstance().mService = null;
-			DeviceEmotivInsightSingleton.getInstance().mBound = false;
+			try {
+				Class<?> cls = Class.forName("io.puzzlebox.jigsaw.data.DeviceEmotivInsightSingleton");
+				Object instance = cls.getMethod("getInstance").invoke(null);
+				cls.getField("mService").set(instance, null);
+				cls.getField("mBound").set(instance, false);
+			} catch (ReflectiveOperationException e) { /* SDK absent */ }
 		}
 	};
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-		// Bind to the service
-		bindService(new Intent(this, EmotivInsightService.class), mConnection,
-				Context.BIND_AUTO_CREATE);
+		// Bind to Emotiv service if SDK is available in this build
+		try {
+			Class<?> serviceClass = Class.forName("io.puzzlebox.jigsaw.service.EmotivInsightService");
+			bindService(new Intent(this, serviceClass), mConnection, Context.BIND_AUTO_CREATE);
+		} catch (ClassNotFoundException e) { /* Emotiv SDK not available */ }
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		// Unbind from the service
-		if (DeviceEmotivInsightSingleton.getInstance().mBound) {
-			unbindService(mConnection);
-			DeviceEmotivInsightSingleton.getInstance().mBound = false;
-		}
+		// Unbind from Emotiv service if it was bound
+		try {
+			Class<?> cls = Class.forName("io.puzzlebox.jigsaw.data.DeviceEmotivInsightSingleton");
+			Object instance = cls.getMethod("getInstance").invoke(null);
+			boolean mBound = (boolean) cls.getField("mBound").get(instance);
+			if (mBound) {
+				unbindService(mConnection);
+				cls.getField("mBound").set(instance, false);
+			}
+		} catch (ReflectiveOperationException e) { /* SDK absent */ }
 	}
 }
