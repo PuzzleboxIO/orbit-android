@@ -29,12 +29,10 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import io.puzzlebox.jigsaw.data.ProfileSingleton;
-import io.puzzlebox.jigsaw.ui.DialogInputEmotivInsightFragment;
 import io.puzzlebox.jigsaw.ui.DialogInputJoystickFragment;
 import io.puzzlebox.jigsaw.ui.DialogInputNeuroSkyMindWaveFragment;
 import io.puzzlebox.jigsaw.ui.DialogOutputAudioIRFragment;
 import io.puzzlebox.jigsaw.ui.DialogOutputSessionFragment;
-import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitEmotivInsightFragment;
 import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitFragment;
 import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitJoystickFragment;
 import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitJoystickMindwaveFragment;
@@ -420,8 +418,15 @@ public class GuideFragment extends TilesFragment {
 						break;
 					case 2:
 						// Emotiv Insight
-						DialogInputEmotivInsightFragment dialogInputEmotivInsightFragment = new DialogInputEmotivInsightFragment();
-						dialogInputEmotivInsightFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_emotiv_insight));
+						try {
+							androidx.fragment.app.DialogFragment dialogInputEmotivInsightFragment =
+								(androidx.fragment.app.DialogFragment) Class
+									.forName("io.puzzlebox.jigsaw.ui.DialogInputEmotivInsightFragment")
+									.getDeclaredConstructor().newInstance();
+							dialogInputEmotivInsightFragment.show(fm, getResources().getString(io.puzzlebox.jigsaw.R.string.title_dialog_fragment_emotiv_insight));
+						} catch (ReflectiveOperationException e) {
+							Toast.makeText(getActivity(), "Emotiv Insight SDK not available in this build", Toast.LENGTH_SHORT).show();
+						}
 						break;
 				}
 				break;
@@ -473,8 +478,15 @@ public class GuideFragment extends TilesFragment {
 						break;
 					case 3:
 						// Puzzlebox Orbit with Emotiv Insight EEG and Joystick
-						DialogProfilePuzzleboxOrbitEmotivInsightFragment dialogPuzzleboxOrbitEmotivInsightFragment = new DialogProfilePuzzleboxOrbitEmotivInsightFragment();
-						dialogPuzzleboxOrbitEmotivInsightFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_emotiv_insight));
+						try {
+							androidx.fragment.app.DialogFragment dialogPuzzleboxOrbitEmotivInsightFragment =
+								(androidx.fragment.app.DialogFragment) Class
+									.forName("io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitEmotivInsightFragment")
+									.getDeclaredConstructor().newInstance();
+							dialogPuzzleboxOrbitEmotivInsightFragment.show(fm, getResources().getString(R.string.title_dialog_fragment_puzzlebox_orbit_emotiv_insight));
+						} catch (ReflectiveOperationException e) {
+							Toast.makeText(getActivity(), "Emotiv Insight SDK not available in this build", Toast.LENGTH_SHORT).show();
+						}
 						break;
 				}
 				break;
