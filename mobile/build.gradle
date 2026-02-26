@@ -18,11 +18,20 @@ android {
 //        minSdk 18 // API 4.3 [Emotiv Community SDK]
         minSdk 21 // 5.x - required for ScanResult.getDevice()
         targetSdk 36
-        versionCode 22
-        versionName "2.4.0"
+        versionCode 23
+        versionName "2.5.0"
         // No abiFilters: pre-built .so files in jniLibs/armeabi-v7a/ are packaged as-is.
         // The app runs in 32-bit compat mode on arm64 devices (libNSUART.so and libbedk.so
         // are armeabi-v7a only; no arm64 builds exist from the SDK vendors).
+
+        // ── Feature flags ────────────────────────────────────────────────────
+        // Set to false before building to hide Emotiv tiles from the UI.
+        // The underlying code is retained; only the carousel entries are hidden.
+        buildConfigField "boolean", "EMOTIV_TILES_ENABLED", "false"
+    }
+
+    buildFeatures {
+        buildConfig true
     }
     buildTypes {
         release {
