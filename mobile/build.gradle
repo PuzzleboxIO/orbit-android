@@ -36,6 +36,12 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
+    // libbedk.so is provided by both :jigsaw's jniLibs and community-3.3.4.aar.
+    // Pick the first copy encountered rather than failing with a duplicate error.
+    packagingOptions {
+        pickFirst '**/libbedk.so'
+    }
+
     // Disable SerialDevice because not currently used to talk to Puzzlebox Pyramid
     // but we want to keep the source code available
     sourceSets {
