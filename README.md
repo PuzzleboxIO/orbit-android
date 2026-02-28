@@ -8,7 +8,7 @@ Copyright Puzzlebox Productions, LLC (2012-2023)
 Copyright Steve Castellotti (2023-2026)
 
 by Puzzlebox Productions, LLC
-http://puzzlebox.io/orbit
+https://puzzlebox.io/orbit
 
 License: GNU Affero General Public License v3.0
 https://www.gnu.org/licenses/agpl-3.0.html
@@ -17,13 +17,11 @@ https://www.gnu.org/licenses/agpl-3.0.html
 
 ![puzzlebox-orbit-mobile_edition](https://github.com/user-attachments/assets/9bb56004-326f-4650-8551-f9f6e0ff8ab0)
 
-
 ============
 
 Download APK:
 
 Google Play: https://play.google.com/store/apps/details?id=info.puzzlebox.orbit
-
 
 ============
 
