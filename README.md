@@ -33,7 +33,7 @@ https://github.com/PuzzleboxIO/jigsaw-android
 
 - Create a symlink inside root directory to jigsaw:
 
-Example: ln -s ../jigsaw-android/jigsaw jigsaw
+Example: `ln -s ../jigsaw-android/jigsaw jigsaw`
 
 - Certain devices require downloading of proprietary SDK libraries
   (see jigsaw-android/README.md for details)
