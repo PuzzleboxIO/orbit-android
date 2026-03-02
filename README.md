@@ -1,5 +1,5 @@
 orbit-android
-============
+===
 
 Puzzlebox Orbit for Android
 
@@ -17,13 +17,13 @@ https://www.gnu.org/licenses/agpl-3.0.html
 
 ![puzzlebox-orbit-mobile_edition](https://github.com/user-attachments/assets/9bb56004-326f-4650-8551-f9f6e0ff8ab0)
 
-============
+---
 
 Download APK:
 
 Google Play: https://play.google.com/store/apps/details?id=info.puzzlebox.orbit
 
-============
+---
 
 Instructions:
 
