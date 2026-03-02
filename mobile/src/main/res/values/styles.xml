@@ -1,7 +1,8 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar"
+        tools:ignore="NewApi">
         <!-- Opt out of Android 15+ forced edge-to-edge. Without this, content draws
              behind the status bar and the ActionBar appears below the tiles instead of
              at the top. AppCompat 1.7.0 respects this attribute on API 35+. -->
