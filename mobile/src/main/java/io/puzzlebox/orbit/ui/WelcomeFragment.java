@@ -15,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
+import androidx.annotation.NonNull;
+
 import io.puzzlebox.jigsaw.data.ConfigurationSingleton;
 import io.puzzlebox.orbit.R;
 
@@ -49,58 +51,43 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 		View v = inflater.inflate(io.puzzlebox.orbit.R.layout.fragment_welcome, container, false);
 
 		// Background video
-		mVideoView = (VideoView) v.findViewById(R.id.video_view);
+		mVideoView = v.findViewById(R.id.video_view);
 
 		try {
 			mVideoView.setVideoURI(Uri.parse("android.resource://" +
-					getActivity().getPackageName() +
+					requireActivity().getPackageName() +
 					"/" + R.raw.splash_puzzlebox_orbit));
 
 		} catch (Exception e) {
-			Log.e("Error", e.getMessage());
-			e.printStackTrace();
+			Log.e(TAG, "Error setting video URI", e);
 		}
 
 		mVideoView.requestFocus();
-		mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+		mVideoView.setOnPreparedListener(mp -> {
 			// Close the progress bar and play the video
-			public void onPrepared(MediaPlayer mp) {
-				mVideoView.seekTo(position);
-				if (position == 0) {
-					mVideoView.start();
-				} else {
-					mVideoView.pause();
-				}
-			}
-		});
-
-		mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-			public void onCompletion(MediaPlayer mp) {
-				position = 0;
-				mVideoView.seekTo(position);
+			mVideoView.seekTo(position);
+			if (position == 0) {
 				mVideoView.start();
+			} else {
+				mVideoView.pause();
 			}
 		});
 
-		LinearLayout llWelcomeMessage = (LinearLayout) v.findViewById(R.id.layoutWelcomeMessage);
-		llWelcomeMessage.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				loadMain();
-			}
+		mVideoView.setOnCompletionListener(mp -> {
+			position = 0;
+			mVideoView.seekTo(position);
+			mVideoView.start();
 		});
 
-		RelativeLayout relativeLayoutWelcome = (RelativeLayout) v.findViewById(R.id.relativeLayoutWelcome);
-		relativeLayoutWelcome.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				loadMain();
-			}
-		});
+		LinearLayout llWelcomeMessage = v.findViewById(R.id.layoutWelcomeMessage);
+		llWelcomeMessage.setOnClickListener(v1 -> loadMain());
 
-		LinearLayout llLogo = (LinearLayout) v.findViewById(R.id.linearLayoutLogo);
+		RelativeLayout relativeLayoutWelcome = v.findViewById(R.id.relativeLayoutWelcome);
+		relativeLayoutWelcome.setOnClickListener(v1 -> loadMain());
 
-		ImageView imageViewLogo = (ImageView) v.findViewById(R.id.imageViewLogo);
+		LinearLayout llLogo = v.findViewById(R.id.linearLayoutLogo);
+
+		ImageView imageViewLogo = v.findViewById(R.id.imageViewLogo);
 
 		layoutParams = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -131,12 +118,12 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
+	public void onAttach(@NonNull Activity activity) {
 		super.onAttach(activity);
 		try {
 			mListenerDevices = (OnDevicesListener) activity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " must implement mListenerDevices");
+			throw new ClassCastException(activity + " must implement mListenerDevices");
 		}
 	}
 

@@ -1,8 +1,8 @@
 package io.puzzlebox.orbit;
 
-import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
+import android.util.Log;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Messenger;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import android.content.pm.ActivityInfo;
@@ -57,6 +58,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		DialogProfilePuzzleboxOrbitFragment.OnFragmentInteractionListener,
 		DialogProfilePuzzleboxOrbitJoystickMindwaveFragment.OnFragmentInteractionListener {
 
+	private static final String TAG = MainActivity.class.getSimpleName();
+
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	List<DrawerItem> dataList;
@@ -93,7 +96,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				builder.setPositiveButton(android.R.string.ok, null);
 				builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
 					@Override
-					@TargetApi(Build.VERSION_CODES.M)
+					@RequiresApi(Build.VERSION_CODES.M)
 					public void onDismiss(DialogInterface dialog) {
 						requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
 					}
@@ -105,8 +108,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		dataList = getDrawerDataList();
 
 		final CharSequence mDrawerTitle = getTitle();
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mDrawerList = (ListView) findViewById(R.id.navigation_drawer);
+		mDrawerLayout = findViewById(R.id.drawer_layout);
+		mDrawerList = findViewById(R.id.navigation_drawer);
 
 		Toolbar mToolbar = new Toolbar(this);
 
@@ -118,7 +121,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 			}
 
 			public void onDrawerOpened(View drawerView) {
-				getSupportActionBar().setTitle(mDrawerTitle);
+				if (getSupportActionBar() != null)
+					getSupportActionBar().setTitle(mDrawerTitle);
 				invalidateOptionsMenu();
 			}
 		};
@@ -149,7 +153,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				try{
 					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(TAG, "Exception", e);
 				}
 				if (fragment == null)
 					fragment = new WelcomeFragment();
@@ -159,7 +163,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				try{
 					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(TAG, "Exception", e);
 				}
 				if (fragment == null)
 					fragment = new GuideFragment();
@@ -169,7 +173,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				try{
 					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(TAG, "Exception", e);
 				}
 				if (fragment == null)
 					fragment = new TutorialFragment();
@@ -179,7 +183,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				try{
 					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(TAG, "Exception", e);
 				}
 				if (fragment == null)
 					fragment = new SupportFragment();
@@ -189,7 +193,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				try{
 					fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(TAG, "Exception", e);
 				}
 				if (fragment == null)
 					fragment = new CreditsFragment();
@@ -197,8 +201,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 			default:
 				break;
 		}
-		if (fragment != null)
-			fragment.setArguments(args);
+		if (fragment == null) return;
+		fragment.setArguments(args);
 		FragmentManager frgManager = getSupportFragmentManager();
 		frgManager.beginTransaction().replace(io.puzzlebox.jigsaw.R.id.container, fragment)
 				.addToBackStack(backStackName)
@@ -220,7 +224,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		try{
 			fragment = getSupportFragmentManager().findFragmentByTag(backStackName);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(TAG, "Exception", e);
 		}
 		if (fragment == null)
 			fragment = new GuideFragment();
@@ -302,8 +306,8 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 		try {
 			Class<?> cls = Class.forName("io.puzzlebox.jigsaw.data.DeviceEmotivInsightSingleton");
 			Object instance = cls.getMethod("getInstance").invoke(null);
-			boolean mBound = (boolean) cls.getField("mBound").get(instance);
-			if (mBound) {
+			Object boundValue = cls.getField("mBound").get(instance);
+			if (Boolean.TRUE.equals(boundValue)) {
 				unbindService(mConnection);
 				cls.getField("mBound").set(instance, false);
 			}

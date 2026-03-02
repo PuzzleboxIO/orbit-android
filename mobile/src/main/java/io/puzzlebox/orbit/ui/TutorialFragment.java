@@ -20,7 +20,7 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	/**
 	 * Configuration
 	 */
-	static String URL = "file:///android_asset/tutorial/contents.html";
+	static final String URL = "file:///android_asset/tutorial/contents.html";
 
 	WebView webView;
 
@@ -30,12 +30,12 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 		// Inflate the layout for this fragment
 		View v = inflater.inflate(R.layout.fragment_tutorial, container, false);
 
-		LinearLayout dynamicLayout = (LinearLayout) v.findViewById(R.id.dynamicLayout);
+		LinearLayout dynamicLayout = v.findViewById(R.id.dynamicLayout);
 
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				  LinearLayoutCompat.LayoutParams.MATCH_PARENT, LinearLayoutCompat.LayoutParams.MATCH_PARENT);
 
-		LinearLayout ll = new LinearLayout(getActivity().getBaseContext());
+		LinearLayout ll = new LinearLayout(requireContext());
 		ll.setOrientation(LinearLayout.VERTICAL);
 
 		ll.setLayoutParams(params);

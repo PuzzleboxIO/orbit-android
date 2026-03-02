@@ -45,9 +45,9 @@ public class GuideFragment extends TilesFragment {
 
 	private static final String TAG = GuideFragment.class.getSimpleName();
 
-	double tileInputInsetScale = 8.0;
-	double tileOutputInsetScale = 8.0;
-	double tileProfileInsetScale = 0.1;
+	final double tileInputInsetScale = 8.0;
+	final double tileOutputInsetScale = 8.0;
+	final double tileProfileInsetScale = 0.1;
 
 	private int counterToastMessages = 3;
 
@@ -80,13 +80,13 @@ public class GuideFragment extends TilesFragment {
 		View v = inflater.inflate(io.puzzlebox.jigsaw.R.layout.fragment_tiles, container, false);
 
 		// Get reference to carousel container
-		mInputCarouselContainer = (LinearLayout) v.findViewById(io.puzzlebox.jigsaw.R.id.carousel_devices_input);
-		mOutputCarouselContainer = (LinearLayout) v.findViewById(io.puzzlebox.jigsaw.R.id.carousel_devices_output);
-		mProfileCarouselContainer = (LinearLayout) v.findViewById(io.puzzlebox.jigsaw.R.id.carousel_devices_profile);
+		mInputCarouselContainer = v.findViewById(io.puzzlebox.jigsaw.R.id.carousel_devices_input);
+		mOutputCarouselContainer = v.findViewById(io.puzzlebox.jigsaw.R.id.carousel_devices_output);
+		mProfileCarouselContainer = v.findViewById(io.puzzlebox.jigsaw.R.id.carousel_devices_profile);
 
 		// Compute the width of a carousel item based on the screen width and number of initial items.
 		final DisplayMetrics displayMetrics = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		tileDimension = (int) (displayMetrics.widthPixels / INITIAL_ITEMS_COUNT);
 
 		// Get the array of input devices resources
@@ -94,9 +94,9 @@ public class GuideFragment extends TilesFragment {
 		devicesOutputResourcesTypedArray = getResources().obtainTypedArray(io.puzzlebox.jigsaw.R.array.devices_output_icon_array);
 		devicesProfileResourcesTypedArray = getResources().obtainTypedArray(io.puzzlebox.jigsaw.R.array.devices_profile_array);
 
-		carouselDevicesInputTextView = (TextView) v. findViewById(R.id.carousel_devices_input_textview);
-		carouselDevicesOutputTextView = (TextView) v. findViewById(R.id.carousel_devices_output_textview);
-		carouselDevicesProfileTextView = (TextView) v. findViewById(R.id.carousel_device_profile_textview);
+		carouselDevicesInputTextView = v.findViewById(R.id.carousel_devices_input_textview);
+		carouselDevicesOutputTextView = v.findViewById(R.id.carousel_devices_output_textview);
+		carouselDevicesProfileTextView = v.findViewById(R.id.carousel_device_profile_textview);
 
 		displayInputCarousel();
 
@@ -125,8 +125,9 @@ public class GuideFragment extends TilesFragment {
 
 		// Populate the input devices carousel with items
 		for (int i = 0 ; i < devicesInputResourcesTypedArray.length() ; ++i) {
+			String inputTileName = devicesInputResourcesTypedArray.getString(i);
 			if (!BuildConfig.EMOTIV_TILES_ENABLED
-					&& devicesInputResourcesTypedArray.getString(i).contains("emotiv")) continue;
+					&& inputTileName != null && inputTileName.contains("emotiv")) continue;
 
 			final int index = i;
 
@@ -144,7 +145,7 @@ public class GuideFragment extends TilesFragment {
 			}
 
 			layersInput[1] =  getResources().getDrawable(
-					getResources().getIdentifier(devicesInputResourcesTypedArray.getString(i), "drawable", getActivity().getPackageName()));
+					getResources().getIdentifier(devicesInputResourcesTypedArray.getString(i), "drawable", requireContext().getPackageName()));
 
 			layerDrawableInput = new LayerDrawable(layersInput);
 
@@ -153,12 +154,7 @@ public class GuideFragment extends TilesFragment {
 			// Set the size of the image view to the previously computed value
 			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
 
-			imageItem.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					showDialog("inputs", index);
-				}
-			});
+			imageItem.setOnClickListener(v -> showDialog("inputs", index));
 
 			TileViewAnimator tileViewAnimator = new TileViewAnimator(getContext());
 			tileViewAnimator.addView(imageItem);
@@ -195,7 +191,7 @@ public class GuideFragment extends TilesFragment {
 			}
 
 			layersOutput[1] =  getResources().getDrawable(
-					getResources().getIdentifier(devicesOutputResourcesTypedArray.getString(i), "drawable", getActivity().getPackageName()));
+					getResources().getIdentifier(devicesOutputResourcesTypedArray.getString(i), "drawable", requireContext().getPackageName()));
 
 			layerDrawableOutput = new LayerDrawable(layersOutput);
 
@@ -204,12 +200,7 @@ public class GuideFragment extends TilesFragment {
 			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
 
 			final int index = i;
-			imageItem.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					showDialog("outputs", index);
-				}
-			});
+			imageItem.setOnClickListener(v -> showDialog("outputs", index));
 
 			TileViewAnimator tileViewAnimator = new TileViewAnimator(getContext());
 			tileViewAnimator.addView(imageItem);
@@ -244,8 +235,9 @@ public class GuideFragment extends TilesFragment {
 
 		// Populate the profile input device row with items
 		for (int i = 0 ; i < devicesProfileResourcesTypedArray.length() ; ++i) {
+			String profileTileName = devicesProfileResourcesTypedArray.getString(i);
 			if (!BuildConfig.EMOTIV_TILES_ENABLED
-					&& devicesProfileResourcesTypedArray.getString(i).contains("emotiv")) continue;
+					&& profileTileName != null && profileTileName.contains("emotiv")) continue;
 			imageItem = new ImageView(getActivity());
 
 			imageItem.setBackgroundResource(io.puzzlebox.jigsaw.R.drawable.shadow);
@@ -261,9 +253,9 @@ public class GuideFragment extends TilesFragment {
 			layersTile[0] = ProfileSingleton.getInstance().getProfileTileColor(getContext(), i);
 
 			id = devicesProfileResourcesTypedArray.getString(i);
-			resource =  getResources().getIdentifier(id + "_input", "array", getActivity().getPackageName());
+			resource =  getResources().getIdentifier(id + "_input", "array", requireContext().getPackageName());
 			inputArray = getResources().getStringArray(resource);
-			resource =  getResources().getIdentifier(id + "_output", "array", getActivity().getPackageName());
+			resource =  getResources().getIdentifier(id + "_output", "array", requireContext().getPackageName());
 			outputArray = getResources().getStringArray(resource);
 
 			maxSubtiles = inputArray.length;
@@ -279,7 +271,7 @@ public class GuideFragment extends TilesFragment {
 					layersInput[j+1] = getResources().getDrawable(
 							getResources().getIdentifier(
 									ProfileSingleton.getInstance().getDeviceIconPath(inputArray[j]),
-									"drawable", getActivity().getPackageName())
+									"drawable", requireContext().getPackageName())
 					);
 					layersInput[j+1].setBounds(0,0,tileDimension,tileDimension);
 				} catch (Exception e) {
@@ -313,7 +305,7 @@ public class GuideFragment extends TilesFragment {
 					layersOutput[j+1] = getResources().getDrawable(
 							getResources().getIdentifier(
 									ProfileSingleton.getInstance().getDeviceIconPath(outputArray[j]),
-									"drawable", getActivity().getPackageName())
+									"drawable", requireContext().getPackageName())
 					);
 					layersOutput[j+1].setBounds(0,0,tileDimension,tileDimension);
 				} catch (Exception e) {
@@ -339,10 +331,10 @@ public class GuideFragment extends TilesFragment {
 			resource = ProfileSingleton.getInstance().getId(
 					ProfileSingleton.getInstance().profiles.get(i).get("icon"), io.puzzlebox.jigsaw.R.drawable.class);
 
-			resourcePath = Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + resource);
+			resourcePath = Uri.parse("android.resource://" + requireContext().getPackageName() + "/" + resource);
 
 			try {
-				InputStream inputStream = getContext().getContentResolver().openInputStream(resourcePath);
+				InputStream inputStream = requireContext().getContentResolver().openInputStream(resourcePath);
 				layersTile[3] = Drawable.createFromStream(inputStream, resourcePath.toString() );
 			} catch (FileNotFoundException e) {
 				Log.e(TAG, "Error parsing Drawable: " + Arrays.toString(e.getStackTrace()));
@@ -367,7 +359,7 @@ public class GuideFragment extends TilesFragment {
 			if (layerDrawableTile.getIntrinsicHeight() > maxDimension)
 				maxDimension = layerDrawableTile.getIntrinsicHeight();
 
-			layerDrawableTile.setLayerInset(4, (int) maxDimension / 2, (int) maxDimension / 2, (int) maxDimension / 2, (int) maxDimension / 2);
+			layerDrawableTile.setLayerInset(4, maxDimension / 2, maxDimension / 2, maxDimension / 2, maxDimension / 2);
 
 			layerDrawableTile.setLayerInset(1, 0, 0, (int) (tileDimension * tileInputInsetScale), (int) (maxDimension - (maxDimension / tileInputInsetScale)));
 			layerDrawableTile.setLayerInset(2, (int) (tileDimension * tileOutputInsetScale), (int) (maxDimension - (maxDimension / tileInputInsetScale)), 0, 0);
@@ -378,19 +370,14 @@ public class GuideFragment extends TilesFragment {
 			if (layerDrawableTile.getIntrinsicHeight() > maxDimension)
 				maxDimension = layerDrawableTile.getIntrinsicHeight();
 
-			layerDrawableTile.setLayerInset(4, (int) maxDimension / 2, (int) maxDimension / 2, (int) maxDimension / 2, (int) maxDimension / 2);
+			layerDrawableTile.setLayerInset(4, maxDimension / 2, maxDimension / 2, maxDimension / 2, maxDimension / 2);
 
 			imageItem.setImageDrawable(layerDrawableTile);
 
 			imageItem.setLayoutParams(new LinearLayout.LayoutParams(tileDimension, tileDimension));
 
 			final int index = i;
-			imageItem.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					showDialog("profiles", index);
-				}
-			});
+			imageItem.setOnClickListener(v -> showDialog("profiles", index));
 
 			TileViewAnimator tileViewAnimator = new TileViewAnimator(getContext());
 			tileViewAnimator.addView(imageItem);
@@ -406,7 +393,7 @@ public class GuideFragment extends TilesFragment {
 	@Override
 	public void showDialog(String type, int index) {
 
-		FragmentManager fm = getFragmentManager();
+		FragmentManager fm = getParentFragmentManager();
 
 		switch (type) {
 			case "inputs":
@@ -452,14 +439,14 @@ public class GuideFragment extends TilesFragment {
 				break;
 
 			case "profiles":
-				if (! ProfileSingleton.getInstance().profiles.get(index).get("status").equals("available")) {
+				if (! "available".equals(ProfileSingleton.getInstance().profiles.get(index).get("status"))) {
 					// Skip warning message from block access after a number of attempts
 					--counterToastMessages;
 					if (counterToastMessages > 2) {
-						Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_warning_profile_unavailable), Toast.LENGTH_LONG).show();
+						Toast.makeText(requireContext(), getString(R.string.toast_warning_profile_unavailable), Toast.LENGTH_LONG).show();
 						break;
 					} else if (counterToastMessages > 0) {
-						Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_warning_profile_unavailable), Toast.LENGTH_SHORT).show();
+						Toast.makeText(requireContext(), getString(R.string.toast_warning_profile_unavailable), Toast.LENGTH_SHORT).show();
 						break;
 					} else {
 						counterToastMessages = 3;
@@ -501,13 +488,13 @@ public class GuideFragment extends TilesFragment {
 	public void onPause() {
 		super.onPause();
 		LocalBroadcastManager.getInstance(
-				getActivity().getApplicationContext()).unregisterReceiver(
+				requireActivity().getApplicationContext()).unregisterReceiver(
 				mTileReceiver);
 	}
 
 	public void onResume() {
 		super.onResume();
-		LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(
+		LocalBroadcastManager.getInstance(requireActivity().getApplicationContext()).registerReceiver(
 				mTileReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.tile.event"));
 	}
 
@@ -522,6 +509,7 @@ public class GuideFragment extends TilesFragment {
 
 			ProfileSingleton.getInstance().updateStatus(id, name , value);
 
+			if (category == null) return;
 			switch(category) {
 				case "inputs":
 					displayInputCarousel();
