@@ -27,13 +27,11 @@ Google Play: https://play.google.com/store/apps/details?id=info.puzzlebox.orbit
 
 Instructions:
 
-- Requires downloading and configuration of Puzzlebox Jigsaw:
+- Clone [Puzzlebox Jigsaw](https://github.com/PuzzleboxIO/jigsaw-android) as a sibling directory:
 
-https://github.com/PuzzleboxIO/jigsaw-android
-
-- Create a symlink inside root directory to jigsaw:
-
-Example: `ln -s ../jigsaw-android/jigsaw jigsaw`
+```
+git clone https://github.com/PuzzleboxIO/jigsaw-android ../jigsaw-android
+```
 
 - Certain devices require downloading of proprietary SDK libraries
   (see jigsaw-android/README.md for details)

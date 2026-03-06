@@ -1,1 +1,7 @@
-include ':mobile', ':wear', ':jigsaw'
+include ':mobile', ':wear'
+
+includeBuild('../jigsaw-android') {
+    dependencySubstitution {
+        substitute module('io.puzzlebox.jigsaw:jigsaw') using project(':jigsaw')
+    }
+}

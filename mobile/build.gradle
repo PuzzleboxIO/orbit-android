@@ -5,8 +5,9 @@ apply plugin: 'com.android.application'
 // skip linking the Emotiv AAR, reducing APK size and build time.
 def emotivTilesEnabled = false
 
-def emotivSdkPresent   = file('../jigsaw/libs/community-3.3.4.aar').exists()
-def neuroSkySdkPresent = file('../jigsaw/libs/libStreamSDK_v1.2.0.jar').exists()
+def jigsawLibsDir      = file('../../jigsaw-android/jigsaw/libs')
+def emotivSdkPresent   = new File(jigsawLibsDir, 'community-3.3.4.aar').exists()
+def neuroSkySdkPresent = new File(jigsawLibsDir, 'libStreamSDK_v1.2.0.jar').exists()
 
 if (!emotivTilesEnabled) println "NOTE: EMOTIV_TILES_ENABLED=false — Emotiv tiles hidden and AAR skipped"
 if (!emotivSdkPresent)   println "NOTE: Emotiv SDK absent — community-3.3.4.aar not bundled in orbit :mobile build"
@@ -84,7 +85,7 @@ androidComponents {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':jigsaw')
+    implementation 'io.puzzlebox.jigsaw:jigsaw'
     // wearApp project(':wear') — removed: wearApp() was dropped in AGP 8.
     // The Wear OS module is now built and distributed as a separate standalone app.
 
@@ -94,9 +95,8 @@ dependencies {
 
     // Emotiv Insight full AAR — provides native libs (libbedk.so) and AAR resources
     // not included in the classes-only JAR used by :jigsaw for compilation.
-    // The AAR is stored centrally in jigsaw-android/jigsaw/libs/ (symlinked as
-    // orbit-android/jigsaw/libs/). The local copy in mobile/libs/ is no longer used.
-    if (emotivTilesEnabled && file('../jigsaw/libs/community-3.3.4.aar').exists()) {
-        implementation files('../jigsaw/libs/community-3.3.4.aar')
+    // The AAR is stored centrally in jigsaw-android/jigsaw/libs/.
+    if (emotivTilesEnabled && new File(jigsawLibsDir, 'community-3.3.4.aar').exists()) {
+        implementation files("${jigsawLibsDir}/community-3.3.4.aar")
     }
 }
