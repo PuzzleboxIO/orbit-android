@@ -1,0 +1,52 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # required to create GitHub Releases
+
+    steps:
+      - name: Checkout orbit-android
+        uses: actions/checkout@v4
+        with:
+          path: orbit-android
+
+      # jigsaw-android must be a sibling of orbit-android so that the composite
+      # build reference in settings.gradle ( includeBuild('../jigsaw-android') )
+      # resolves correctly.
+      - name: Checkout jigsaw-android
+        uses: actions/checkout@v4
+        with:
+          repository: PuzzleboxIO/jigsaw-android
+          path: jigsaw-android
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build debug APK
+        working-directory: orbit-android
+        run: ./gradlew :mobile:assembleDebug
+
+      - name: Build release APK (unsigned)
+        working-directory: orbit-android
+        run: ./gradlew :mobile:assembleRelease
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            orbit-android/mobile/build/outputs/apk/debug/mobile-debug.apk
+            orbit-android/mobile/build/outputs/apk/release/mobile-release-unsigned.apk
