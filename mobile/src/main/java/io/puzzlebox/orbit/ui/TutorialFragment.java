@@ -40,7 +40,7 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 
 		ll.setLayoutParams(params);
 
-		webView = new WebView(getActivity()){
+		webView = new WebView(requireContext()){
 
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event) {

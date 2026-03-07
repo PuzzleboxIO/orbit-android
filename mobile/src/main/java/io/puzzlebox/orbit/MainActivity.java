@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Messenger;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import android.content.pm.ActivityInfo;
@@ -87,7 +86,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				needed.add(android.Manifest.permission.BLUETOOTH_CONNECT);
 			if (!needed.isEmpty())
 				requestPermissions(needed.toArray(new String[0]), PERMISSION_REQUEST_BLUETOOTH);
-		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+		} else {
 			// Android 6.0–11: location permission required for BLE scanning
 			if (this.checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 				final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -96,7 +95,6 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				builder.setPositiveButton(android.R.string.ok, null);
 				builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
 					@Override
-					@RequiresApi(Build.VERSION_CODES.M)
 					public void onDismiss(DialogInterface dialog) {
 						requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
 					}

@@ -13,7 +13,8 @@
 
     <!-- New granular Bluetooth permissions required on API 31+ -->
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
-        android:usesPermissionFlags="neverForLocation" />
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="31" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -33,12 +34,12 @@
     <application android:allowBackup="true"
                  android:label="@string/app_name"
                  android:icon="@mipmap/ic_orbit_photo"
+                 android:supportsRtl="true"
                  tools:replace="android:icon"
                  android:theme="@style/AppTheme">
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

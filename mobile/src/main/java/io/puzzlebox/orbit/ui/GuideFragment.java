@@ -1,5 +1,6 @@
 package io.puzzlebox.orbit.ui;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,8 +13,9 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentManager;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -115,6 +117,7 @@ public class GuideFragment extends TilesFragment {
 		ProfileSingleton.getInstance().tilesAnimationId = R.anim.tiles_fast;
 	}
 
+	@SuppressLint("DiscouragedApi")
 	public void displayInputCarousel() {
 
 		ImageView imageItem;
@@ -144,8 +147,8 @@ public class GuideFragment extends TilesFragment {
 				layersInput[0] = new ColorDrawable( getResources().getColor(R.color.white));
 			}
 
-			layersInput[1] =  getResources().getDrawable(
-					getResources().getIdentifier(devicesInputResourcesTypedArray.getString(i), "drawable", requireContext().getPackageName()));
+			layersInput[1] = ResourcesCompat.getDrawable(getResources(),
+					getResources().getIdentifier(devicesInputResourcesTypedArray.getString(i), "drawable", requireContext().getPackageName()), null);
 
 			layerDrawableInput = new LayerDrawable(layersInput);
 
@@ -169,6 +172,7 @@ public class GuideFragment extends TilesFragment {
 		carouselDevicesInputTextView.setVisibility(View.VISIBLE);
 	}
 
+	@SuppressLint("DiscouragedApi")
 	public void displayOutputCarousel() {
 
 		ImageView imageItem;
@@ -190,8 +194,8 @@ public class GuideFragment extends TilesFragment {
 				layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.white));
 			}
 
-			layersOutput[1] =  getResources().getDrawable(
-					getResources().getIdentifier(devicesOutputResourcesTypedArray.getString(i), "drawable", requireContext().getPackageName()));
+			layersOutput[1] = ResourcesCompat.getDrawable(getResources(),
+					getResources().getIdentifier(devicesOutputResourcesTypedArray.getString(i), "drawable", requireContext().getPackageName()), null);
 
 			layerDrawableOutput = new LayerDrawable(layersOutput);
 
@@ -214,6 +218,7 @@ public class GuideFragment extends TilesFragment {
 		carouselDevicesOutputTextView.setVisibility(View.VISIBLE);
 	}
 
+	@SuppressLint("DiscouragedApi")
 	public void displayProfileCarousel() {
 		ImageView imageItem;
 		Drawable[] layersTile;
@@ -268,11 +273,10 @@ public class GuideFragment extends TilesFragment {
 
 			for (int j = 0 ; j < maxSubtiles ; ++j) {
 				try {
-					layersInput[j+1] = getResources().getDrawable(
+					layersInput[j+1] = ResourcesCompat.getDrawable(getResources(),
 							getResources().getIdentifier(
 									ProfileSingleton.getInstance().getDeviceIconPath(inputArray[j]),
-									"drawable", requireContext().getPackageName())
-					);
+									"drawable", requireContext().getPackageName()), null);
 					layersInput[j+1].setBounds(0,0,tileDimension,tileDimension);
 				} catch (Exception e) {
 					layersInput[j+1] = new ColorDrawable(Color.TRANSPARENT);
@@ -302,11 +306,10 @@ public class GuideFragment extends TilesFragment {
 			for (int j = 0 ; j < maxSubtiles ; ++j) {
 
 				try {
-					layersOutput[j+1] = getResources().getDrawable(
+					layersOutput[j+1] = ResourcesCompat.getDrawable(getResources(),
 							getResources().getIdentifier(
 									ProfileSingleton.getInstance().getDeviceIconPath(outputArray[j]),
-									"drawable", requireContext().getPackageName())
-					);
+									"drawable", requireContext().getPackageName()), null);
 					layersOutput[j+1].setBounds(0,0,tileDimension,tileDimension);
 				} catch (Exception e) {
 					layersOutput[j+1] = new ColorDrawable(Color.TRANSPARENT);
@@ -487,15 +490,13 @@ public class GuideFragment extends TilesFragment {
 
 	public void onPause() {
 		super.onPause();
-		LocalBroadcastManager.getInstance(
-				requireActivity().getApplicationContext()).unregisterReceiver(
+		requireActivity().getApplicationContext().unregisterReceiver(
 				mTileReceiver);
 	}
 
 	public void onResume() {
 		super.onResume();
-		LocalBroadcastManager.getInstance(requireActivity().getApplicationContext()).registerReceiver(
-				mTileReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.tile.event"));
+		ContextCompat.registerReceiver(requireActivity().getApplicationContext(), mTileReceiver, new IntentFilter("io.puzzlebox.jigsaw.protocol.tile.event"), ContextCompat.RECEIVER_NOT_EXPORTED);
 	}
 
 	private final BroadcastReceiver mTileReceiver = new BroadcastReceiver() {

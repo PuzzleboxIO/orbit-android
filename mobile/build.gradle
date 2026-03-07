@@ -91,7 +91,6 @@ dependencies {
 
     // AndroidX (replaces com.android.support:appcompat-v7)
     implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
     // Emotiv Insight full AAR — provides native libs (libbedk.so) and AAR resources
     // not included in the classes-only JAR used by :jigsaw for compilation.

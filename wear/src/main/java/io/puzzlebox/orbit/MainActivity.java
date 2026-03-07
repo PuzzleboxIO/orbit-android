@@ -2,7 +2,7 @@ package io.puzzlebox.orbit;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.wearable.view.WatchViewStub;
+import androidx.wear.widget.WatchViewStub;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {

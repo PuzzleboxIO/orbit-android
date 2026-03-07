@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<!-- Orbit intentionally overrides jigsaw arrays with a subset of supported devices -->
+<!-- suppress AndroidLintInconsistentArrays -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="InconsistentArrays">
 
     <!-- Array of input devices resource IDs -->
     <string-array name="devices_input_array">
