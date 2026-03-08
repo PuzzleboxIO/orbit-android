@@ -142,9 +142,9 @@ public class GuideFragment extends TilesFragment {
 
 			layersInput = new Drawable[2];
 			if (ProfileSingleton.getInstance().isActive("inputs", i)) {
-				layersInput[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
+				layersInput[0] = new ColorDrawable( ContextCompat.getColor(requireContext(), R.color.tileActivated));
 			} else {
-				layersInput[0] = new ColorDrawable( getResources().getColor(R.color.white));
+				layersInput[0] = new ColorDrawable( ContextCompat.getColor(requireContext(), R.color.White));
 			}
 
 			layersInput[1] = ResourcesCompat.getDrawable(getResources(),
@@ -189,9 +189,9 @@ public class GuideFragment extends TilesFragment {
 			layersOutput = new Drawable[2];
 
 			if (ProfileSingleton.getInstance().isActive("outputs", i)) {
-				layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.tileActivated));
+				layersOutput[0] = new ColorDrawable( ContextCompat.getColor(requireContext(), R.color.tileActivated));
 			} else {
-				layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.white));
+				layersOutput[0] = new ColorDrawable( ContextCompat.getColor(requireContext(), R.color.White));
 			}
 
 			layersOutput[1] = ResourcesCompat.getDrawable(getResources(),
@@ -269,7 +269,7 @@ public class GuideFragment extends TilesFragment {
 
 			layersInput = new Drawable[maxSubtiles + 1];
 
-			layersInput[0] = new ColorDrawable( getResources().getColor(R.color.tileHighlight));
+			layersInput[0] = new ColorDrawable( ContextCompat.getColor(requireContext(), R.color.tileHighlight));
 
 			for (int j = 0 ; j < maxSubtiles ; ++j) {
 				try {
@@ -277,11 +277,12 @@ public class GuideFragment extends TilesFragment {
 							getResources().getIdentifier(
 									ProfileSingleton.getInstance().getDeviceIconPath(inputArray[j]),
 									"drawable", requireContext().getPackageName()), null);
-					layersInput[j+1].setBounds(0,0,tileDimension,tileDimension);
 				} catch (Exception e) {
-					layersInput[j+1] = new ColorDrawable(Color.TRANSPARENT);
-					layersInput[j+1].setBounds(0,0,tileDimension,tileDimension);
+					layersInput[j+1] = null;
 				}
+				if (layersInput[j+1] == null)
+					layersInput[j+1] = new ColorDrawable(Color.TRANSPARENT);
+				layersInput[j+1].setBounds(0,0,tileDimension,tileDimension);
 			}
 
 			layerDrawableInput = new LayerDrawable(layersInput);
@@ -301,20 +302,20 @@ public class GuideFragment extends TilesFragment {
 			layersTile[1] = layerDrawableInput.getCurrent();
 
 			layersOutput = new Drawable[maxSubtiles + 1];
-			layersOutput[0] = new ColorDrawable( getResources().getColor(R.color.tileHighlight));
+			layersOutput[0] = new ColorDrawable( ContextCompat.getColor(requireContext(), R.color.tileHighlight));
 
 			for (int j = 0 ; j < maxSubtiles ; ++j) {
-
 				try {
 					layersOutput[j+1] = ResourcesCompat.getDrawable(getResources(),
 							getResources().getIdentifier(
 									ProfileSingleton.getInstance().getDeviceIconPath(outputArray[j]),
 									"drawable", requireContext().getPackageName()), null);
-					layersOutput[j+1].setBounds(0,0,tileDimension,tileDimension);
 				} catch (Exception e) {
-					layersOutput[j+1] = new ColorDrawable(Color.TRANSPARENT);
-					layersOutput[j+1].setBounds(0,0,tileDimension,tileDimension);
+					layersOutput[j+1] = null;
 				}
+				if (layersOutput[j+1] == null)
+					layersOutput[j+1] = new ColorDrawable(Color.TRANSPARENT);
+				layersOutput[j+1].setBounds(0,0,tileDimension,tileDimension);
 			}
 
 			layerDrawableOutput = new LayerDrawable(layersOutput);

@@ -1,14 +1,12 @@
 package io.puzzlebox.orbit.ui;
 
-import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -29,12 +27,7 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	private VideoView mVideoView;
 	private int position = 0;
 
-	private OnTutorialListener mListenerTutorial;
 	private OnDevicesListener mListenerDevices;
-
-	public interface OnTutorialListener {
-		void loadTutorial();
-	}
 
 	public interface OnDevicesListener {
 		void loadDevices();
@@ -43,8 +36,6 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-
-		LinearLayout.LayoutParams layoutParams;
 
 		// Inflate the layout for this fragment
 		View v = inflater.inflate(io.puzzlebox.orbit.R.layout.fragment_welcome, container, false);
@@ -84,32 +75,22 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 		RelativeLayout relativeLayoutWelcome = v.findViewById(R.id.relativeLayoutWelcome);
 		relativeLayoutWelcome.setOnClickListener(v1 -> loadMain());
 
-		LinearLayout llLogo = v.findViewById(R.id.linearLayoutLogo);
-
 		ImageView imageViewLogo = v.findViewById(R.id.imageViewLogo);
-
-		layoutParams = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-		layoutParams.setMargins(16, 2, 16, 2);
-		imageViewLogo.setLayoutParams(layoutParams);
 
 		// Set logo banner to ~15% of vertical screen size
 		int newHeight = (int) (0.15 * ConfigurationSingleton.getInstance().displayHeight);
 		Log.d(TAG, "newHeight: " + newHeight);
 
-		layoutParams = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.WRAP_CONTENT, newHeight);
-
-		llLogo.setLayoutParams(layoutParams);
+		RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT, newHeight);
+		rlParams.setMargins(16, 2, 16, 2);
+		rlParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		imageViewLogo.setLayoutParams(rlParams);
 
 		return v;
 	}
 
 	public void loadMain() {
-		if (mListenerTutorial != null)
-			mListenerTutorial.loadTutorial();
-		else
-			Log.d(TAG, "mListenerTutorial was null");
 		if (mListenerDevices != null)
 			mListenerDevices.loadDevices();
 		else
@@ -117,31 +98,13 @@ public class WelcomeFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	}
 
 	@Override
-	public void onAttach(@NonNull Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
 		try {
-			mListenerDevices = (OnDevicesListener) activity;
+			mListenerDevices = (OnDevicesListener) context;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity + " must implement mListenerDevices");
+			throw new ClassCastException(context + " must implement mListenerDevices");
 		}
 	}
 
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mListenerTutorial = null;
-	}
-
-	private static class compatibilityWebViewClient extends WebViewClient {
-		/***
-		 * This class prevents Android from launching URLs in external browsers
-		 *
-		 * credit: http://stackoverflow.com/questions/2378800/clicking-urls-opens-default-browser
-		 */
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			view.loadUrl(url);
-			return true;
-		}
-	}
 }

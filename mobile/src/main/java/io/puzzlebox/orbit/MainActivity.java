@@ -1,5 +1,6 @@
 package io.puzzlebox.orbit;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.util.Log;
@@ -29,33 +30,16 @@ import java.util.List;
 
 import io.puzzlebox.jigsaw.data.SessionSingleton;
 import io.puzzlebox.jigsaw.ui.EmotivInsightFragmentListener;
-import io.puzzlebox.jigsaw.ui.DialogInputJoystickFragment;
-import io.puzzlebox.jigsaw.ui.DialogInputNeuroSkyMindWaveFragment;
-import io.puzzlebox.jigsaw.ui.DialogOutputSessionFragment;
 import io.puzzlebox.jigsaw.ui.DrawerItem;
 import io.puzzlebox.jigsaw.ui.SupportFragment;
-import io.puzzlebox.jigsaw.ui.DialogOutputAudioIRFragment;
-import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitFragment;
-import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitJoystickFragment;
 import io.puzzlebox.orbit.ui.CreditsFragment;
-import io.puzzlebox.jigsaw.ui.DialogProfilePuzzleboxOrbitJoystickMindwaveFragment;
 import io.puzzlebox.orbit.ui.GuideFragment;
 import io.puzzlebox.orbit.ui.TutorialFragment;
 import io.puzzlebox.orbit.ui.WelcomeFragment;
 
 public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
-		WelcomeFragment.OnFragmentInteractionListener,
 		WelcomeFragment.OnDevicesListener,
-		GuideFragment.OnFragmentInteractionListener,
-		SupportFragment.OnFragmentInteractionListener,
-		DialogInputJoystickFragment.OnFragmentInteractionListener,
-		DialogInputNeuroSkyMindWaveFragment.OnFragmentInteractionListener,
-		EmotivInsightFragmentListener,
-		DialogOutputAudioIRFragment.OnFragmentInteractionListener,
-		DialogOutputSessionFragment.OnFragmentInteractionListener,
-		DialogProfilePuzzleboxOrbitJoystickFragment.OnFragmentInteractionListener,
-		DialogProfilePuzzleboxOrbitFragment.OnFragmentInteractionListener,
-		DialogProfilePuzzleboxOrbitJoystickMindwaveFragment.OnFragmentInteractionListener {
+		EmotivInsightFragmentListener {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -63,6 +47,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 	private ListView mDrawerList;
 	List<DrawerItem> dataList;
 
+	@SuppressLint("SourceLockedOrientationActivity")
 	@Override
 	protected void onCreateCustom() {
 
@@ -93,12 +78,7 @@ public class MainActivity extends io.puzzlebox.jigsaw.ui.MainActivity implements
 				builder.setTitle(getResources().getString(R.string.main_dialog_title));
 				builder.setMessage(getResources().getString(R.string.main_dialog_message));
 				builder.setPositiveButton(android.R.string.ok, null);
-				builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-					@Override
-					public void onDismiss(DialogInterface dialog) {
-						requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-					}
-				});
+				builder.setOnDismissListener(dialog -> requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION));
 				builder.show();
 			}
 		}

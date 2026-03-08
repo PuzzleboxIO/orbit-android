@@ -2,18 +2,12 @@ package io.puzzlebox.orbit;
 
 import android.app.Activity;
 import android.os.Bundle;
-import androidx.wear.widget.WatchViewStub;
-import android.widget.TextView;
 
 public class MainActivity extends Activity {
-
-	private TextView mTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		final WatchViewStub stub = findViewById(R.id.watch_view_stub);
-		stub.setOnLayoutInflatedListener(s -> mTextView = s.findViewById(R.id.text));
 	}
 }
