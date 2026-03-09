@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 // ── Feature flags (Gradle level) ─────────────────────────────────────────────
 // Set EMOTIV_TILES_ENABLED to false to hide Emotiv tiles from the UI *and*
@@ -91,6 +93,10 @@ dependencies {
 
     // AndroidX (replaces com.android.support:appcompat-v7)
     implementation 'androidx.appcompat:appcompat:1.7.1'
+
+    // Firebase — Crashlytics for crash reporting, no Analytics dependency
+    implementation platform('com.google.firebase:firebase-bom:33.9.0')
+    implementation 'com.google.firebase:firebase-crashlytics'
 
     // Emotiv Insight full AAR — provides native libs (libbedk.so) and AAR resources
     // not included in the classes-only JAR used by :jigsaw for compilation.
