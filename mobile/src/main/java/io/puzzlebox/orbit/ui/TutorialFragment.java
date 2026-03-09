@@ -72,8 +72,8 @@ public class TutorialFragment extends io.puzzlebox.jigsaw.ui.WelcomeFragment {
 	private static class compatibilityWebViewClient extends WebViewClient {
 		/***
 		 * This class prevents Android from launching URLs in external browsers
-		 *
-		 * credit: http://stackoverflow.com/questions/2378800/clicking-urls-opens-default-browser
+		 * <p>
+		 * credit: <a href="http://stackoverflow.com/questions/2378800/clicking-urls-opens-default-browser">stackoverflow</a>
 		 */
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
